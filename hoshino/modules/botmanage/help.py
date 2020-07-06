@@ -9,7 +9,8 @@ TOP_MANUAL = '''
 [怎么拆日和] 竞技场查询
 [优妮来发十连] 转蛋模拟
 [切噜一下] 切噜语转换
-[谁是霸瞳] 别名查询
+
+[帮助pcr查询] 更多查询功能
 '''.strip()
 
 def gen_bundle_manual(bundle_name, service_list, gid):
