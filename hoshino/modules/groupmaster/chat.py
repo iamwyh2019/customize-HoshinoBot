@@ -15,7 +15,7 @@ sv = Service('chat', visible=False)
 
 @sv.on_keyword(('沙雕机器人', '沙雕機器人', '笨蛋机器人', '傻逼机器人', '憨憨机器人', '憨批机器人', 'sb机器人', 'バカ机器人'))
 async def say_sorry(bot, ev):
-    await bot.send(ev, '你在说谁？')
+    await bot.send(ev, '你在说谁？', at_sender=True)
 
 
 @sv.on_fullmatch(('老婆', 'waifu', 'laopo'), only_to_me=True)
@@ -33,7 +33,14 @@ async def chat_laogong(bot, ev):
 
 @sv.on_fullmatch('mua', only_to_me=True)
 async def chat_mua(bot, ev):
-    await bot.send(ev, '笨蛋~', at_sender=True)
+    if not priv.check_priv(ev, priv.SUPERUSER):
+        await bot.send(ev, '滚！', at_sender=True)
+    else:
+        await bot.send(ev, '嗯？什么事？')
+
+@sv.on_fullmatch(('我登顶了','我挖完了'), only_to_me=True)
+async def chat_congrat(bot, ev):
+    await bot.send(ev, '恭喜！', at_sender=True)
 
 '''
 @sv.on_fullmatch('来点星奏')
