@@ -10,13 +10,11 @@ from hoshino import R, Service, priv, util
 async def say_hello(session):
     await session.send('在啊。')
 
-
 sv = Service('chat', visible=False)
 
 @sv.on_keyword(('沙雕机器人', '沙雕機器人', '笨蛋机器人', '傻逼机器人', '憨憨机器人', '憨批机器人', 'sb机器人', 'バカ机器人'))
 async def say_sorry(bot, ev):
     await bot.send(ev, '你在说谁？', at_sender=True)
-
 
 @sv.on_fullmatch(('老婆', 'waifu', 'laopo'), only_to_me=True)
 async def chat_waifu(bot, ev):
@@ -25,11 +23,9 @@ async def chat_waifu(bot, ev):
     else:
         await bot.send(ev, '嗯？什么事？')
 
-
 @sv.on_fullmatch('老公', only_to_me=True)
 async def chat_laogong(bot, ev):
     await bot.send(ev, '人不能，至少不应该。', at_sender=True)
-
 
 @sv.on_fullmatch('mua', only_to_me=True)
 async def chat_mua(bot, ev):
@@ -38,11 +34,9 @@ async def chat_mua(bot, ev):
     else:
         await bot.send(ev, '嗯？什么事？')
 
-
 @sv.on_fullmatch(('我登顶了','我挖完了', '我到顶了'), only_to_me=True)
 async def chat_congrat(bot, ev):
     await bot.send(ev, '恭喜！', at_sender=True)
-
 
 @sv.on_fullmatch(('我井了','我天井了', '我沉了'), only_to_me=True)
 async def chat_sympathy(bot, ev):
@@ -86,12 +80,10 @@ async def chat_queshi(bot, ctx):
     if random.random() < 0.15:
         await bot.send(ctx, R.img('确实.jpg').cqcode)
 
-
 @sv.on_keyword(('会战'))
 async def chat_clanba(bot, ctx):
     if random.random() < 0.10:
         await bot.send(ctx, R.img('我的天啊你看看都几点了.jpg').cqcode)
-
 
 @sv.on_keyword(('内鬼'))
 async def chat_neigui(bot, ctx):
