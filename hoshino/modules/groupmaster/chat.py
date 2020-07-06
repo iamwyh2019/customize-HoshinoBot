@@ -38,9 +38,18 @@ async def chat_mua(bot, ev):
     else:
         await bot.send(ev, '嗯？什么事？')
 
-@sv.on_fullmatch(('我登顶了','我挖完了'), only_to_me=True)
+
+@sv.on_fullmatch(('我登顶了','我挖完了', '我到顶了'), only_to_me=True)
 async def chat_congrat(bot, ev):
     await bot.send(ev, '恭喜！', at_sender=True)
+
+
+@sv.on_fullmatch(('我井了','我天井了', '我沉了'), only_to_me=True)
+async def chat_sympathy(bot, ev):
+    if random.random()<0.95:
+        await bot.send(ev, '真可惜。不过不要灰心，说不定下一次抽卡就出奇迹了呢！', at_sender=True)
+    else:
+        await bot.send(ev, '真的吗？好可怜…噗哈哈哈…', at_sender=True)
 
 '''
 @sv.on_fullmatch('来点星奏')
