@@ -8,12 +8,12 @@ from hoshino import R, Service, priv, util
 # basic function for debug, not included in Service('chat')
 @on_command('zai?', aliases=('在?', '在？', '在吗', '在么？', '在嘛', '在嘛？'), only_to_me=True)
 async def say_hello(session):
-    await session.send('在啊')
+    await session.send('在啊。')
 
 
 sv = Service('chat', visible=False)
 
-@sv.on_keyword(('沙雕机器人', '沙雕機器人', '笨蛋机器人', '傻逼机器人', '憨憨机器人', '憨批机器人', 'sb机器人'))
+@sv.on_keyword(('沙雕机器人', '沙雕機器人', '笨蛋机器人', '傻逼机器人', '憨憨机器人', '憨批机器人', 'sb机器人', 'バカ机器人'))
 async def say_sorry(bot, ev):
     await bot.send(ev, '你在说谁？')
 
@@ -56,14 +56,19 @@ async def nihaole(bot, ev):
 
 # ============================================ #
 
+@sv.on_keyword(('涩图', 'setu', '色图', '黄图', 'h图'))
+async def chat_antisetu(bot, ctx):
+    if random.random() < 0.13:
+        await bot.send(ctx, '不要ghs哦。')
+
 @sv.on_keyword(('大佬', 'dalao', '大神'))
 async def chat_dalao(bot, ctx):
-    if random.random() < 0.15:
+    if random.random() < 0.13:
         await bot.send(ctx, R.img('dalao.jpg').cqcode)
 
 @sv.on_keyword(('确实', '有一说一', 'u1s1', 'yysy'))
 async def chat_queshi(bot, ctx):
-    if random.random() < 0.15:
+    if random.random() < 0.13:
         await bot.send(ctx, R.img('确实.jpg').cqcode)
 
 
@@ -75,7 +80,7 @@ async def chat_clanba(bot, ctx):
 
 @sv.on_keyword(('内鬼'))
 async def chat_neigui(bot, ctx):
-    if random.random() < 0.15:
+    if random.random() < 0.13:
         await bot.send(ctx, R.img('内鬼.png').cqcode)
 
 nyb_player = f'''正在播放：New Year Burst
@@ -85,5 +90,5 @@ nyb_player = f'''正在播放：New Year Burst
 
 @sv.on_keyword(('春黑', '新黑'))
 async def new_year_burst(bot, ev):
-    if random.random() < 0.05:
+    if random.random() < 0.13:
         await bot.send(ev, nyb_player)
