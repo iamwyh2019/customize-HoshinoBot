@@ -12,6 +12,7 @@ PCR会战管理命令 v2
 import os
 from datetime import datetime, timedelta
 from typing import List
+import matplotlib as mpl
 from matplotlib import pyplot as plt
 try:
     import ujson as json
@@ -30,8 +31,11 @@ from .argparse.argtype import *
 from .battlemaster import BattleMaster
 from .exception import *
 
-plt.style.use('seaborn-pastel')
-plt.rcParams['font.family'] = ['DejaVuSans', 'Microsoft YaHei', 'SimSun', ]
+#plt.style.use('seaborn-pastel')
+#mpl.rcParams['font.family'] = ['SimHei']
+plt.rcParams['font.sans-serif'] = ['SimHei']
+#mpl.rcParams['font.serif'] = ['Microsoft YaHei', 'DejaVu Serif']
+plt.rcParams['axes.unicode_minus'] = False
 
 USAGE_ADD_CLAN = '!建会 N公会名 S服务器代号'
 USAGE_ADD_MEMBER = '!入会 昵称 (@qq)'
