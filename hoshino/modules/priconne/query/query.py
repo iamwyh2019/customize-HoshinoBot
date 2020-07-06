@@ -100,22 +100,19 @@ async def bcr_sites(bot, ev: CQEvent):
 
 
 
-#YUKARI_SHEET_ALIAS = map(lambda x: ''.join(x), itertools.product(('黄骑', '酒鬼', '黃騎'), ('充电', '充电表', '充能', '充能表')))
-#YUKARI_SHEET = f'''
-#{R.img('priconne/quick/黄骑充电.jpg').cqcode}
-#※大圈是1动充电对象 PvP测试
-#※黄骑四号位例外较多
-#※对面羊驼或中后卫坦 有可能歪
-#※我方羊驼算一号位
-#※图片搬运自漪夢奈特'''
+YUKARI_SHEET_ALIAS = map(lambda x: ''.join(x), itertools.product(('黄骑', '酒鬼', '黃騎'), ('充电', '充电表', '充能', '充能表')))
+YUKARI_SHEET = f'''
+{R.img('priconne/quick/黄骑充电.jpg').cqcode}
+※大圈是1动充电对象 PvP测试
+※黄骑四号位例外较多
+※对面羊驼或中后卫坦，有可能歪
+※我方羊驼算一号位
+※图片搬运自漪夢奈特'''
 
-'''
 @sv.on_fullmatch(YUKARI_SHEET_ALIAS)
 async def yukari_sheet(bot, ev):
     await bot.send(ev, YUKARI_SHEET, at_sender=True)
     await util.silence(ev, 60)
-
-'''
 
 
 #DRAGON_TOOL = f'''
