@@ -26,7 +26,7 @@ async def broadcast(session: CommandSession):
 
 @sucmd('broadcastbygroup', aliases=('gbc', '分群广播'))
 async def broadcast(session: CommandSession):
-    msg = session.current_arg.split()
+    msg = session.current_arg.split(' ')
     try:
         target=int(msg[0])
     except Exception as e:
@@ -37,7 +37,7 @@ async def broadcast(session: CommandSession):
             hoshino.logger.critical(f'向广播发起者进行错误回报时发生错误：{type(e)}')
         return
 
-    new_msg="".join(msg[1:])
+    new_msg=' '.join(msg[1:])
 
     for sid in hoshino.get_self_ids():
         gl = await session.bot.get_group_list(self_id=sid)
