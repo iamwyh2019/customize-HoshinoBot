@@ -1,4 +1,7 @@
 # Config Files
+config.py
+config.json
+hoshino/config/
 local_coolq_config/
 
 # Database
@@ -125,6 +128,7 @@ venv.bak/
 /site
 
 # mypy
+<<<<<<< HEAD
 .mypy_cache/
 hoshino/config/__bot__.py
 hoshino/config/deepchat.py
@@ -136,3 +140,6 @@ hoshino/config/hourcall.py
 hoshino/config/mikan.py
 hoshino/modules/pcrclanbattle/clanbattle/config.json
 hoshino/modules/priconne/gacha/config.json
+=======
+.mypy_cache/
+>>>>>>> parent of 4b38afd... Update .gitignore
