@@ -23,7 +23,7 @@ async def chat_waifu(bot, ev):
     if not priv.check_priv(ev, priv.SUPERUSER):
         await bot.send(ev, R.img('laopo.jpg').cqcode)
     else:
-        await bot.send(ev, 'mua~')
+        await bot.send(ev, '嗯？什么事？')
 
 
 @sv.on_fullmatch('老公', only_to_me=True)
