@@ -13,7 +13,7 @@ async def say_hello(session):
 
 sv = Service('chat', visible=False)
 
-@sv.on_keyword(('沙雕机器人', '沙雕機器人'))
+@sv.on_keyword(('沙雕机器人', '沙雕機器人', '笨蛋机器人', '傻逼机器人', '憨憨机器人', '憨批机器人', 'sb机器人'))
 async def say_sorry(bot, ev):
     await bot.send(ev, '你在说谁？')
 
@@ -56,22 +56,26 @@ async def nihaole(bot, ev):
 
 # ============================================ #
 
+@sv.on_keyword(('大佬', 'dalao', '大神'))
+async def chat_dalao(bot, ctx):
+    if random.random() < 0.15:
+        await bot.send(ctx, R.img('dalao.jpg').cqcode)
 
 @sv.on_keyword(('确实', '有一说一', 'u1s1', 'yysy'))
 async def chat_queshi(bot, ctx):
-    if random.random() < 0.1:
+    if random.random() < 0.15:
         await bot.send(ctx, R.img('确实.jpg').cqcode)
 
 
 @sv.on_keyword(('会战'))
 async def chat_clanba(bot, ctx):
-    if random.random() < 0.04:
+    if random.random() < 0.05:
         await bot.send(ctx, R.img('我的天啊你看看都几点了.jpg').cqcode)
 
 
 @sv.on_keyword(('内鬼'))
 async def chat_neigui(bot, ctx):
-    if random.random() < 0.2:
+    if random.random() < 0.15:
         await bot.send(ctx, R.img('内鬼.png').cqcode)
 
 nyb_player = f'''正在播放：New Year Burst
