@@ -47,40 +47,39 @@ async def ddhaole(bot, ev):
     await util.silence(ev, 30)
 '''
 
-@sv.on_fullmatch('我好了')
-async def nihaole(bot, ev):
-    await bot.send(ev, '不许好，憋回去！')
-    await util.silence(ev, 30)
-
-
-
 # ============================================ #
+
+@sv.on_keyword('我好了')
+async def nihaole(bot, ev):
+    if random.random() < 0.25:
+        await bot.send(ev, '不许好，憋回去！')
+        await util.silence(ev, 30)
 
 @sv.on_keyword(('涩图', 'setu', '色图', '黄图', 'h图'))
 async def chat_antisetu(bot, ctx):
-    if random.random() < 0.13:
+    if random.random() < 0.15:
         await bot.send(ctx, '不要ghs哦。')
 
 @sv.on_keyword(('大佬', 'dalao', '大神'))
 async def chat_dalao(bot, ctx):
-    if random.random() < 0.13:
+    if random.random() < 0.15:
         await bot.send(ctx, R.img('dalao.jpg').cqcode)
 
 @sv.on_keyword(('确实', '有一说一', 'u1s1', 'yysy'))
 async def chat_queshi(bot, ctx):
-    if random.random() < 0.13:
+    if random.random() < 0.15:
         await bot.send(ctx, R.img('确实.jpg').cqcode)
 
 
 @sv.on_keyword(('会战'))
 async def chat_clanba(bot, ctx):
-    if random.random() < 0.05:
+    if random.random() < 0.10:
         await bot.send(ctx, R.img('我的天啊你看看都几点了.jpg').cqcode)
 
 
 @sv.on_keyword(('内鬼'))
 async def chat_neigui(bot, ctx):
-    if random.random() < 0.13:
+    if random.random() < 0.15:
         await bot.send(ctx, R.img('内鬼.png').cqcode)
 
 nyb_player = f'''正在播放：New Year Burst
@@ -90,5 +89,5 @@ nyb_player = f'''正在播放：New Year Burst
 
 @sv.on_keyword(('春黑', '新黑'))
 async def new_year_burst(bot, ev):
-    if random.random() < 0.13:
+    if random.random() < 0.15:
         await bot.send(ev, nyb_player)
