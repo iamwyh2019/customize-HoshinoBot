@@ -127,3 +127,12 @@ venv.bak/
 # mypy
 .mypy_cache/
 hoshino/config/__bot__.py
+hoshino/config/deepchat.py
+hoshino/config/priconne.py
+hoshino/config/twitter.py
+hoshino/config/__init__.py
+hoshino/config/groupmaster.py
+hoshino/config/hourcall.py
+hoshino/config/mikan.py
+hoshino/modules/pcrclanbattle/clanbattle/config.json
+hoshino/modules/priconne/gacha/config.json
