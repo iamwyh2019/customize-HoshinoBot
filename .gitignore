@@ -126,3 +126,4 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+hoshino/config/__bot__.py
