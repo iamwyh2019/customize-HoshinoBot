@@ -1,9 +1,12 @@
 import random
 
 from nonebot import on_command
+from datetime import datetime
+import pytz
 
 from hoshino import R, Service, priv, util
 
+tz = pytz.timezone('Asia/Shanghai')
 
 # basic function for debug, not included in Service('chat')
 @on_command('zai?', aliases=('在?', '在？', '在吗', '在么？', '在嘛', '在嘛？'), only_to_me=True)
@@ -52,9 +55,43 @@ async def nihaole(bot, ev):
         await bot.send(ev, '不许好，憋回去！')
         await util.silence(ev, 30)
 
-@sv.on_fullmatch(('晚安','晚安哦', '晚安啦', 'good night', 'gn'), only_to_me=True)
+@sv.on_fullmatch(('晚安','晚安哦', '晚安啦', 'good night'), only_to_me=True)
 async def goodnight(bot, ev):
-    await bot.send(ev, '晚安~', at_sender=True)
+    now_hour=datetime.now(tz).hour
+    if now_hour<=3 or now_hour>=21:
+        await bot.send(ev, '晚安~', at_sender=True)
+    elif 19<=now_hour<21:
+        await bot.send(ev, f'现在才{now_hour}点，这么早就睡了吗？', at_sender=True)
+    else:
+        await bot.send(ev, f'现在才{now_hour}点，还没到晚上咧。嘿嘿。', at_sender=True)
+
+@sv.on_fullmatch(('晚上好','晚上好啊', '晚上好呀', 'good evening'), only_to_me=True)
+async def goodevening(bot, ev):
+    now_hour=datetime.now(tz).hour
+    if 18<=now_hour<24 or 0<=now_hour<3:
+        await bot.send(ev, f'晚上好！今晚想做什么呢？', at_sender=True)
+    elif 3<=now_hour<6:
+        await bot.send(ev, f'{now_hour}点啦，还不睡吗？', at_sender=True)
+    elif 6<=now_hour<=9:
+        await bot.send(ev, f'晚上好…嗯？我刚起床呢。', at_sender=True)
+    else:
+        await bot.send(ev, f'现在才{now_hour}点，还没天黑呢。嘿嘿。', at_sender=True)
+
+@sv.on_fullmatch(('早安','早安哦', '早上好', '早上好啊', '早上好呀', '早', 'good morning'), only_to_me=True)
+async def goodmorning(bot, ev):
+    now_hour=datetime.now(tz).hour
+    if 0<=now_hour<6:
+        await bot.send(ev, f'好早，现在才{now_hour}点呢。', at_sender=True)
+    elif 6<=now_hour<10:
+        await bot.send(ev, '早上好！今天打算做什么呢？', at_sender=True)
+    elif 21<=now_hour<24:
+        await bot.send(ev, '别闹，准备睡觉啦。', at_sender=True)
+    else:
+        await bot.send(ev, f'{now_hour}点了才起床吗…', at_sender=True)
+
+@sv.on_fullmatch(('你是谁','你是谁啊', '你是谁？', '你是谁啊？', '你是谁?', '你是谁啊?'), only_to_me=True)
+async def selfintro(bot, ev):
+    await bot.send(ev,'我是圣特蕾莎女子学院好朋友部的优妮～')
 '''
 @sv.on_fullmatch('来点星奏')
 async def seina(bot, ev):
@@ -68,6 +105,10 @@ async def ddhaole(bot, ev):
 '''
 
 # ============================================ #
+
+@sv.on_keyword(('吃优妮'))
+async def eatme(bot, ev):
+    await bot.send(ev, '这样不好。真的。', at_sender=True)
 
 @sv.on_keyword(('涩图', 'setu', '色图', '黄图', 'h图'))
 async def chat_antisetu(bot, ctx):
@@ -94,12 +135,19 @@ async def chat_neigui(bot, ctx):
     if random.random() < 0.15:
         await bot.send(ctx, R.img('内鬼.png').cqcode)
 
-nyb_player = f'''正在播放：New Year Burst
-──●━━━━ 1:05/1:30
-⇆ ㅤ◁ ㅤㅤ❚❚ ㅤㅤ▷ ㅤ↻
-'''.strip()
 
-@sv.on_keyword(('春黑', '新黑'))
-async def new_year_burst(bot, ev):
-    if random.random() < 0.15:
-        await bot.send(ev, nyb_player)
+#@sv.on_keyword(('伊莉亚','伊利亚','伊莉雅','伊利雅','yly'))
+#async def chat_yly(bot, ctx):
+#    if random.random() < 0.15:
+#        await bot.send(ctx, f'''伊莉亚，嘿嘿嘿\n{R.img('伊莉亚.gif').cqcode}''')
+
+#nyb_player = f'''{R.img('春黑.gif').cqcode}
+#正在播放：New Year Burst
+#──●━━━━ 1:05/1:30
+#⇆ ㅤ◁ ㅤㅤ❚❚ ㅤㅤ▷ ㅤ↻
+#'''.strip()
+
+#@sv.on_keyword(('春黑', '新黑'))
+#async def new_year_burst(bot, ev):
+#    if random.random() < 0.15:
+#        await bot.send(ev, nyb_player)
