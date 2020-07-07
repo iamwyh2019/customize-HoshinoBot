@@ -68,9 +68,9 @@ async def goodnight(bot, ev):
 @sv.on_fullmatch(('晚上好','晚上好啊', '晚上好呀', 'good evening'), only_to_me=True)
 async def goodevening(bot, ev):
     now_hour=datetime.now(tz).hour
-    if 18<=now_hour<24 or 0<=now_hour<3:
+    if 18<=now_hour<24:
         await bot.send(ev, f'晚上好！今晚想做什么呢？', at_sender=True)
-    elif 3<=now_hour<6:
+    elif 0<=now_hour<6:
         await bot.send(ev, f'{now_hour}点啦，还不睡吗？', at_sender=True)
     elif 6<=now_hour<=9:
         await bot.send(ev, f'晚上好…嗯？我刚起床呢。', at_sender=True)
