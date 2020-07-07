@@ -92,17 +92,6 @@ async def goodmorning(bot, ev):
 @sv.on_fullmatch(('你是谁','你是谁啊', '你是谁？', '你是谁啊？', '你是谁?', '你是谁啊?'), only_to_me=True)
 async def selfintro(bot, ev):
     await bot.send(ev,'我是圣特蕾莎女子学院好朋友部的优妮～')
-'''
-@sv.on_fullmatch('来点星奏')
-async def seina(bot, ev):
-    await bot.send(ev, R.img('星奏.png').cqcode)
-
-
-@sv.on_fullmatch(('我有个朋友说他好了', '我朋友说他好了', ))
-async def ddhaole(bot, ev):
-    await bot.send(ev, '那个朋友是不是你弟弟？')
-    await util.silence(ev, 30)
-'''
 
 # ============================================ #
 
