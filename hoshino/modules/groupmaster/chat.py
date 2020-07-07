@@ -12,16 +12,17 @@ async def say_hello(session):
 
 sv = Service('chat', visible=False)
 
-@sv.on_keyword(('沙雕机器人', '沙雕機器人', '笨蛋机器人', '傻逼机器人', '憨憨机器人', '憨批机器人', 'sb机器人', 'バカ机器人'))
+@sv.on_keyword(('沙雕机器人', '沙雕機器人', '笨蛋机器人', '傻逼机器人', '憨憨机器人', '憨批机器人', 'sb机器人', 'バカ机器人',
+    '沙雕优妮','笨蛋优妮','傻逼优妮','憨憨优妮','憨批优妮','sb优妮','バカ优妮'))
 async def say_sorry(bot, ev):
-    await bot.send(ev, '你在说谁？', at_sender=True)
+    await bot.send(ev, '你在说谁？')
 
 @sv.on_fullmatch(('老婆', 'waifu', 'laopo'), only_to_me=True)
 async def chat_waifu(bot, ev):
     if not priv.check_priv(ev, priv.SUPERUSER):
         await bot.send(ev, R.img('laopo.jpg').cqcode)
     else:
-        await bot.send(ev, '嗯？什么事？')
+        await bot.send(ev, '大庭广众的，别这么肉麻。')
 
 @sv.on_fullmatch('老公', only_to_me=True)
 async def chat_laogong(bot, ev):
@@ -32,9 +33,9 @@ async def chat_mua(bot, ev):
     if not priv.check_priv(ev, priv.SUPERUSER):
         await bot.send(ev, '滚！', at_sender=True)
     else:
-        await bot.send(ev, '嗯？什么事？')
+        await bot.send(ev, '大庭广众的，别这么肉麻。')
 
-@sv.on_fullmatch(('我登顶了','我挖完了', '我到顶了'), only_to_me=True)
+@sv.on_fullmatch(('我登顶了','我挖完了', '我到顶了', '我出货了'), only_to_me=True)
 async def chat_congrat(bot, ev):
     await bot.send(ev, '恭喜！', at_sender=True)
 
@@ -45,6 +46,15 @@ async def chat_sympathy(bot, ev):
     else:
         await bot.send(ev, '真的吗？好可怜…噗哈哈哈…', at_sender=True)
 
+@sv.on_fullmatch(('我好了','我有个朋友说他好了', '我朋友说他好了'))
+async def nihaole(bot, ev):
+    if random.random() <= 0.50:
+        await bot.send(ev, '不许好，憋回去！')
+        await util.silence(ev, 30)
+
+@sv.on_fullmatch(('晚安','晚安哦', '晚安啦', 'good night', 'gn'), only_to_me=True)
+async def goodnight(bot, ev):
+    await bot.send(ev, '晚安~', at_sender=True)
 '''
 @sv.on_fullmatch('来点星奏')
 async def seina(bot, ev):
@@ -58,12 +68,6 @@ async def ddhaole(bot, ev):
 '''
 
 # ============================================ #
-
-@sv.on_keyword('我好了')
-async def nihaole(bot, ev):
-    if random.random() < 0.25:
-        await bot.send(ev, '不许好，憋回去！')
-        await util.silence(ev, 30)
 
 @sv.on_keyword(('涩图', 'setu', '色图', '黄图', 'h图'))
 async def chat_antisetu(bot, ctx):
