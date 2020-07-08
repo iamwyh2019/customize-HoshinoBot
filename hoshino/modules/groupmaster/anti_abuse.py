@@ -9,6 +9,8 @@ from nonebot import Message, MessageSegment, message_preprocessor, on_command
 from nonebot.message import _check_calling_me_nickname
 
 import hoshino
+from hoshino.service import sucmd
+from hoshino.typing import CommandSession, CQHttpError
 from hoshino import R, Service, util
 
 '''
@@ -95,7 +97,7 @@ async def bangroup(session: CommandSession):
             pass
         return
 
-    hoshino.priv.set_block_group(group_id,timedelta(hour=8))
+    hoshino.priv.set_block_group(group_id,timedelta(hours=8))
 
     if len(msg)>1:
         msg=' '.join(msg[1:])
