@@ -4,6 +4,8 @@ config.json
 hoshino/config/
 local_coolq_config/
 
+阴间/
+
 # Database
 db.json
 database.json
