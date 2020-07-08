@@ -81,3 +81,44 @@ async def ban_word(session):
     pic = R.img(f"chieri{random.randint(1, 4)}.jpg").cqcode
     await session.send(f"不理你啦！バーカー\n{pic}", at_sender=True)
     await util.silence(session.ctx, 8*60*60)
+
+@sucmd('bangroup', aliases=('gban', '群屏蔽'))
+async def bangroup(session: CommandSession):
+    msg = session.current_arg.split(' ')
+    try:
+        group_id=int(msg[0])
+    except Exception as e:
+        hoshino.logger.error(f'群屏蔽失败：{type(e)}')
+        try:
+            await session.send(f'群屏蔽失败：{type(e)}')
+        except Exception as e:
+            pass
+        return
+
+    hoshino.priv.set_block_group(group_id,timedelta(hour=8))
+
+    if len(msg)>1:
+        msg=' '.join(msg[1:])
+        try:
+            await session.bot.send_group_msg(self_id=sid, group_id=target, message=new_msg)
+        except Exception as e:
+            pass
+
+    await session.send(f'屏蔽完成！')
+
+@sucmd('debangroup', aliases=('gdeban', '取消群屏蔽'))
+async def debangroup(session: CommandSession):
+    msg = session.current_arg.split(' ')
+    try:
+        group_id=int(msg[0])
+    except Exception as e:
+        hoshino.logger.error(f'取消群屏蔽失败：{type(e)}')
+        try:
+            await session.send(f'取消群屏蔽失败：{type(e)}')
+        except Exception as e:
+            pass
+        return
+
+    hoshino.priv.set_block_group(group_id,timedelta(seconds=1))
+
+    await session.send(f'取消屏蔽完成！')
