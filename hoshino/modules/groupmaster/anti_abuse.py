@@ -101,10 +101,11 @@ async def bangroup(session: CommandSession):
 
     if len(msg)>1:
         msg=' '.join(msg[1:])
-        try:
-            await session.bot.send_group_msg(self_id=sid, group_id=target, message=new_msg)
-        except Exception as e:
-            pass
+        for sid in hoshino.get_self_ids():
+            try:
+                await session.bot.send_group_msg(self_id=sid, group_id=group_id, message=msg)
+            except Exception as e:
+                hoshino.logger.error(f'发送群屏蔽消息失败：{type(e)}')
 
     await session.send(f'屏蔽完成！')
 
@@ -122,5 +123,13 @@ async def debangroup(session: CommandSession):
         return
 
     hoshino.priv.set_block_group(group_id,timedelta(seconds=1))
+
+    if len(msg)>1:
+        msg=' '.join(msg[1:])
+        for sid in hoshino.get_self_ids():
+            try:
+                await session.bot.send_group_msg(self_id=sid, group_id=group_id, message=msg)
+            except Exception as e:
+                hoshino.logger.error(f'发送取消群屏蔽消息失败：{type(e)}')
 
     await session.send(f'取消屏蔽完成！')
