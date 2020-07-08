@@ -1,4 +1,4 @@
-"""The privilege of user discribed in an `int` number.
+"""The privilege of user described in an `int` number.
 
 `0` is for Default or NotSet. The other numbers may change in future versions.
 """
