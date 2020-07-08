@@ -11,7 +11,10 @@ tz = pytz.timezone('Asia/Shanghai')
 # basic function for debug, not included in Service('chat')
 @on_command('zai?', aliases=('在?', '在？', '在吗', '在么？', '在嘛', '在嘛？'), only_to_me=True)
 async def say_hello(session):
-    await session.send('在啊。')
+    ctx = session.ctx
+    user_id = ctx['user_id']
+    if user_id in hoshino.config.SUPERUSERS:
+        await session.send('在啊。')
 
 sv = Service('chat', visible=False)
 
