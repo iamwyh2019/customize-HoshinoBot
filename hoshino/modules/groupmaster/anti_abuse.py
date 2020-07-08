@@ -76,8 +76,13 @@ async def ban_word(session):
     msg_from = str(user_id)
     if ctx['message_type'] == 'group':
         msg_from += f'@[群:{ctx["group_id"]}]'
+        group_id=ctx["group_id"]
     elif ctx['message_type'] == 'discuss':
         msg_from += f'@[讨论组:{ctx["discuss_id"]}]'
+        group_id=ctx["discuss_id"]
+    if hoshino.priv.check_block_group(group_id):
+        return
+    
     hoshino.logger.critical(f'Self: {ctx["self_id"]}, Message {ctx["message_id"]} from {msg_from}: {ctx["message"]}')
     hoshino.priv.set_block_user(user_id, timedelta(hours=8))
     pic = R.img(f"chieri{random.randint(1, 4)}.jpg").cqcode
