@@ -52,9 +52,21 @@ class ResImg(ResObj):
             hoshino.logger.error(f'缺少图片资源：{self.path}')
             raise
 
-
+class ResRec(ResObj):
+    @property
+    def cqcode(self) -> MessageSegment:
+        if hoshino.config.RES_PROTOCOL=='http':
+            return MessageSegment.record(self.url)
+        elif hoshino.config.RES_PROTOCOL=='file':
+            return MessageSegment.record(f'file://{os.path.abspath(self.path)}')
+        else:
+            return MessageSegment.text('[不支持的方法]')
+    
 def get(path, *paths):
     return ResObj(os.path.join(path, *paths))
 
+def rec(path, *paths):
+    return ResRec(os.path.join('rec', path, *paths))
+
 def img(path, *paths):
-    return ResImg(os.path.join('img/', path, *paths))
+    return ResImg(os.path.join('img', path, *paths))
