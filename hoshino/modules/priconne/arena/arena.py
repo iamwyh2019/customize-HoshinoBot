@@ -118,7 +118,7 @@ async def do_query(id_list, user_id, region=1):
     payload = {"_sign": "a", "def": id_list, "nonce": "a", "page": 1, "sort": 1, "ts": int(time.time()), "region": region}
     logger.debug(f'Arena query {payload=}')
     try:
-        resp = await aiorequests.post('https://api.pcrdfans.com/x/v1/search', headers=header, json=payload, timeout=10)
+        resp = await aiorequests.post('https://api.pcrdfans.com/x/v1/search', headers=header, json=payload, timeout=15)
         res = await resp.json()
         logger.debug(f'len(res)={len(res)}')
     except Exception as e:
