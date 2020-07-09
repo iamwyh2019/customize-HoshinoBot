@@ -4,6 +4,7 @@ from nonebot import on_command
 from datetime import datetime
 import pytz
 
+import hoshino
 from hoshino import R, Service, priv, util
 
 tz = pytz.timezone('Asia/Shanghai')
@@ -92,6 +93,19 @@ async def goodmorning(bot, ev):
 @sv.on_fullmatch(('你是谁','你是谁啊', '你是谁？', '你是谁啊？', '你是谁?', '你是谁啊?'), only_to_me=True)
 async def selfintro(bot, ev):
     await bot.send(ev,'我是圣特蕾莎女子学院好朋友部的优妮～')
+
+hentai_audio=("你是变态可疑分子.mp3","我懂了，你是变态吧.m4a")
+roar_audio=("瓜啊.m4a","呜啊.m4a")
+
+@sv.on_fullmatch(('变态','我是变态','我是绅士','变态可疑分子','可疑分子'))
+async def chat_hentai(bot,ev):
+    rec=random.choice(hentai_audio)
+    await bot.send(ev,R.rec(rec).cqcode)
+
+@sv.on_fullmatch(('娇喘',))
+async def chat_roar(bot,ev):
+    rec=random.choice(roar_audio)
+    await bot.send(ev,R.rec(rec).cqcode)
 
 # ============================================ #
 
