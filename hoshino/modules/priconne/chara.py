@@ -19,7 +19,7 @@ UnavailableChara = {
     1072,   # 可萝爹
     1073,   # 拉基拉基
     1102,   # 泳装大眼
-}.union(set(range(10000,10050)))
+}
 
 try:
     gadget_equip = R.img('priconne/gadget/equip.png').open()
