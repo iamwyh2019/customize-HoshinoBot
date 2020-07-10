@@ -2,7 +2,7 @@
 
 HoshinoBot的个人修改版。安装和部署指南请移步[原项目地址](https://github.com/Ice-Cirno/HoshinoBot)
 
-本项目不提供资源文件。
+本项目**不提供**资源文件。
 
 ## 简介
 
