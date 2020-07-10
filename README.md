@@ -6,7 +6,7 @@ HoshinoBot的个人修改版。安装和部署指南请移步[原项目地址](h
 
 ## 简介
 
-本项目对原版机器人进行了少许修改。，**这些修改可能导致与原版机器人部分功能不兼容**。修改包括：
+本项目对原版机器人进行了少许修改。**这些修改可能导致与原版机器人部分功能不兼容**。修改包括：
 
 - 在[语料库](https://github.com/iamwyh2019/custom-HoshinoBot/blob/master/hoshino/modules/groupmaster/chat.py)中加入更多应答；
 - 在[资源库接口](https://github.com/iamwyh2019/custom-HoshinoBot/blob/master/hoshino/R.py)中添加ResRec类以处理语音；
