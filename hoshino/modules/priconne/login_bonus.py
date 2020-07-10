@@ -1,4 +1,5 @@
-import random
+import random,os
+import hoshino
 from hoshino import Service, R
 from hoshino.typing import CQEvent
 from hoshino.util import DailyNumberLimiter
@@ -43,6 +44,12 @@ todo_list = [
     '搓一把日麻'
 ]
 
+stampdir=os.path.abspath(os.path.join(hoshino.config.RES_DIR, "img/priconne/stamp"))
+stamplst=os.listdir(stampdir)
+
+# The stamp images are from https://tieba.baidu.com/p/6769790810. All rights reserved to the author.
+# We sincerely thank him/her for his/her works.
+
 @sv.on_fullmatch(('签到', '盖章', '妈', '妈?', '妈妈', '妈!', '妈！', '妈妈！'), only_to_me=True)
 async def give_okodokai(bot, ev: CQEvent):
     uid = ev.user_id
@@ -52,4 +59,18 @@ async def give_okodokai(bot, ev: CQEvent):
     lmt.increase(uid)
     present = random.choice(login_presents)
     todo = random.choice(todo_list)
-    await bot.send(ev, f'\n主人欢迎回来{R.img("priconne/kokkoro_stamp.png").cqcode}\n获得了{present}\n这是我的小礼物\n主人今天要{todo}吗？', at_sender=True)
+    stamp = random.choice(stamplst)
+    await bot.send(ev, f'\n主人欢迎回来{R.img("priconne/stamp/"+stamp).cqcode}\n获得了{present}\n这是我的小礼物\n主人今天要{todo}吗？', at_sender=True)
+
+@sv.on_prefix('重置签到')
+async def stamp_reset(bot, ev: CQEvent):
+    if ev.user_id not in bot.config.SUPERUSERS:
+        return
+    count = 0
+    for m in ev.message:
+        if m.type == 'at' and m.data['qq'] != 'all':
+            uid = int(m.data['qq'])
+            lmt.reset(uid)
+            count+=1
+    if count:
+        await bot.send(ev, f"已重置{count}位用户的签到状况。")
