@@ -79,6 +79,6 @@ async def stamp_reset(bot, ev: CQEvent):
 async def reload_stamp(bot, ev: CQEvent):
     if ev.user_id not in bot.config.SUPERUSERS:
         return
-    global stampdir,stamplst
+    global stampdir, stamplst
     stamplst=os.listdir(stampdir)
     await bot.send(ev, f"刷新成功，现在有{len(stamplst)}张印章图片。")
