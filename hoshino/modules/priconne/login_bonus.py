@@ -74,3 +74,11 @@ async def stamp_reset(bot, ev: CQEvent):
             count+=1
     if count:
         await bot.send(ev, f"已重置{count}位用户的签到状况。")
+
+@sv.on_fullmatch('刷新印章库')
+async def reload_stamp(bot, ev: CQEvent):
+    if ev.user_id not in bot.config.SUPERUSERS:
+        return
+    global stampdir,stamplst
+    stamplst=os.listdir(stampdir)
+    await bot.send(ev, f"刷新成功，现在有{len(stamplst)}张印章图片。")

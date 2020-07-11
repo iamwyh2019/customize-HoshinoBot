@@ -6,6 +6,7 @@ import hoshino
 from hoshino import Service
 from hoshino.typing import *
 from hoshino.util import FreqLimiter, concat_pic, pic2b64
+from hoshino.service import sucmd
 
 from .. import chara
 
@@ -17,6 +18,7 @@ sv = Service('pcr-arena', help_=sv_help, bundle='pcr查询')
 from . import arena
 
 lmt = FreqLimiter(5)
+max_disp = 5
 
 aliases = ('怎么拆', '怎么解', '怎么打', '如何拆', '如何解', '如何打', '怎麼拆', '怎麼解', '怎麼打', 'jjc查询', 'jjc查詢')
 aliases_b = tuple('b' + a for a in aliases) + tuple('B' + a for a in aliases)
@@ -81,7 +83,7 @@ async def _arena_query(bot, ev: CQEvent, region: int):
         await bot.finish(ev, '查询出错，请联系维护组调教\n请先移步pcrdfans.com进行查询', at_sender=True)
     if not len(res):
         await bot.finish(ev, '没有查询到解法\n※没有作业说明随便拆 发挥你的想象力～★\n作业上传请前往pcrdfans.com', at_sender=True)
-    res = res[:min(5, len(res))]    # 限制显示数量，截断结果
+    res = res[:min(max_disp, len(res))]    # 限制显示数量，截断结果
 
     # 发送回复
     
@@ -134,6 +136,22 @@ async def arena_like(bot, ev):
 @sv.on_prefix('点踩')
 async def arena_dislike(bot, ev):
     await _arena_feedback(bot, ev, -1)
+
+@sucmd('arenarescount', aliases=('作业数量'))
+async def set_arena_res_count(session: CommandSession):
+    msg = session.current_arg
+    global max_disp
+    try:
+        target=int(msg)
+    except Exception as e:
+        hoshino.logger.error(f'设置作业数量失败：{type(e)}')
+        try:
+            await session.send(f'设置作业数量失败：{type(e)}')
+        except Exception as e:
+            hoshino.logger.critical(f'错误回报时发生错误：{type(e)}')
+        return
+    max_disp=max(1,target)
+    await session.send(f'作业数量修改成功。')
 
 
 rex_qkey = re.compile(r'^[0-9a-zA-Z]{5}$')
