@@ -18,7 +18,7 @@ HoshinoBot的个人修改版。安装和部署指南请移步[原项目地址](h
 
 ## 开源
 
-本项目按GPL-v3协议开源。您可以任意复制、使用、修改、署名该作品，但基于此项目的所有作品，若向非开发者分发，则需要以GPL-v3协议开源。详情请阅读[开源协议](https://github.com/iamwyh2019/custom-HoshinoBot/blob/master/LICENSE)。
+本项目按GPL-v3协议开源。您可以任意复制、使用、修改、署名该作品及衍生作品，但若要向非开发者分发这些作品，则需要以GPL-v3协议开源。详情请阅读[开源协议](https://github.com/iamwyh2019/custom-HoshinoBot/blob/master/LICENSE)。
 
 ## 部署
 
