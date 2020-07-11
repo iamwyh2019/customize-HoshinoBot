@@ -114,6 +114,10 @@ async def yukari_sheet(bot, ev):
     await bot.send(ev, YUKARI_SHEET, at_sender=True)
     await util.silence(ev, 60)
 
+@sv.on_fullmatch(('角色位置','角色站位'))
+async def stand_position(bot,ev):
+    await bot.send(ev,R.img('priconne/quick/position.png').cqcode, at_sender=True)
+
 
 #DRAGON_TOOL = f'''
 #拼音对照表：{R.img('priconne/KyaruMiniGame/注音文字.jpg').cqcode}{R.img('priconne/KyaruMiniGame/接龙.jpg').cqcode}
