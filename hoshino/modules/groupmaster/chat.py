@@ -107,6 +107,10 @@ async def chat_roar(bot,ev):
     rec=random.choice(roar_audio)
     await bot.send(ev,R.rec(rec).cqcode)
 
+@sv.on_fullmatch(('唱歌','唱首歌','来首歌','来唱首歌'), only_to_me=True)
+async def sing(bot,ev):
+    await bot.send(ev,R.rec('song.mp3').cqcode)
+
 # ============================================ #
 
 @sv.on_keyword(('吃优妮'))
