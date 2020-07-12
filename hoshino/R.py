@@ -34,16 +34,18 @@ class ResObj:
 class ResImg(ResObj):
     @property
     def cqcode(self) -> MessageSegment:
+        '''
         if hoshino.config.RES_PROTOCOL == 'http':
             return MessageSegment.image(self.url)
         elif hoshino.config.RES_PROTOCOL == 'file':
             return MessageSegment.image(f'file:///{os.path.abspath(self.path)}')
         else:
-            try:
-                return MessageSegment.image(util.pic2b64(self.open()))
-            except Exception as e:
-                hoshino.logger.exception(e)
-                return MessageSegment.text('[图片出错]')
+            '''
+        try:
+            return MessageSegment.image(util.pic2b64(self.open()))
+        except Exception as e:
+            hoshino.logger.exception(e)
+            return MessageSegment.text('[图片出错]')
 
     def open(self) -> Image:
         try:
