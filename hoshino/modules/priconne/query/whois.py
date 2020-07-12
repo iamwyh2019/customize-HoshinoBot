@@ -1,5 +1,6 @@
 from hoshino.typing import CQEvent, MessageSegment
 from hoshino.util import FreqLimiter
+import hoshino
 
 from .. import chara
 from . import sv
@@ -10,7 +11,7 @@ lmt = FreqLimiter(5)
 @sv.on_prefix(('谁是', '誰是'))
 async def whois(bot, ev: CQEvent):
     uid = ev.user_id
-    if not lmt.check(uid):
+    if uid not in hoshino.config.SUPERUSERS and not lmt.check(uid):
         await bot.send(ev, f'兰德索尔花名册冷却中(剩余 {int(lmt.left_time(uid)) + 1}秒)', at_sender=True)
         return
     lmt.start_cd(uid)
