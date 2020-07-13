@@ -111,6 +111,10 @@ async def chat_roar(bot,ev):
 async def sing(bot,ev):
     await bot.send(ev,R.rec('song.mp3').cqcode)
 
+@sv.on_fullmatch(('再见','拜拜'),only_to_me=True)
+async def farewell(bot,ev):
+    await bot.send(ev,"拜拜~",at_sender=True)
+
 # ============================================ #
 
 @sv.on_keyword(('吃优妮'))
