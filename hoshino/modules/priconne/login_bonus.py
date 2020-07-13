@@ -46,6 +46,8 @@ todo_list = [
 
 stampdir=os.path.abspath(os.path.join(hoshino.config.RES_DIR, "img/priconne/stamp"))
 stamplst=os.listdir(stampdir)
+random.shuffle(stamplst)
+nxt_stamp=0
 
 # The stamp images are from https://tieba.baidu.com/p/6769790810. All rights reserved to the author.
 # We sincerely thank him/her for his/her works.
@@ -57,9 +59,14 @@ async def give_okodokai(bot, ev: CQEvent):
         await bot.send(ev, '明天再来吧~', at_sender=True)
         return
     lmt.increase(uid)
-    present = random.choice(login_presents)
-    todo = random.choice(todo_list)
-    stamp = random.choice(stamplst)
+
+    global stampdir, stamplst, nxt_stamp, login_presents, todo_list
+    present=random.choice(login_presents)
+    todo=random.choice(todo_list)
+    stamp=stamplst[nxt_stamp]
+    nxt_stamp+=1
+    if nxt_stamp>=len(stamplst):
+        nxt_stamp-=len(stamplst)
     await bot.send(ev, f'\n主人欢迎回来{R.img("priconne/stamp/"+stamp).cqcode}\n获得了{present}\n这是我的小礼物\n主人今天要{todo}吗？', at_sender=True)
 
 @sv.on_prefix('重置签到')
@@ -73,12 +80,14 @@ async def stamp_reset(bot, ev: CQEvent):
             lmt.reset(uid)
             count+=1
     if count:
-        await bot.send(ev, f"已重置{count}位用户的签到状况。")
+        await bot.send(ev, f"已重置{count}位用户的签到状况")
 
 @sv.on_fullmatch('刷新印章库')
 async def reload_stamp(bot, ev: CQEvent):
     if ev.user_id not in bot.config.SUPERUSERS:
         return
-    global stampdir, stamplst
+    global stampdir, stamplst, nxt_stamp
     stamplst=os.listdir(stampdir)
-    await bot.send(ev, f"刷新成功，现在有{len(stamplst)}张印章图片。")
+    random.shuffle(stamplst)
+    nxt_stamp=0
+    await bot.send(ev, f"刷新成功，现在有{len(stamplst)}张印章图片")
