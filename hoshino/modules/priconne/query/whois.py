@@ -28,7 +28,7 @@ async def whois(bot, ev: CQEvent):
     
     msg = ''
     if confi < 100:
-        lmt.start_cd(uid, 120)
+        lmt.start_cd(uid, 30)
         msg = f'兰德索尔似乎没有叫"{name}"的人...\n角色别称补全计划: github.com/Ice-Cirno/HoshinoBot/issues/5'
         await bot.send(ev, msg)
         msg = f'\n您有{confi}%的可能在找{guess_name} '
