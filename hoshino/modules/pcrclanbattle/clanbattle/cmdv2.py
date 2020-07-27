@@ -377,6 +377,12 @@ class SubscribeData:
 
     def add_tree(self, uid:int):
         self._data['tree'].append(uid)
+
+    def remove_tree(self, uid:int):
+        try:
+            self._data['tree'].remove(uid)
+        except:
+            pass
         
     def clear_tree(self):
         self._data['tree'].clear()
@@ -573,6 +579,24 @@ async def add_sos(bot:NoneBot, ctx:Context_T, args:ParseResult):
     sub.add_tree(uid)
     _save_sub(sub, bm.group)
     msg = [ "\n您已上树，本Boss被击败时将会通知您",
+           f"目前{clan['name']}挂树人数为{len(tree)}人：" ]
+    msg.extend(_gen_namelist_text(bm, tree))
+    await bot.send(ctx, '\n'.join(msg), at_sender=True)
+
+
+@cb_cmd(('下树', '取消挂树'), ArgParser('!下树'))
+async def remove_sos(bot:NoneBot, ctx:Context_T, args:ParseResult):
+    bm = BattleMaster(ctx['group_id'])
+    uid = ctx['user_id']
+    clan = _check_clan(bm)
+    _check_member(bm, uid, bm.group)
+    sub = _load_sub(bm.group)
+    tree = sub.get_tree_list()
+    if uid not in tree:
+        raise AlreadyExistError("您不在树上")
+    sub.remove_tree(uid)
+    _save_sub(sub, bm.group)
+    msg = [ "\n您已下树",
            f"目前{clan['name']}挂树人数为{len(tree)}人：" ]
     msg.extend(_gen_namelist_text(bm, tree))
     await bot.send(ctx, '\n'.join(msg), at_sender=True)
