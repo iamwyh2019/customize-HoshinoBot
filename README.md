@@ -14,7 +14,10 @@ HoshinoBot的个人修改版。安装和部署指南请移步[原项目地址](h
 - 修改[每日签到](https://github.com/iamwyh2019/custom-HoshinoBot/blob/master/hoshino/modules/priconne/login_bonus.py)访问印章图片的位置，支持印章图片集的热更新；加入重置签到情况的功能；
 - 在[反滥用](https://github.com/iamwyh2019/custom-HoshinoBot/blob/master/hoshino/modules/groupmaster/anti_abuse.py)中加入临时屏蔽指定群消息（和解除该屏蔽）的功能；
 - 出于搞笑效果，增加[角色数据库](https://github.com/iamwyh2019/custom-HoshinoBot/blob/master/hoshino/modules/priconne/_pcr_data.py)中内容；**注意**：卡池信息及额外的资源文件并未上传；
+- 公会战期间hourcall将使用一套专门针对公会战的文案。同时，添加了手动触发报时功能，方便调试；
 - 等等
+
+具体的更新内容可查阅commit与更新日志（近期上线）
 
 ## 开源
 
@@ -26,10 +29,10 @@ HoshinoBot的个人修改版。安装和部署指南请移步[原项目地址](h
 
 ## 更新
 
-目前的更新方向是将原项目中重要的且被写死的参数改成变量，增加修改接口，以实现参数热更新。现在可热更新的参数有：
+目前的更新方向是将原项目中重要且被写死的参数改成变量，增加修改接口，以实现参数热更新。现在可热更新的参数有：
 
 - 重置每日签到情况
 - 更新印章库里的印章列表
 - 设置查询拆法时显示的最大作业数
 
-除此之外，还会尝试增加新的查询功能，例如查询角色站位和技能循环。目前未实现。
+除此之外，我们会尝试增加新的查询功能。目前增加了“角色站位”关键词，返回角色站位顺序表。今后可能会增加技能循环和角色属性查询，但目前并没有很好的数据源。
