@@ -14,7 +14,7 @@ HoshinoBot的个人修改版。安装和部署指南请移步[原项目地址](h
 - 修改[每日签到](https://github.com/iamwyh2019/custom-HoshinoBot/blob/master/hoshino/modules/priconne/login_bonus.py)访问印章图片的位置，支持印章图片集的热更新；加入重置签到情况的功能；
 - 在[反滥用](https://github.com/iamwyh2019/custom-HoshinoBot/blob/master/hoshino/modules/groupmaster/anti_abuse.py)中加入临时屏蔽指定群消息（和解除该屏蔽）的功能；
 - 出于搞笑效果，增加[角色数据库](https://github.com/iamwyh2019/custom-HoshinoBot/blob/master/hoshino/modules/priconne/_pcr_data.py)中内容；**注意**：卡池信息及额外的资源文件并未上传；
-- 公会战期间hourcall将使用一套专门针对公会战的文案。同时，添加了手动触发报时功能，方便调试；
+- 公会战期间[hourcall](https://github.com/iamwyh2019/customize-HoshinoBot/blob/master/hoshino/modules/hourcall/hourcall.py)将使用一套专门针对公会战的文案。同时，添加了手动触发报时功能，方便调试；
 - 等等
 
 具体的更新内容可查阅commit与更新日志（近期上线）
