@@ -147,6 +147,10 @@ async def del_member(bot:NoneBot, ctx:Context_T, args:ParseResult):
 
 @cb_cmd('清空成员', ArgParser('!清空成员'))
 async def clear_member(bot:NoneBot, ctx:Context_T, args:ParseResult):
+    # Dangerous operation. Banned temporarily.
+    await bot.send(ctx, "危险功能，暂时禁用", at_sender=True)
+    return
+
     bm = BattleMaster(ctx['group_id'])
     clan = _check_clan(bm)
     _check_admin(ctx)
@@ -272,7 +276,7 @@ async def add_challenge_last(bot:NoneBot, ctx:Context_T, args:ParseResult):
     await process_challenge(bot, ctx, challenge)
 
 
-@cb_cmd(('出补时刀', '补时刀', '补时'), ArgParser(usage='!出补时刀 <伤害值> (@qq)', arg_dict={
+@cb_cmd(('出补时刀', '补时刀', '补时', '出补偿刀', '补偿刀', '补偿'), ArgParser(usage='!出补时刀 <伤害值> (@qq)', arg_dict={
     '': ArgHolder(tip='伤害值', type=damage_int),
     '@': ArgHolder(tip='qq号', type=int, default=0),
     'R': ArgHolder(tip='周目数', type=round_code, default=0),
@@ -502,7 +506,7 @@ async def call_subscribe(bot:NoneBot, ctx:Context_T, round_:int, boss:int):
     mlist = sub.get_memo_list(boss)
     tlist = sub.get_tree_list()
     if slist:
-        msg.append(f"您们预约的老{BattleMaster.int2kanji(boss)}出现啦！")
+        msg.append(f"您预约的{BattleMaster.int2kanji(boss)}王出现啦！")
         msg.extend(_gen_namelist_text(bm, slist, mlist, do_at=True))
     if slist and tlist:
         msg.append("==========")
