@@ -811,6 +811,8 @@ async def _do_show_remain(bot:NoneBot, ctx:Context_T, args:ParseResult, at_user:
     if at_user:
         _check_admin(ctx, '才能催刀。您可以用【!查刀】查询余刀')
     threshold = args[''] or 1
+    if threshold > 3 or threshold < 1:
+        threshold = 1
     rlist = bm.list_challenge_remain(1, datetime.now())
     rlist.sort(key=lambda x: x[3] + x[4], reverse=True)
     msg = [  ('' if at_user else '\n') + f"{clan['name']}今日余刀：" ]
