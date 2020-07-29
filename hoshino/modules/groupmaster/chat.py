@@ -12,7 +12,7 @@ tz = pytz.timezone('Asia/Shanghai')
 # basic function for debug, not included in Service('chat')
 @on_command('zai?', aliases=('在?', '在？', '在吗', '在么？', '在嘛', '在嘛？'), only_to_me=True)
 async def say_hello(session):
-    await session.send('在啊。')
+    await session.send('在啊')
 
 sv = Service('chat', visible=False)
 
@@ -26,18 +26,18 @@ async def chat_waifu(bot, ev):
     if not priv.check_priv(ev, priv.SUPERUSER):
         await bot.send(ev, R.img('laopo.jpg').cqcode)
     else:
-        await bot.send(ev, '大庭广众的，别这么肉麻。')
+        await bot.send(ev, '大庭广众的，别这么肉麻')
 
 @sv.on_fullmatch('老公', only_to_me=True)
 async def chat_laogong(bot, ev):
-    await bot.send(ev, '人不能，至少不应该。', at_sender=True)
+    await bot.send(ev, '人不能，至少不应该', at_sender=True)
 
 @sv.on_fullmatch('mua', only_to_me=True)
 async def chat_mua(bot, ev):
     if not priv.check_priv(ev, priv.SUPERUSER):
         await bot.send(ev, '滚！', at_sender=True)
     else:
-        await bot.send(ev, '大庭广众的，别这么肉麻。')
+        await bot.send(ev, '大庭广众的，别这么肉麻')
 
 @sv.on_fullmatch(('我登顶了','我挖完了', '我到顶了', '我出货了'), only_to_me=True)
 async def chat_congrat(bot, ev):
@@ -64,7 +64,7 @@ async def goodnight(bot, ev):
     elif 19<=now_hour<21:
         await bot.send(ev, f'现在才{now_hour}点，这么早就睡了吗？', at_sender=True)
     else:
-        await bot.send(ev, f'现在才{now_hour}点，还没到晚上咧。嘿嘿。', at_sender=True)
+        await bot.send(ev, f'现在才{now_hour}点，还没到晚上咧。嘿嘿', at_sender=True)
 
 @sv.on_fullmatch(('晚上好','晚上好啊', '晚上好呀', 'good evening'), only_to_me=True)
 async def goodevening(bot, ev):
@@ -74,9 +74,9 @@ async def goodevening(bot, ev):
     elif 0<=now_hour<6:
         await bot.send(ev, f'{now_hour}点啦，还不睡吗？', at_sender=True)
     elif 6<=now_hour<=9:
-        await bot.send(ev, f'晚上好…嗯？我刚起床呢。', at_sender=True)
+        await bot.send(ev, f'晚上好…嗯？我刚起床呢', at_sender=True)
     else:
-        await bot.send(ev, f'现在才{now_hour}点，还没天黑呢。嘿嘿。', at_sender=True)
+        await bot.send(ev, f'现在才{now_hour}点，还没天黑呢。嘿嘿', at_sender=True)
 
 @sv.on_fullmatch(('你真棒','你好棒','你真厉害','你好厉害'), only_to_me=True)
 async def iamgood(bot, ev):
@@ -86,7 +86,7 @@ async def iamgood(bot, ev):
 async def goodmorning(bot, ev):
     now_hour=datetime.now(tz).hour
     if 0<=now_hour<6:
-        await bot.send(ev, f'好早，现在才{now_hour}点呢。', at_sender=True)
+        await bot.send(ev, f'好早，现在才{now_hour}点呢', at_sender=True)
     elif 6<=now_hour<10:
         await bot.send(ev, '早上好！今天打算做什么呢？', at_sender=True)
     elif 21<=now_hour<24:
@@ -123,12 +123,12 @@ async def farewell(bot,ev):
 
 @sv.on_keyword(('吃优妮'))
 async def eatme(bot, ev):
-    await bot.send(ev, '这样不好。真的。', at_sender=True)
+    await bot.send(ev, '这样不好,真的', at_sender=True)
 
 @sv.on_keyword(('涩图', 'setu', '色图', '黄图', 'h图'))
 async def chat_antisetu(bot, ctx):
     if random.random() < 0.15:
-        await bot.send(ctx, '不要ghs哦。')
+        await bot.send(ctx, '不要ghs哦')
 
 @sv.on_keyword(('大佬', 'dalao', '大神'))
 async def chat_dalao(bot, ctx):
