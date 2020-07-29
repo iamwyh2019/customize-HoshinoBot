@@ -810,7 +810,7 @@ async def _do_show_remain(bot:NoneBot, ctx:Context_T, args:ParseResult, at_user:
     clan = _check_clan(bm)
     if at_user:
         _check_admin(ctx, '才能催刀。您可以用【!查刀】查询余刀')
-    threshold = args[''] or 0
+    threshold = args[''] or 1
     rlist = bm.list_challenge_remain(1, datetime.now())
     rlist.sort(key=lambda x: x[3] + x[4], reverse=True)
     msg = [  ('' if at_user else '\n') + f"{clan['name']}今日余刀：" ]
@@ -827,23 +827,25 @@ async def _do_show_remain(bot:NoneBot, ctx:Context_T, args:ParseResult, at_user:
 
 
 @cb_cmd('查刀', ArgParser(usage='!查刀 (阈值)', arg_dict={
-    '': ArgHolder(tip='qq号', type=int, default=0)}))
+    '': ArgHolder(tip='qq号', type=int, default=1)}))
 async def list_remain(bot:NoneBot, ctx:Context_T, args:ParseResult):
     await _do_show_remain(bot, ctx, args, at_user=False)
 @cb_cmd('催刀', ArgParser(usage='!催刀 (阈值)', arg_dict={
-    '': ArgHolder(tip='qq号', type=int, default=0)}))
+    '': ArgHolder(tip='qq号', type=int, default=1)}))
 async def urge_remain(bot:NoneBot, ctx:Context_T, args:ParseResult):
     await _do_show_remain(bot, ctx, args, at_user=True)
 
 
-@cb_cmd('出刀记录', ArgParser(usage='!出刀记录 (@qq)', arg_dict={
-        '@': ArgHolder(tip='qq号', type=int, default=0)}))
+@cb_cmd('出刀记录', ArgParser(usage='!出刀记录 (@qq) (B编号)', arg_dict={
+        '@': ArgHolder(tip='qq号', type=int, default=0),
+        'B': ArgHolder(tip='Boss编号', type=boss_code, default=0)}))
 async def list_challenge(bot:NoneBot, ctx:Context_T, args:ParseResult):
     bm = BattleMaster(ctx['group_id'])
     clan = _check_clan(bm)
     now = datetime.now()
     zone = bm.get_timezone_num(clan['server'])
     uid = args['@'] or args.at
+    boss = args.B
     if uid:
         mem = _check_member(bm, uid, bm.group, '公会内无此成员')
         challen = bm.list_challenge_of_user_of_day(mem['uid'], mem['alt'], now, zone)
@@ -853,6 +855,8 @@ async def list_challenge(bot:NoneBot, ctx:Context_T, args:ParseResult):
     msg = [ f'{clan["name"]}出刀记录：\n编号|出刀者|周目|Boss|伤害|标记' ]
     challenstr = 'E{eid:0>3d}|{name}|r{round}|b{boss}|{dmg: >7,d}{flag_str}'
     for c in challen:
+        if boss!=0 and boss!=c['boss']:
+            continue
         mem = bm.get_member(c['uid'], c['alt'])
         c['name'] = mem['name'] if mem else c['uid']
         flag = c['flag']
