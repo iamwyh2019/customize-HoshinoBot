@@ -829,11 +829,11 @@ async def _do_show_remain(bot:NoneBot, ctx:Context_T, args:ParseResult, at_user:
 
 
 @cb_cmd('查刀', ArgParser(usage='!查刀 (阈值)', arg_dict={
-    '': ArgHolder(tip='qq号', type=int, default=1)}))
+    '': ArgHolder(tip='阈值', type=int, default=1)}))
 async def list_remain(bot:NoneBot, ctx:Context_T, args:ParseResult):
     await _do_show_remain(bot, ctx, args, at_user=False)
 @cb_cmd('催刀', ArgParser(usage='!催刀 (阈值)', arg_dict={
-    '': ArgHolder(tip='qq号', type=int, default=1)}))
+    '': ArgHolder(tip='阈值', type=int, default=1)}))
 async def urge_remain(bot:NoneBot, ctx:Context_T, args:ParseResult):
     await _do_show_remain(bot, ctx, args, at_user=True)
 
