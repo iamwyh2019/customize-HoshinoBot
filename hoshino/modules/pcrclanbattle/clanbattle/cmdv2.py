@@ -813,7 +813,7 @@ async def _do_show_remain(bot:NoneBot, ctx:Context_T, args:ParseResult, at_user:
     threshold = args[''] or 0
     rlist = bm.list_challenge_remain(1, datetime.now())
     rlist.sort(key=lambda x: x[3] + x[4], reverse=True)
-    msg = [ f"\n{clan['name']}今日余刀：" ]
+    msg = [  ('' if at_user else '\n') + f"{clan['name']}今日余刀：" ]
     for uid, _, name, r_n, r_e in rlist:
         if r_n + r_e >= threshold:
             msg.append(f"剩{r_n}刀 补时{r_e}刀 | {ms.at(uid) if at_user else name}")
@@ -823,7 +823,7 @@ async def _do_show_remain(bot:NoneBot, ctx:Context_T, args:ParseResult, at_user:
         msg.append('若有负数说明报刀有误 请注意核对\n使用“!出刀记录 @qq”可查看详细记录')
         if at_user:
             msg.append("=========\n在？阿sir喊你出刀啦！")
-        await bot.send(ctx, '\n'.join(msg), at_sender=True)
+        await bot.send(ctx, '\n'.join(msg), at_sender=not at_user) # 催刀不需要at自己
 
 
 @cb_cmd('查刀', ArgParser(usage='!查刀 (阈值)', arg_dict={
