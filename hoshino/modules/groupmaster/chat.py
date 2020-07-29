@@ -90,7 +90,7 @@ async def goodmorning(bot, ev):
     elif 6<=now_hour<10:
         await bot.send(ev, '早上好！今天打算做什么呢？', at_sender=True)
     elif 21<=now_hour<24:
-        await bot.send(ev, '别闹，准备睡觉啦。', at_sender=True)
+        await bot.send(ev, '别闹，准备睡觉啦！', at_sender=True)
     else:
         await bot.send(ev, f'{now_hour}点了才起床吗…', at_sender=True)
 
@@ -123,7 +123,7 @@ async def farewell(bot,ev):
 
 @sv.on_keyword(('吃优妮'))
 async def eatme(bot, ev):
-    await bot.send(ev, '这样不好,真的', at_sender=True)
+    await bot.send(ev, '这样不好，真的', at_sender=True)
 
 @sv.on_keyword(('涩图', 'setu', '色图', '黄图', 'h图'))
 async def chat_antisetu(bot, ctx):
