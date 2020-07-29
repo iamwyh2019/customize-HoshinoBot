@@ -16,9 +16,9 @@ async def say_hello(session):
 
 sv = Service('chat', visible=False)
 
-@sv.on_keyword(('沙雕机器人', '沙雕機器人', '笨蛋机器人', '傻逼机器人', '憨憨机器人', '憨批机器人', 'sb机器人', 'バカ机器人',
-    '沙雕优妮','笨蛋优妮','傻逼优妮','憨憨优妮','憨批优妮','sb优妮','バカ优妮'))
-async def say_sorry(bot, ev):
+@sv.on_keyword(('沙雕机器人', '笨蛋机器人', '傻逼机器人', '憨憨机器人', 
+    '憨批机器人', '沙雕优妮','笨蛋优妮','傻逼优妮','憨憨优妮','憨批优妮'))
+async def chat_sad(bot, ev):
     await bot.send(ev, '你在说谁？')
 
 @sv.on_fullmatch(('老婆', 'waifu', 'laopo'), only_to_me=True)
