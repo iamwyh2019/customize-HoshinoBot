@@ -810,11 +810,12 @@ async def _do_show_remain(bot:NoneBot, ctx:Context_T, args:ParseResult, at_user:
     clan = _check_clan(bm)
     if at_user:
         _check_admin(ctx, '才能催刀。您可以用【!查刀】查询余刀')
+    threshold = args[''] or 0
     rlist = bm.list_challenge_remain(1, datetime.now())
     rlist.sort(key=lambda x: x[3] + x[4], reverse=True)
     msg = [ f"\n{clan['name']}今日余刀：" ]
     for uid, _, name, r_n, r_e in rlist:
-        if r_n or r_e:
+        if r_n + r_e >= threshold:
             msg.append(f"剩{r_n}刀 补时{r_e}刀 | {ms.at(uid) if at_user else name}")
     if len(msg) == 1:
         await bot.send(ctx, f"今日{clan['name']}所有成员均已下班！各位辛苦了！", at_sender=True)
@@ -825,10 +826,12 @@ async def _do_show_remain(bot:NoneBot, ctx:Context_T, args:ParseResult, at_user:
         await bot.send(ctx, '\n'.join(msg), at_sender=True)
 
 
-@cb_cmd('查刀', ArgParser(usage='!查刀'))
+@cb_cmd('查刀', ArgParser(usage='!查刀 (阈值)', arg_dict={
+    '': ArgHolder(tip='qq号', type=int, default=0)}))
 async def list_remain(bot:NoneBot, ctx:Context_T, args:ParseResult):
     await _do_show_remain(bot, ctx, args, at_user=False)
-@cb_cmd('催刀', ArgParser(usage='!催刀'))
+@cb_cmd('催刀', ArgParser(usage='!催刀 (阈值)', arg_dict={
+    '': ArgHolder(tip='qq号', type=int, default=0)}))
 async def urge_remain(bot:NoneBot, ctx:Context_T, args:ParseResult):
     await _do_show_remain(bot, ctx, args, at_user=True)
 
