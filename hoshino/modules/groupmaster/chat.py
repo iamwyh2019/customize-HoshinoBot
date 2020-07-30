@@ -78,7 +78,7 @@ async def goodevening(bot, ev):
     else:
         await bot.send(ev, f'现在才{now_hour}点，还没天黑呢。嘿嘿', at_sender=True)
 
-@sv.on_fullmatch(('你真棒','你好棒','你真厉害','你好厉害'), only_to_me=True)
+@sv.on_fullmatch(('你真棒','你好棒','你真厉害','你好厉害','真棒','真聪明','你真聪明'), only_to_me=True)
 async def iamgood(bot, ev):
     await bot.send(ev, f'诶嘿嘿~')
 
