@@ -309,7 +309,7 @@ async def add_challenge_timeout(bot:NoneBot, ctx:Context_T, args:ParseResult):
     await process_challenge(bot, ctx, challenge)
 
 
-@cb_cmd('删刀', ArgParser(usage='!删刀 E记录编号', arg_dict={
+@cb_cmd(('删刀','撤销','删除报刀','撤销出刀','删除出刀'), ArgParser(usage='!删刀 E记录编号', arg_dict={
     'E': ArgHolder(tip='记录编号', type=int)}))
 async def del_challenge(bot:NoneBot, ctx:Context_T, args:ParseResult):
     bm = BattleMaster(ctx['group_id'])
