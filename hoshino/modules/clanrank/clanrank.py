@@ -17,7 +17,7 @@ sv_push = Service("clanrank-push",enable_on_default=True,visible=True,help_='''
 url_first = "https://service-kjcbcnmw-1254119946.gz.apigw.tencentcs.com/"
 headers = {"Custom-Source":"did","Content-Type": "application/json","Referer": "https://kengxxiao.github.io/Kyouka/"}
 
-_time_limit = 120
+_time_limit = 20
 _lmt = FreqLimiter(_time_limit)
 
 def loadConfig():
