@@ -60,7 +60,7 @@ def get_icons(arr,size=64,types='skill'):
 
 def get_info(id):
     query = Info.get(Info.id==id)
-    msg = f'\n公會: {query.guild}\n生日: {query.birthday}\n年齡: {query.age}\n身高: {query.height}\n體重: {query.weight}\n血型: {query.blood_type}\n種族: {query.race}\n喜好: {query.hobby}\nCV: {query.cv}\n簡介: {query.introduce}'
+    msg = f'\n公会: {query.guild}\n生日: {query.birthday}\n年龄: {query.age}\n身高: {query.height}\n体重: {query.weight}\n血型: {query.blood_type}\n种族: {query.race}\n喜好: {query.hobby}\nCV: {query.cv}\n简介: {query.introduce}'
     return convert(msg, 'zh-hans')
 
 def get_skill(id):
@@ -68,6 +68,8 @@ def get_skill(id):
     query = Skill.select().where(Skill.id==id)
     arr = []
     for i in query:
+        if i.type in ("必殺技+","專武強化技能1"):
+            continue
         skill = {}
         skill['name'] = i.name
         skill['type'] = i.type
