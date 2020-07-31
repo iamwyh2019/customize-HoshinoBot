@@ -826,7 +826,7 @@ async def _do_show_remain(bot:NoneBot, ctx:Context_T, args:ParseResult, at_user:
     else:
         msg.append(f'共剩{cnt}刀')
         if at_user:
-            msg.append("=========\n在？阿sir喊你出刀啦！")
+            msg.append("=========\n"+args.M)
         await bot.send(ctx, '\n'.join(msg), at_sender=not at_user) # 催刀不需要at自己
 
 
@@ -835,7 +835,8 @@ async def _do_show_remain(bot:NoneBot, ctx:Context_T, args:ParseResult, at_user:
 async def list_remain(bot:NoneBot, ctx:Context_T, args:ParseResult):
     await _do_show_remain(bot, ctx, args, at_user=False)
 @cb_cmd('催刀', ArgParser(usage='!催刀 (阈值)', arg_dict={
-    '': ArgHolder(tip='阈值', type=int, default=1)}))
+    '': ArgHolder(tip='阈值', type=int, default=1),
+    'M': ArgHolder(tip='留言', default='在？阿sir喊你出刀啦！')}))
 async def urge_remain(bot:NoneBot, ctx:Context_T, args:ParseResult):
     await _do_show_remain(bot, ctx, args, at_user=True)
 
