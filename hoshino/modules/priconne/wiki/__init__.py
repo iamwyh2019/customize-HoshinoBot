@@ -74,6 +74,15 @@ async def kizuna(bot, ev: CQEvent):
     result = get_chara(name,'kizuna')
     await bot.send(ev, result)
 
+@sv.on_prefix(('声优','cv'), only_to_me=True)
+async def cv(bot, ev: CQEvent):
+    name = ev.message.extract_plain_text().strip()
+    if not name:
+        await bot.send(ev, '请发送"声优"+声优名，如"声优高桥李依"')
+        return
+    result = get_cv(name)
+    await bot.send(ev, result)
+
 # @sv.on_prefix(('更新wiki'))
 # async def update_wiki(bot, ev: CQEvent):
 #     if priv.get_user_priv(ev) < priv.SUPERUSER:
