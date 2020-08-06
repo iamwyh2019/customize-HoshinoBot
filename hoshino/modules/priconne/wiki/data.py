@@ -69,10 +69,10 @@ def get_cv(cv):
     if len(query) == 0:
         msg = f"没有找到{cv}扮演的角色"
     else:
-        msg = f"{cv} 的扮演角色有：\n"
+        msg = f"{cv} 的扮演角色有："
         for i in query:
-            msg += i.name
             msg += "\n"
+            msg += i.name
     return convert(msg, "zh-hans")
 
 
