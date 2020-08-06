@@ -98,6 +98,7 @@ async def goodmorning(bot, ev):
 async def selfintro(bot, ev):
     await bot.send(ev,'我是圣特蕾莎女子学院好朋友部的优妮～')
 
+'''
 hentai_audio=("你是变态可疑分子.mp3","我懂了，你是变态吧.m4a")
 roar_audio=("瓜啊.m4a","呜啊.m4a")
 
@@ -114,6 +115,7 @@ async def chat_roar(bot,ev):
 @sv.on_fullmatch(('唱歌','唱首歌','来首歌','来唱首歌'), only_to_me=True)
 async def sing(bot,ev):
     await bot.send(ev,R.rec('song.mp3').cqcode)
+'''
 
 @sv.on_fullmatch(('再见','拜拜'),only_to_me=True)
 async def farewell(bot,ev):
