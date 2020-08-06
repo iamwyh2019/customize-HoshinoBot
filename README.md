@@ -40,4 +40,4 @@ HoshinoBot的个人修改版。安装和部署指南请看[这里](#deploy)。
 
 **注意**：本项目代码与使用中的机器人代码实时同步更新，但出于隐私原因，所有配置文件都不会公开。这可能导致部署困难。因此，我们建议您不直接使用本项目代码。
 
-由于酷Q框架停止服务，本项目已迁移至mirai框架上。请确保您的电脑上安装有jre8及python3.8或更高版本。首先，参考HoshinoBot的[项目地址](https://github.com/Ice-Cirno/HoshinoBot)中“部署指南”一章，下载机器人代码并填写配置信息；随后，参考mirai部署教程（[Windows](https://yobot.win/install/Windows-cqhttp-mirai.html)或[Linux](https://yobot.win/install/Linux-cqhttp-mirai.html)）中“部署mirai”一章，下载并配置miraiOK与cqhttp-mirai。注意HoshinoBot与mirai的配置文件中，反向代理的IP及端口应保持一致。配置完后，依次启动hoshinoBot与miraiOK，向机器人发送“在吗”测试，若有回复则部署成功。
+由于酷Q框架停止服务，本项目已迁移至mirai框架上。请确保您的电脑上安装有jre8及python3.8或更高版本。首先，参考HoshinoBot的[项目地址](https://github.com/Ice-Cirno/HoshinoBot)中“部署指南”一章，下载机器人代码并填写配置信息；随后，参考mirai部署教程（[Windows](https://yobot.win/install/Windows-cqhttp-mirai.html)或[Linux](https://yobot.win/install/Linux-cqhttp-mirai.html)）中“部署mirai”一章，下载并配置miraiOK与cqhttp-mirai。注意HoshinoBot与mirai的配置文件中，反向代理的IP及端口应保持一致。配置完后，依次启动HoshinoBot与miraiOK，向机器人发送“在吗”测试，若有回复则部署成功。
