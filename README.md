@@ -1,6 +1,6 @@
 # HoshinoBot (customized)
 
-HoshinoBot的个人修改版。安装和部署指南请移步[原项目地址](https://github.com/Ice-Cirno/HoshinoBot)。
+HoshinoBot的个人修改版。安装和部署指南请参考[这里](#deploy)。
 
 本项目**不提供**资源文件。
 
@@ -36,6 +36,6 @@ HoshinoBot的个人修改版。安装和部署指南请移步[原项目地址](h
 
 本项目按GPL-v3协议开源。您可以任意复制、使用、修改、署名该作品及衍生作品，但若要向非开发者分发这些作品，则需要以GPL-v3协议开源。详情请阅读[开源协议](https://github.com/iamwyh2019/custom-HoshinoBot/blob/master/LICENSE)。
 
-## 部署
+<h2 id="deploy"> 部署 </h2>
 
 本项目代码与使用中的机器人代码实时同步更新，但出于隐私原因，所有配置文件都不会公开。这可能导致部署困难。因此，我们建议您**不直接使用**本项目代码，而是访问[原项目地址](https://github.com/Ice-Cirno/HoshinoBot)进行部署。
