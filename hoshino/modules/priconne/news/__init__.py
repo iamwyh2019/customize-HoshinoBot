@@ -16,7 +16,7 @@ async def news_poller(spider:BaseSpider, sv:Service, TAG):
     sv.logger.info(f'检索到{len(news)}条{TAG}新闻更新！')
     await sv.broadcast(spider.format_items(news), TAG, interval_time=0.5)
     
-@svtw.scheduled_job('cron', minute='*/5', jitter=20)
+#@svtw.scheduled_job('cron', minute='*/5', jitter=20)
 async def sonet_news_poller():
     await news_poller(SonetSpider, svtw, '台服官网')
 
@@ -32,7 +32,7 @@ async def send_news(bot, ev, spider:BaseSpider, max_num=5):
     news = news[:min(max_num, len(news))]
     await bot.send(ev, spider.format_items(news), at_sender=True)
 
-@svtw.on_fullmatch(('台服新闻', '台服日程'))
+#@svtw.on_fullmatch(('台服新闻', '台服日程'))
 async def send_sonet_news(bot, ev):
     await send_news(bot, ev, SonetSpider)
 
