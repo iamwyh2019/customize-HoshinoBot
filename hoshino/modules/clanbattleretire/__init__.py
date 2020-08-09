@@ -60,7 +60,7 @@ async def send_report(bot, event, type=REPORT_UNDECLARED):
     try:
         clanname, challenges = get_person(gid,uid,month)
     except Exception as e:
-        await bot.send(event, f"出现错误: {type(e)}\n请联系开发组调教。")
+        await bot.send(event, f"出现错误: {str(e)}\n请联系开发组调教。")
         return
 
     if challenges.shape[0] == 0:
