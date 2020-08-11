@@ -88,7 +88,10 @@ async def aircon_now(bot,event):
 	update_aircon(aircon)
 	msg = print_aircon(aircon)
 	write_group_aircon(__file__,aircons)
-	await bot.send(event, "❄"+msg)
+	msg = "❄" + msg
+	if not aircon["is_on"]:
+		msg = "⚠️空调未开启\n" + msg
+	await bot.send(event, msg)
 
 @sv.on_prefix(('设置温度','设定温度'))
 async def set_temp(bot,event):
