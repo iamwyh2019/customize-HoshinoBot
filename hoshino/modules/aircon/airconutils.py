@@ -81,7 +81,7 @@ def update_aircon(aircon):
 		timedelta = new_update - last_update
 
 		direction = sgn(env_temp - now_temp)
-		new_temp = now_temp + direction * timedelta
+		new_temp = now_temp + direction * timedelta * aircon_off
 		if (env_temp-now_temp)*(env_temp-new_temp)<0: #过头了
 			new_temp = env_temp
 
