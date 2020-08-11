@@ -125,7 +125,7 @@ async def set_wind_rate(bot,event):
 	if aircon is None:
 		return
 
-	wind_rate = await check_range(bot,event,0,999999,"只能设置1/2/3档喔")
+	wind_rate = await check_range(bot,event,1,3,"只能设置1/2/3档喔")
 	if wind_rate is None:
 		return
 
