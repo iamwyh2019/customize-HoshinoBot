@@ -95,9 +95,11 @@ def print_aircon(aircon):
 	set_temp = aircon["set_temp"]
 	env_temp = aircon["env_temp"]
 
-	text = f'''当前风速{volume_text[wind_rate]}
+	text = f"当前风速{volume_text[wind_rate]}\n" if aircon["is_on"] else ""
+
+	text += f'''
 当前设置温度 {set_temp} °C
-当前群里温度 {now_temp} °C
+当前群里温度 {round(now_temp,1)} °C
 当前环境温度 {env_temp} °C'''.strip()
 
 	return text

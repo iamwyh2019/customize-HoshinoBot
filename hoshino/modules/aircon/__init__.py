@@ -20,18 +20,22 @@ async def check_status(gid,bot,event):
 
 	aircon = aircons[gid]
 	if not aircon["is_on"]:
-		await bot.send(event,"你空调没开！")
+		await bot.send(event,"💤你空调没开！")
 		return None
 
 	return aircon
 
-async def check_range(bot,event,low,high,errormsg):
+async def check_range(bot,event,low,high,errormsg,special = None):
 
 	msg = event.message.extract_plain_text().split()
+
+	if special is not None and msg[0] in special:
+		return special[msg[0]]
+
 	try:
 		val = int(msg[0])
 	except:
-		await bot.send(event, "输入有误！")
+		await bot.send(event, f"⚠️输入有误！只能输入{low}至{high}的整数")
 		return None
 
 	if not low<=val<=high:
@@ -53,12 +57,15 @@ async def aircon_on(bot,event):
 		await bot.send(event,"❄空调已安装~")
 	else:
 		aircon = aircons[gid]
+		if aircon["is_on"]:
+			await bot.send(event,"❄空调开着呢！")
+			return
 
 	update_aircon(aircon)
-	msg = print_aircon(aircon)
 	aircon['is_on'] = True
+	msg = print_aircon(aircon)
 	write_group_aircon(__file__,aircons)
-	await bot.send(event, '❄哔~空调已开\n' + msg)
+	await bot.send(event, "❄哔~空调已开\n" + msg)
 
 @sv.on_fullmatch('关空调')
 async def aircon_off(bot,event):
@@ -70,10 +77,10 @@ async def aircon_off(bot,event):
 		return
 
 	update_aircon(aircon)
-	msg = print_aircon(aircon)
 	aircon['is_on'] = False
+	msg = print_aircon(aircon)
 	write_group_aircon(__file__,aircons)
-	await bot.send(event, '❄哔~空调已关\n' + msg)
+	await bot.send(event, '💤哔~空调已关\n' + msg)
 
 @sv.on_fullmatch('当前温度')
 async def aircon_now(bot,event):
@@ -88,9 +95,12 @@ async def aircon_now(bot,event):
 	update_aircon(aircon)
 	msg = print_aircon(aircon)
 	write_group_aircon(__file__,aircons)
-	msg = "❄" + msg
+
 	if not aircon["is_on"]:
-		msg = "⚠️空调未开启\n" + msg
+		msg = "💤空调未开启\n" + msg
+	else:
+		msg = "❄" + msg
+
 	await bot.send(event, msg)
 
 @sv.on_prefix(('设置温度','设定温度'))
@@ -125,7 +135,8 @@ async def set_wind_rate(bot,event):
 	if aircon is None:
 		return
 
-	wind_rate = await check_range(bot,event,1,3,"只能设置1/2/3档喔")
+	wind_rate = await check_range(bot,event,1,3,"只能设置1/2/3档喔",
+		{"低":1, "中":2, "高":3})
 	if wind_rate is None:
 		return
 
@@ -157,4 +168,10 @@ async def set_env_temp(bot,event):
 	aircon["env_temp"] = env_temp
 	msg = print_aircon(aircon)
 	write_group_aircon(__file__,aircons)
-	await bot.send(event,"❄"+msg)
+
+	if not aircon["is_on"]:
+		msg = "💤空调未开启\n" + msg
+	else:
+		msg = "❄" + msg
+
+	await bot.send(event,msg)
