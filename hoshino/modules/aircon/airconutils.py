@@ -17,15 +17,35 @@ ac_volume = [0.178, 0.213, 0.267] #每秒进风量
 powers = [5000, 6000, 7500] #功率
 volume_text = ["低","中","高"]
 
+required_ranges = {
+	"set_temp": (0,999999,26),
+	"env_temp": (0,999999,33),
+	"wind_rate": (0,2,0),
+	"balance": (-1000000,1000000,0)
+}
+
 def sgn(diff):
 	return 1 if diff>0 else -1 if diff<0 else 0
 
 def get_group_aircon(builtin_path):
+
+	global required_ranges
+
 	filename = os.path.join(os.path.dirname(builtin_path), 'aircon.json')
+
 	try:
 		with open(filename, encoding='utf8') as f:
 			aircons = json.load(f)
+
+			for gid in aircons:
+				aircon = aircons[gid]
+				for item in required_ranges:
+					low,high,default = required_ranges[item]
+					if (item not in aircon) or (not low<=aircon[item]<=high):
+						aircon[item] = default
+
 			return aircons
+
 	except Exception as e:
 		return {}
 
@@ -38,7 +58,7 @@ def new_aircon(num_member, set_temp = 26, now_temp = 33):
 	volume = max(num_member * unit_volume, 20)
 	return {"is_on":True, "env_temp": now_temp, "now_temp": now_temp, 
 			"set_temp": set_temp, "last_update": now_second(),
-			"volume": volume, "wind_rate": 0}
+			"volume": volume, "wind_rate": 0, "balance": 0}
 
 def now_second():
 	return int((datetime.datetime.now()-datetime.datetime(1970,1,1)).total_seconds())
