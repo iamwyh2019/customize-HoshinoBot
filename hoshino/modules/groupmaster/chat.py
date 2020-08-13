@@ -9,11 +9,6 @@ from hoshino import R, Service, priv, util
 
 tz = pytz.timezone('Asia/Shanghai')
 
-# basic function for debug, not included in Service('chat')
-@on_command('zai?', aliases=('在?', '在？', '在吗', '在么？', '在嘛', '在嘛？'), only_to_me=True)
-async def say_hello(session):
-    await session.send('在啊')
-
 sv = Service('chat', visible=False)
 
 @sv.on_keyword(('沙雕机器人', '笨蛋机器人', '傻逼机器人', '憨憨机器人', 
