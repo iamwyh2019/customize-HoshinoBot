@@ -140,7 +140,6 @@ hoshino/config/groupmaster.py
 hoshino/config/hourcall.py
 hoshino/config/mikan.py
 hoshino/modules/pcrclanbattle/clanbattle/config.json
-hoshino/modules/priconne/gacha/config.json
 =======
 .mypy_cache/
 >>>>>>> parent of 4b38afd... Update .gitignore
