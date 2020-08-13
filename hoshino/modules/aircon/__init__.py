@@ -8,7 +8,8 @@ except:
 	import json
 
 sv = Service('aircon', visible=True)
-# initialize
+
+ac_type_text = ["家用空调","中央空调"]
 
 aircons = get_group_aircon(__file__)
 
@@ -112,7 +113,7 @@ async def set_temp(bot,event):
 	if aircon is None:
 		return
 
-	set_temp = await check_range(bot,event,0,999999,"只能设置0-999999°C喔")
+	set_temp = await check_range(bot,event,-273,999999,"只能设置-273-999999°C喔")
 	if set_temp is None:
 		return
 
@@ -135,6 +136,10 @@ async def set_wind_rate(bot,event):
 	if aircon is None:
 		return
 
+	if aircon["ac_type"] != AIRCON_HOME:
+		await bot.send(event,"只有家用空调能调风量哦！")
+		return
+
 	wind_rate = await check_range(bot,event,1,3,"只能设置1/2/3档喔",
 		{"低":1, "中":2, "高":3})
 	if wind_rate is None:
@@ -155,7 +160,7 @@ async def set_env_temp(bot,event):
 		await bot.send(event, "空调还没装哦~发送“开空调”安装空调")
 		return
 
-	env_temp = await check_range(bot,event,0,999999,"只能设置0-999999°C喔")
+	env_temp = await check_range(bot,event,-273,999999,"只能设置-273-999999°C喔")
 	if env_temp is None:
 		return
 
@@ -174,4 +179,65 @@ async def set_env_temp(bot,event):
 	else:
 		msg = "❄" + msg
 
+	await bot.send(event,msg)
+
+@sv.on_fullmatch(('空调类型',))
+async def show_aircon_type(bot,event):
+
+	gid = str(event['group_id'])
+
+	if gid not in aircons:
+		await bot.send(event, "空调还没装哦~发送“开空调”安装空调")
+		return
+
+	aircon = aircons[gid]
+	ac_type = aircon["ac_type"]
+
+	msg = f"当前安装了{ac_type_text[ac_type]}哦~"
+	await bot.send(event,msg)
+
+@sv.on_fullmatch(('升级空调','空调升级'))
+async def upgrade_aircon(bot,event):
+
+	gid = str(event['group_id'])
+
+	if gid not in aircons:
+		await bot.send(event, "空调还没装哦~发送“开空调”安装空调")
+		return
+
+	aircon = aircons[gid]
+	ac_type = aircon["ac_type"]
+	if ac_type == len(ac_type_text)-1:
+		await bot.send(event, "已经是最高级的空调啦！")
+		return
+
+	update_aircon(aircon)
+	ac_type += 1
+	aircon["ac_type"] = ac_type
+	msg = print_aircon(aircon)
+	write_group_aircon(__file__,aircons)
+	msg = f"❄已升级至{ac_type_text[ac_type]}~\n" + msg
+	await bot.send(event,msg)
+
+@sv.on_fullmatch(('降级空调','空调降级'))
+async def downgrade_aircon(bot,event):
+
+	gid = str(event['group_id'])
+
+	if gid not in aircons:
+		await bot.send(event, "空调还没装哦~发送“开空调”安装空调")
+		return
+
+	aircon = aircons[gid]
+	ac_type = aircon["ac_type"]
+	if ac_type == 0:
+		await bot.send(event, "已经是最基础级别的空调啦！")
+		return
+
+	update_aircon(aircon)
+	ac_type -= 1
+	aircon["ac_type"] = ac_type
+	msg = print_aircon(aircon)
+	write_group_aircon(__file__,aircons)
+	msg = f"❄已降级至{ac_type_text[ac_type]}~\n" + msg
 	await bot.send(event,msg)
