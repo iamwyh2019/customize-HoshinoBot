@@ -10,17 +10,19 @@ except:
 sv = Service('aircon', visible=True)
 
 ac_type_text = ["家用空调","中央空调"]
+AIRCON_HOME = 0
+AIRCON_CENTRAL = 1
 
 aircons = get_group_aircon(__file__)
 
-async def check_status(gid,bot,event):
+async def check_status(gid,bot,event,need_on=True):
 
 	if gid not in aircons:
 		await bot.send(event, "空调还没装哦~发送“开空调”安装空调")
 		return None
 
 	aircon = aircons[gid]
-	if not aircon["is_on"]:
+	if need_on and not aircon["is_on"]:
 		await bot.send(event,"💤你空调没开！")
 		return None
 
@@ -88,8 +90,8 @@ async def aircon_now(bot,event):
 
 	gid = str(event['group_id'])
 
-	if gid not in aircons:
-		await bot.send(event, "空调还没装哦~发送“开空调”安装空调")
+	aircon = await check_status(gid,bot,event,need_on=False)
+	if aircon is None:
 		return
 
 	aircon = aircons[gid]
@@ -156,8 +158,8 @@ async def set_env_temp(bot,event):
 
 	gid = str(event['group_id'])
 
-	if gid not in aircons:
-		await bot.send(event, "空调还没装哦~发送“开空调”安装空调")
+	aircon = await check_status(gid,bot,event,need_on=False)
+	if aircon is None:
 		return
 
 	env_temp = await check_range(bot,event,-273,999999,"只能设置-273-999999°C喔")
@@ -186,8 +188,8 @@ async def show_aircon_type(bot,event):
 
 	gid = str(event['group_id'])
 
-	if gid not in aircons:
-		await bot.send(event, "空调还没装哦~发送“开空调”安装空调")
+	aircon = await check_status(gid,bot,event,need_on=False)
+	if aircon is None:
 		return
 
 	aircon = aircons[gid]
@@ -201,8 +203,8 @@ async def upgrade_aircon(bot,event):
 
 	gid = str(event['group_id'])
 
-	if gid not in aircons:
-		await bot.send(event, "空调还没装哦~发送“开空调”安装空调")
+	aircon = await check_status(gid,bot,event,need_on=False)
+	if aircon is None:
 		return
 
 	aircon = aircons[gid]
@@ -224,8 +226,8 @@ async def downgrade_aircon(bot,event):
 
 	gid = str(event['group_id'])
 
-	if gid not in aircons:
-		await bot.send(event, "空调还没装哦~发送“开空调”安装空调")
+	aircon = await check_status(gid,bot,event,need_on=False)
+	if aircon is None:
 		return
 
 	aircon = aircons[gid]
