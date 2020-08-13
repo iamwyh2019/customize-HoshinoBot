@@ -98,7 +98,7 @@ async def block_user(bot,event):
 			msg += f"{delta[2]}秒"
 		await bot.send(event,msg,at_sender=True)
 	else:
-		await bot.send(event,"未拉黑用户",at_sender=True)
+		await bot.send(event,"没有用户被拉黑",at_sender=True)
 
 @sv.on_prefix(('拉黑本群','拉黑群'))
 async def block_group(bot,event):
