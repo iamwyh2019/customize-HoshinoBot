@@ -10,6 +10,7 @@ import base64
 import pandas as pd
 import numpy as np
 import datetime
+import math
 
 _time_limit = 3*60
 _lmt = FreqLimiter(_time_limit)
@@ -45,20 +46,23 @@ async def send_report(bot, event, type=REPORT_UNDECLARED):
     gid = event['group_id']
 
     if not _lmt.check(uid):
-        await bot.send(event, f'每{int(_time_limit/60)}分钟仅能生成一次报告', at_sender=True)
+        await bot.send(event, f'每{math.ceil(_time_limit/60)}分钟仅能生成一次报告', at_sender=True)
         return
     _lmt.start_cd(uid)
 
     now = datetime.datetime.now()
     year = now.year
-    month = now.month-1
+    month = now.month
+    day = now.day
+    if day<20:
+        month -= 1
     if month==0:
         year -= 1
         month = 12
     constellation = b_constellations[month-1]
 
     try:
-        clanname, challenges = get_person(gid,uid,month)
+        clanname, challenges = get_person(gid,uid,year,month)
     except Exception as e:
         await bot.send(event, f"出现错误: {str(e)}\n请联系开发组调教。")
         return

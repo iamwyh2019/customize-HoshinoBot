@@ -1,6 +1,5 @@
 import sqlite3
 import pandas as pd
-import datetime
 from PIL import Image,ImageFont,ImageDraw
 from os import path
 
@@ -17,12 +16,9 @@ def add_text(img: Image,text:str,textsize:int,font=font_path,textfill='white',po
     draw.text(xy=position,text=text,font=img_font,fill=textfill)
     return img
 
-def get_data(gid: int, month: int) -> (str,pd.DataFrame):
+def get_data(gid: int, year:int, month: int) -> (str,pd.DataFrame):
 
     conn = sqlite3.connect(db_path)
-
-    now = datetime.datetime.now()
-    year = now.year
 
     month = str(month) if month>=10 else "0"+str(month)
 
@@ -37,9 +33,9 @@ def get_data(gid: int, month: int) -> (str,pd.DataFrame):
     conn.close()
     return name,dat
 
-def get_person(gid: int, uid: int, month: int) -> (str,pd.DataFrame):
+def get_person(gid: int, uid: int, year:int, month: int) -> (str,pd.DataFrame):
 
-    name,dat = get_data(gid, month)
+    name,dat = get_data(gid, year, month)
     dat = dat[dat["uid"] == uid]
 
     challenges = dat[["boss","dmg","flag"]]
