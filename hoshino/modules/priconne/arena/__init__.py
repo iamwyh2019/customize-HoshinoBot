@@ -139,21 +139,17 @@ async def arena_like(bot, ev):
 async def arena_dislike(bot, ev):
     await _arena_feedback(bot, ev, -1)
 
-@sucmd('arenarescount', aliases=('作业数量'))
+@sucmd('arena-count', aliases=('作业数量','设置作业数量','调整作业数量'))
 async def set_arena_res_count(session: CommandSession):
     msg = session.current_arg
     global max_disp
     try:
-        target=int(msg)
+        target = int(msg)
     except Exception as e:
-        hoshino.logger.error(f'设置作业数量失败：{type(e)}')
-        try:
-            await session.send(f'设置作业数量失败：{type(e)}')
-        except Exception as e:
-            hoshino.logger.critical(f'错误回报时发生错误：{type(e)}')
+        await session.send(f'设置作业数量失败：{str(e)}')
         return
-    max_disp=max(1,target)
-    await session.send(f'作业数量修改成功。')
+    max_disp = max(1,target)
+    await session.send(f'作业数量修改成功')
 
 
 rex_qkey = re.compile(r'^[0-9a-zA-Z]{5}$')
