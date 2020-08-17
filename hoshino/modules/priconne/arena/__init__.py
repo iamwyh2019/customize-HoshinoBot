@@ -81,8 +81,8 @@ async def _arena_query(bot, ev: CQEvent, region: int):
     sv.logger.info('Got response!')
 
     # 处理查询结果
-    if res is None:
-        await bot.finish(ev, '查询出错，请联系维护组调教\n请先移步pcrdfans.com进行查询', at_sender=True)
+    if isinstance(res,int):
+        await bot.finish(ev, f'查询出错，错误代码{res}\n请先移步pcrdfans.com进行查询', at_sender=True)
     if not len(res):
         await bot.finish(ev, '没有查询到解法\n※没有作业说明随便拆 发挥你的想象力～★\n作业上传请前往pcrdfans.com', at_sender=True)
     res = res[:min(max_disp, len(res))]    # 限制显示数量，截断结果
