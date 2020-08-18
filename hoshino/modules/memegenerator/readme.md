@@ -4,7 +4,7 @@
 
 ## 安装
 
-将整个memegenerator文件夹放入hoshino/modules中，并在config/__bot__.py里的模块列表中加入memegenerator。
+将整个memegenerator文件夹放入hoshino/modules中，并在```config/__bot__.py```里的模块列表中加入memegenerator。
 
 ## 使用
 
