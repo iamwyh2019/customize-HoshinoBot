@@ -1,7 +1,7 @@
 from os import path
 from PIL import Image,ImageFont,ImageDraw
 
-font_path = path.abspath("./simhei.ttf")
+font_path = path.join(path.abspath(path.dirname(__file__)),"simhei.ttf")
 
 offset = 3 #文字与表情之间的留白
 
@@ -25,7 +25,7 @@ def draw_meme(img: Image, text:str):
 	text_len = max([get_width(s) for s in text_l])
 
 	tsize = int(img.width / text_len)
-	tsize = min(tsize,35) #太大了
+	tsize = min(tsize,img.height//6) #太大了
 	position = ((img.width - text_len*tsize)//2,img.height+offset)
 	meme_width = img.width
 	meme_height = img.height + tsize*rows + offset*2 #底部留白
@@ -33,5 +33,3 @@ def draw_meme(img: Image, text:str):
 	meme.paste(img,(0,0,img.width,img.height))
 	add_text(meme,text,textsize=tsize,position=position)
 	return meme
-
-	add_text(img,text,textsize=tsize,position=position)
