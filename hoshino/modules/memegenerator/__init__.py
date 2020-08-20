@@ -13,6 +13,7 @@ img_name = []
 def load_images():
 	global img,img_name,img_dir
 	img = os.listdir(img_dir)
+	img.sort()
 	img_name = [''.join(s.split('.')[:-1]) for s in img]
 
 load_images()
