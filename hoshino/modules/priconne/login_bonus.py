@@ -11,12 +11,12 @@ sv_help = '''
 sv = Service('登录签到', bundle='pcr娱乐', help_=sv_help)
 
 lmt = DailyNumberLimiter(1)
-login_presents = [
+login_presents = (
     '扫荡券×5',  '卢币×1000', '普通EXP药水×5',  '宝石×50',  '玛那×3000',
     '扫荡券×10', '卢币×1500', '普通EXP药水×15', '宝石×80',  '白金转蛋券×1',
     '扫荡券×15', '卢币×2000', '上级精炼石×3',   '宝石×100', '白金转蛋券×1',
-]
-todo_list = [
+)
+todo_list = (
     '找伊绪老师上课',
     '给宫子买布丁',
     '和真琴寻找伤害优衣的人',
@@ -46,7 +46,7 @@ todo_list = [
     '努力工作，尽早报答妈妈的养育之恩',
     '成为魔法少女',
     '搓一把日麻'
-]
+)
 
 stampdir=os.path.abspath(os.path.join(hoshino.config.RES_DIR, "img/priconne/stamp"))
 stamplst=os.listdir(stampdir)
