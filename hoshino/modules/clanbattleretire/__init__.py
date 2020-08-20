@@ -24,7 +24,11 @@ REPORT_RESIGN = 0
 REPORT_NORMAL = 1
 REPORT_UNDECLARED = -1
 
-sv = Service('clanbattle-retire', visible=True)
+sv_help = '''
+[离职报告/会战报告] 生成一张离职报告/会战报告
+'''.strip()
+
+sv = Service('clanbattle-retire', help_=sv_help, bundle='离职报告')
 
 @sv.on_fullmatch('离职报告')
 async def send_resign_report(bot, event):

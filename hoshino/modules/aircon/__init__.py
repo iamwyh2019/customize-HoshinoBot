@@ -7,7 +7,16 @@ try:
 except:
 	import json
 
-sv = Service('aircon', visible=True)
+sv_help = '''
+[开空调/关空调] 开/关空调
+[当前温度] 查看当前温度
+[设置温度/设置环境温度 <温度>] 设置温度或环境温度
+[设置风速 <档位>] 设置风速
+[空调类型] 查看空调类型
+[升级空调/降级空调] 调整空调类型
+'''.strip()
+
+sv = Service('aircon', help_=sv_help, bundle='空调')
 
 ac_type_text = ["家用空调","中央空调"]
 AIRCON_HOME = 0

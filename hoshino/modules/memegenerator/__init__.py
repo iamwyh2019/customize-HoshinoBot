@@ -1,5 +1,6 @@
 from io import BytesIO
 from hoshino import Service
+from nonebot import MessageSegment
 import os
 from os import path
 from .memeutil import draw_meme
@@ -18,7 +19,13 @@ def load_images():
 
 load_images()
 
-sv = Service('meme-generator',visible=True)
+sv_help = '''
+[表情列表] 查看当前表情列表
+[查看表情 <名字>] 查看指定表情
+[生成表情 <名字> <文案>] 生成一张表情
+'''.strip()
+
+sv = Service('表情生成器', help_=sv_help, bundle='表情生成器')
 
 @sv.on_fullmatch(('表情列表','查看表情列表'))
 async def show_memes(bot,event):
@@ -32,10 +39,21 @@ async def reload_memes(bot,event):
 	load_images()
 	await bot.send(event,f"表情列表更新成功，现在有{len(img)}张表情")
 
+@sv.on_prefix(('查看表情','看看表情'))
+async def show_meme(bot,event):
+	msg = event.message.extract_plain_text().split(" ")
+	sel = msg[0]
+	if sel not in img_name:
+		await bot.send(event,f'没有找到表情"{sel}"',at_sender=True)
+		return
+
+	idx = img_name.index(sel)
+	await bot.send(event,
+		MessageSegment.image(f'file:///{os.path.join(img_dir,img[idx])}'))
+
 @sv.on_prefix(('生成表情',))
 async def generate_meme(bot,event):
 	msg = event.message.extract_plain_text().split(" ")
-
 	sel = msg[0]
 	if sel not in img_name:
 		await bot.send(event,f'没有找到表情"{sel}"',at_sender=True)

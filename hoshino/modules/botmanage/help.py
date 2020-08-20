@@ -10,7 +10,11 @@ TOP_MANUAL = '''
 [优妮来发十连] 转蛋模拟
 [切噜一下] 切噜语转换
 
-[帮助pcr查询] 更多查询功能
+更多功能：
+[帮助pcr查询]
+[帮助空调]
+[帮助离职报告]
+[帮助表情生成器]
 '''.strip()
 
 def gen_bundle_manual(bundle_name, service_list, gid):
