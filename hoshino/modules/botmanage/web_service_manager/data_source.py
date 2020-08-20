@@ -3,7 +3,6 @@ import os
 import random
 
 template_folder = os.path.join(os.path.dirname(__file__),'templates')
-print(template_folder)
 env = jinja2.Environment(
     loader=jinja2.FileSystemLoader(template_folder),
     enable_async=True
