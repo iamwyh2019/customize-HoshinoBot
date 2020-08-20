@@ -4,7 +4,11 @@ from hoshino import Service, R
 from hoshino.typing import CQEvent
 from hoshino.util import DailyNumberLimiter
 
-sv = Service('pcr-login-bonus', bundle='pcr娱乐', help_='[优妮签到] 给主人盖章章')
+sv_help = '''
+[优妮签到] 给主人盖章章
+'''.strip()
+
+sv = Service('登录签到', bundle='pcr娱乐', help_=sv_help)
 
 lmt = DailyNumberLimiter(1)
 login_presents = [
@@ -50,7 +54,7 @@ random.shuffle(stamplst)
 nxt_stamp=0
 
 # The stamp images are from https://tieba.baidu.com/p/6769790810. All rights reserved to the author.
-# We sincerely thank him/her for his/her works.
+# Our sincere thank for him/her wonderful works.
 
 @sv.on_fullmatch(('签到', '盖章', '妈', '妈?', '妈妈', '妈!', '妈！', '妈妈！'), only_to_me=True)
 async def give_okodokai(bot, ev: CQEvent):
@@ -69,7 +73,7 @@ async def give_okodokai(bot, ev: CQEvent):
         nxt_stamp-=len(stamplst)
     await bot.send(ev, f'\n主人欢迎回来{R.img("priconne/stamp/"+stamp).cqcode}\n获得了{present}\n这是我的小礼物\n主人今天要{todo}吗？', at_sender=True)
 
-@sv.on_prefix('重置签到')
+@sv.on_prefix(('重置签到','签到重置'))
 async def stamp_reset(bot, ev: CQEvent):
     if ev.user_id not in bot.config.SUPERUSERS:
         return
@@ -82,7 +86,7 @@ async def stamp_reset(bot, ev: CQEvent):
     if count:
         await bot.send(ev, f"已重置{count}位用户的签到状况")
 
-@sv.on_fullmatch('刷新印章库')
+@sv.on_fullmatch(('刷新印章库','更新印章库'))
 async def reload_stamp(bot, ev: CQEvent):
     if ev.user_id not in bot.config.SUPERUSERS:
         return
