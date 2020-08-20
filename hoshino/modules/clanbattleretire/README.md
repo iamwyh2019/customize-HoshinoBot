@@ -33,4 +33,4 @@
 
 ## 开源
 
-本插件以GPL-v3协议开源。[项目地址](https://github.com/iamwyh2019/customize-HoshinoBot/tree/master/hoshino/modules/clanbattleretire)
+本插件以GPL-v3协议开源。[项目地址](https://github.com/iamwyh2019/clanbattleretire)
