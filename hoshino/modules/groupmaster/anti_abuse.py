@@ -61,7 +61,7 @@ async def ban_word(session):
 
 	hoshino.logger.critical(f'Self: {ctx["self_id"]}, Message {ctx["message_id"]} from {msg_from}: {ctx["message"]}')
 	hoshino.priv.set_block_user(user_id, timedelta(hours=8))
-	pic = R.img(f"chieri{random.randint(1, 4)}.jpg").cqcode
+	pic = R.img(f"angry{random.randint(1, 3)}.png").cqcode
 	await session.send(f"不理你啦！バーカー\n{pic}", at_sender=True)
 	await util.silence(session.ctx, 8*60*60)
 
