@@ -12,9 +12,10 @@ from hoshino.util import pic2b64
 logger = log.new_logger('wiki')
 
 UNKNOWN = 1000
+order = ['必殺技','必殺技+','技能1','專武強化技能1','技能2','EX技能','EX技能+']
 
 def custom_sorted(x,y):
-    order = ['必殺技','必殺技+','技能1','專武強化技能1','技能2','EX技能','EX技能+']
+    global order
     if order.index(x['type']) < order.index(y['type']):
         return -1
     if order.index(x['type']) > order.index(y['type']):
@@ -81,7 +82,7 @@ def get_skill(id):
     query = Skill.select().where(Skill.id==id)
     arr = []
     for i in query:
-        if i.type in ("必殺技+","專武強化技能1"):
+        if i.type in ("專武強化技能1",):
             continue
         skill = {}
         skill['name'] = i.name
