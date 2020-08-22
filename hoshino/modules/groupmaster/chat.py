@@ -18,10 +18,13 @@ async def chat_sad(bot, ev):
 
 @sv.on_fullmatch(('老婆', 'waifu', 'laopo'), only_to_me=True)
 async def chat_waifu(bot, ev):
+    '''
     if not priv.check_priv(ev, priv.SUPERUSER):
         await bot.send(ev, R.img('laopo.jpg').cqcode)
     else:
         await bot.send(ev, '大庭广众的，别这么肉麻')
+    '''
+    await bot.send(ev, R.img('laopo.jpg').cqcode)
 
 @sv.on_fullmatch('老公', only_to_me=True)
 async def chat_laogong(bot, ev):
