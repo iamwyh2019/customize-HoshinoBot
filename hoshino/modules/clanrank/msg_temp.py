@@ -25,7 +25,7 @@ leader_id_query_list = [
 ]
 # 本公会查询
 self_clan_query_list = [
-    'clan_name','leader_name','ts','rank','damage','boss'
+    'clan_name','leader_name','rank','damage','boss'
 ]
 
 # 分数线模板

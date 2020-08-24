@@ -142,7 +142,8 @@ def process(dec, infoList:list):
             else:
                 msg += f"{msg_dic[key]}："
                 msg += f"{dec['data'][i][key]}\n"
-        msg += '\n'
+        if i<result-1:
+            msg += '\n'
     return msg
 
 def set_clanname(group_id,leader_id):
@@ -276,7 +277,7 @@ async def rank_query_by_name(bot, ev: CQEvent):
         msg = f'查询出现错误{info}，请联系维护者'
     else:
         msg = process(info,leader_id_query_list)
-        #msg += f"查询有{_time_limit}秒冷却"
+        msg += f"查询有{_time_limit}秒冷却"
         _lmt.start_cd(uid)
     await bot.send(ev, msg)
 
