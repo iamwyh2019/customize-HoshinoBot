@@ -6,7 +6,7 @@ msg_dic = {
     'boss': 'BOSS进度',# 需要调用函数，特殊处理
     'index':'信息编号', # 特殊处理
     'leader_name': '会长名',
-    'member_num':'总人数',
+    #'member_num':'总人数',
     'ts':'更新时间', # 预先处理
     'leader_viewer_id':"会长UID",
     'full':'全部查询结果：' # 预先处理
@@ -24,7 +24,7 @@ leader_id_query_list = [
     'clan_name','leader_name','rank','index','damage','boss'
 ]
 # 本公会查询
-self_lan_query_list = [
+self_clan_query_list = [
     'clan_name','leader_name','ts','rank','damage','boss'
 ]
 

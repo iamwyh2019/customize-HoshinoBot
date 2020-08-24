@@ -16,7 +16,7 @@ sv_query = Service("clanrank-query",enable_on_default=True,visible = True,help_=
 sv_push = Service("clanrank-push",enable_on_default=True,visible=True,help_='''
 以下仅限国服B站，渠道服/日台服均不可用
 如果不知道会长ID可以先通过通用查询来查询会长的ID
-【绑定公会ID】后跟会长ID来绑定公会, 公会战期间每日5:30会自动推送前一日排名
+【绑定公会】后跟会长ID来绑定公会, 公会战期间每日5:30会自动推送前一日排名
 【公会排名】查询本公会的排名
 '''.strip())
 
@@ -142,8 +142,7 @@ def process(dec, infoList:list):
             else:
                 msg += f"{msg_dic[key]}："
                 msg += f"{dec['data'][i][key]}\n"
-        if i<result-1:
-            msg += '\n'
+        msg += '\n'
     return msg
 
 def set_clanname(group_id,leader_id):
@@ -171,7 +170,7 @@ def set_clanname(group_id,leader_id):
     saveConfig(clanrank_config)
     return 0
 
-@sv_push.on_fullmatch(('公会排名','工会排名'))
+@sv_push.on_fullmatch(('公会排名','工会排名','!公会排名','！公会排名','!工会排名','！工会排名'))
 async def clanrankQuery(bot, ev:CQEvent):
     """
     查询本公会排名, 需要预先绑定公会。
@@ -187,9 +186,9 @@ async def clanrankQuery(bot, ev:CQEvent):
     # 获取上次更新时间,假定网站更新比游戏内延迟12分钟
     lastQuertTime = config[str(group_id)]["lastQuery"]["ts"]
     if time.time() - lastQuertTime >= 42*60:
-        # 上次查询时间戳有效时间42分钟,超时会触发联网查询
-        msg = '缓存数据已超时, 正在在线查询......'
-        await bot.send(ev, msg)
+        # 上次查询时间戳有效时间42分钟,超时会触发联网查询 (v0.1.5：ts始终返回0，因此不作缓存)
+        #msg = '缓存数据已超时, 正在在线查询......'
+        #await bot.send(ev, msg)
         code = set_clanname(int(group_id),config[str(group_id)]["leaderId"])
         if code != 0:
             msg = f'发生错误{code}, 可能的原因：公会更换了会长/工会排名不在前2W名。\n如果非上述原因, 请联系维护并提供此信息。\n'
@@ -198,11 +197,11 @@ async def clanrankQuery(bot, ev:CQEvent):
         else:
             config = loadConfig() # 信息已经被缓存, 重新读取
     last_query_info = config[str(group_id)]["lastQuery"]
-    msg = process(last_query_info,self_lan_query_list)
+    msg = process(last_query_info,self_clan_query_list)
     await bot.send(ev, msg)
     
 
-@sv_push.on_prefix(['绑定公会','绑定工会'])
+@sv_push.on_prefix(('绑定公会','绑定工会'))
 async def set_clan(bot,ev:CQEvent):
     """
     为一个公会绑定信息, 需要会长ID
@@ -227,7 +226,7 @@ async def set_clan(bot,ev:CQEvent):
     # 发送绑定过程中的查询结果
     clanrank_config = loadConfig()
     last_query_info = clanrank_config[str(group_id)]["lastQuery"]
-    msg = process(last_query_info,self_lan_query_list)
+    msg = process(last_query_info,self_clan_query_list)
     await bot.send(ev, msg, at_sender=False)  
 
 @sv_push.scheduled_job('cron',hour='5',minute='30')
@@ -262,7 +261,7 @@ async def clanrank_push_cn():
 # -----------------------------------
 # 此部分以下为旧版直接查询的函数
 
-@sv_query.on_prefix(['查询公会', '查询工会'])
+@sv_query.on_prefix(('查询公会', '查询工会','!查询公会', '!查询工会','！查询公会', '！查询工会'))
 async def rank_query_by_name(bot, ev: CQEvent):
     """
     通过公会名查询排名
@@ -282,7 +281,7 @@ async def rank_query_by_name(bot, ev: CQEvent):
     await bot.send(ev, msg)
 
 
-@sv_query.on_prefix('查询会长')
+@sv_query.on_prefix(('查询会长','!查询会长','！查询会长'))
 async def rank_query_by_leader(bot, ev: CQEvent):
     """
     通过会长名字查询排名
@@ -297,12 +296,12 @@ async def rank_query_by_leader(bot, ev: CQEvent):
         msg = f'查询出现错误{info}，请联系维护者'
     else:
         msg = process(info,leader_id_query_list)
-        #msg += f"查询有{_time_limit}秒冷却"
+        msg += f"查询有{_time_limit}秒冷却"
         _lmt.start_cd(uid)
     await bot.send(ev, msg)
 
 
-@sv_query.on_prefix('查询排名')
+@sv_query.on_prefix(('查询排名','!查询排名','！查询排名'))
 async def rank_query_by_rank(bot, ev: CQEvent):
     """
     查看指定名次的公会信息
@@ -320,7 +319,7 @@ async def rank_query_by_rank(bot, ev: CQEvent):
         msg = f'查询出现错误{info}，请联系维护者'
     else:
         msg = process(info,leader_id_query_list)
-        #msg += f"查询有{_time_limit}秒冷却"
+        msg += f"查询有{_time_limit}秒冷却"
         _lmt.start_cd(uid)
     await bot.send(ev, msg)
 
@@ -338,6 +337,6 @@ async def damage_line(bot, ev: CQEvent):
         msg = f'查询出现错误{info}，请联系维护者'
     else:
         msg = process(info,line_list)
-        #msg += f"查询有{_time_limit}秒冷却"
+        msg += f"查询有{_time_limit}秒冷却"
         _lmt.start_cd(uid)
     await bot.send(ev, msg)
