@@ -242,7 +242,7 @@ async def process_challenge(bot:NoneBot, ctx:Context_T, ch:ParseResult):
     await auto_unsubscribe(bot, ctx, bm.group, mem['uid'], boss)
 
 
-@cb_cmd(('出刀', '报刀'), ArgParser(usage='!出刀 <伤害值> (@qq)', arg_dict={
+@cb_cmd(('出刀', '报刀'), ArgParser(usage='!出刀 <伤害值> (@qq) (R周目数) (B编号)', arg_dict={
     '': ArgHolder(tip='伤害值', type=damage_int),
     '@': ArgHolder(tip='qq号', type=int, default=0),
     'R': ArgHolder(tip='周目数', type=round_code, default=0),
@@ -810,11 +810,17 @@ async def _do_show_remain(bot:NoneBot, ctx:Context_T, args:ParseResult, at_user:
     clan = _check_clan(bm)
     if at_user:
         _check_admin(ctx, '才能催刀。您可以用【!查刀】查询余刀')
-    threshold = args[''] or 1
+
+    today = args[''] or '今日'
+    if today not in ('昨日','今日'):
+        await bot.send(ctx, f'无法识别参数“{today}”\n如果您要设置阈值，请使用“T<阈值>”',at_sender=True)
+        return
+
+    threshold = args['T'] or 1
     if threshold > 3 or threshold < 1:
         threshold = 1
     cnt = 0
-    rlist = bm.list_challenge_remain(1, datetime.now())
+    rlist = bm.list_challenge_remain(1, datetime.now() if today=='今日' else datetime.now()-timedelta(days=1))
     rlist.sort(key=lambda x: x[3] + x[4], reverse=True)
     msg = [  ('' if at_user else '\n') + f"{clan['name']}今日余刀：" ]
     for uid, _, name, r_n, r_e in rlist:
@@ -822,7 +828,7 @@ async def _do_show_remain(bot:NoneBot, ctx:Context_T, args:ParseResult, at_user:
             msg.append(f"剩{r_n}刀 补时{r_e}刀 | {ms.at(uid) if at_user else name}")
             cnt += r_n + r_e
     if len(msg) == 1:
-        await bot.send(ctx, f"今日{clan['name']}所有成员均已下班！各位辛苦了！", at_sender=True)
+        await bot.send(ctx, f"{today}{clan['name']}所有成员均已下班！各位辛苦了！", at_sender=True)
     else:
         msg.append(f'共剩{cnt}刀')
         if at_user:
@@ -830,24 +836,33 @@ async def _do_show_remain(bot:NoneBot, ctx:Context_T, args:ParseResult, at_user:
         await bot.send(ctx, '\n'.join(msg), at_sender=not at_user) # 催刀不需要at自己
 
 
-@cb_cmd('查刀', ArgParser(usage='!查刀 (阈值)', arg_dict={
-    '': ArgHolder(tip='阈值', type=int, default=1)}))
+@cb_cmd('查刀', ArgParser(usage='!查刀 (T阈值) (昨日)', arg_dict={
+    'T': ArgHolder(tip='阈值', type=int, default=1),
+    '' : ArgHolder(tip='昨日', type=str, default='今日')}))
 async def list_remain(bot:NoneBot, ctx:Context_T, args:ParseResult):
     await _do_show_remain(bot, ctx, args, at_user=False)
-@cb_cmd('催刀', ArgParser(usage='!催刀 (阈值)', arg_dict={
-    '': ArgHolder(tip='阈值', type=int, default=1),
-    'M': ArgHolder(tip='留言', default='在？阿sir喊你出刀啦！')}))
+
+@cb_cmd('催刀', ArgParser(usage='!催刀 (T阈值) (M留言)', arg_dict={
+    'T': ArgHolder(tip='阈值', type=int, default=1),
+    'M': ArgHolder(tip='留言', type=str, default='在？阿sir喊你出刀啦！')}))
 async def urge_remain(bot:NoneBot, ctx:Context_T, args:ParseResult):
     await _do_show_remain(bot, ctx, args, at_user=True)
 
 
-@cb_cmd('出刀记录', ArgParser(usage='!出刀记录 (@qq) (B编号)', arg_dict={
+@cb_cmd('出刀记录', ArgParser(usage='!出刀记录 (@qq) (B编号) (昨日)', arg_dict={
         '@': ArgHolder(tip='qq号', type=int, default=0),
-        'B': ArgHolder(tip='Boss编号', type=boss_code, default=0)}))
+        'B': ArgHolder(tip='Boss编号', type=boss_code, default=0),
+        '' : ArgHolder(type=str, default='今日')}))
 async def list_challenge(bot:NoneBot, ctx:Context_T, args:ParseResult):
     bm = BattleMaster(ctx['group_id'])
     clan = _check_clan(bm)
-    now = datetime.now()
+
+    today = args['']
+    if today not in ('昨日','今日'):
+        await bot.send(ctx, f'无法识别参数“{today}”', at_sender=True)
+        return
+    now = datetime.now() if today=='今日' else datetime.now()-timedelta(days=1)
+
     zone = bm.get_timezone_num(clan['server'])
     uid = args['@'] or args.at
     boss = args.B
