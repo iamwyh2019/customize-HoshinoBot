@@ -12,7 +12,7 @@ import numpy as np
 import datetime
 import math
 
-_time_limit = 3*60
+_time_limit = 2*60
 _lmt = FreqLimiter(_time_limit)
 
 b_constellations = ["摩羯","水瓶","双鱼","白羊","金牛","双子","巨蟹","狮子","处女","天秤","天蝎","射手"] #国服的（预测）

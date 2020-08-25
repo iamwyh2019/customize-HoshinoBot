@@ -13,7 +13,7 @@ from hoshino.service import sucmd
 from hoshino.typing import CommandSession, CQHttpError
 from hoshino import R, Service, util, priv
 
-sv = Service('anti-abuse', visible=False)
+sv = Service('anti-abuse', visible=False, manage_priv=priv.SUPERUSER)
 
 BANNED_WORD = (
 	'rbq', 'RBQ', '憨批', '废物', '死妈', '崽种', '傻逼', '傻逼玩意',
