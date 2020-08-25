@@ -820,6 +820,7 @@ async def _do_show_remain(bot:NoneBot, ctx:Context_T, args:ParseResult, at_user:
     if threshold > 3 or threshold < 1:
         threshold = 1
     cnt = 0
+    people = 0
     rlist = bm.list_challenge_remain(1, datetime.now() if today=='今日' else datetime.now()-timedelta(days=1))
     rlist.sort(key=lambda x: x[3] + x[4], reverse=True)
     msg = [  ('' if at_user else '\n') + f"{clan['name']}今日余刀：" ]
@@ -827,10 +828,11 @@ async def _do_show_remain(bot:NoneBot, ctx:Context_T, args:ParseResult, at_user:
         if r_n + r_e >= threshold:
             msg.append(f"剩{r_n}刀 补时{r_e}刀 | {ms.at(uid) if at_user else name}")
             cnt += r_n + r_e
+            people += 1
     if len(msg) == 1:
         await bot.send(ctx, f"{today}{clan['name']}所有成员均已下班！各位辛苦了！", at_sender=True)
     else:
-        msg.append(f'共剩{cnt}刀')
+        msg.append(f'共剩{people}人{cnt}刀')
         if at_user:
             msg.append("=========\n"+args.M)
         await bot.send(ctx, '\n'.join(msg), at_sender=not at_user) # 催刀不需要at自己
@@ -849,9 +851,10 @@ async def urge_remain(bot:NoneBot, ctx:Context_T, args:ParseResult):
     await _do_show_remain(bot, ctx, args, at_user=True)
 
 
-@cb_cmd('出刀记录', ArgParser(usage='!出刀记录 (@qq) (B编号) (昨日)', arg_dict={
+@cb_cmd('出刀记录', ArgParser(usage='!出刀记录 (@qq) (B编号) (R周目数) (昨日)', arg_dict={
         '@': ArgHolder(tip='qq号', type=int, default=0),
         'B': ArgHolder(tip='Boss编号', type=boss_code, default=0),
+        'R': ArgHolder(tip='周目数', type=round_code, default=0),
         '' : ArgHolder(type=str, default='今日')}))
 async def list_challenge(bot:NoneBot, ctx:Context_T, args:ParseResult):
     bm = BattleMaster(ctx['group_id'])
@@ -866,6 +869,7 @@ async def list_challenge(bot:NoneBot, ctx:Context_T, args:ParseResult):
     zone = bm.get_timezone_num(clan['server'])
     uid = args['@'] or args.at
     boss = args.B
+    rnd = args.R
     if uid:
         mem = _check_member(bm, uid, bm.group, '公会内无此成员')
         challen = bm.list_challenge_of_user_of_day(mem['uid'], mem['alt'], now, zone)
@@ -876,6 +880,8 @@ async def list_challenge(bot:NoneBot, ctx:Context_T, args:ParseResult):
     challenstr = 'E{eid:0>3d}|{name}|r{round}|b{boss}|{dmg: >7,d}{flag_str}'
     for c in challen:
         if boss!=0 and boss!=c['boss']:
+            continue
+        if rnd!=0 and rnd!=c['round']:
             continue
         mem = bm.get_member(c['uid'], c['alt'])
         c['name'] = mem['name'] if mem else c['uid']
