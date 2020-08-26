@@ -43,7 +43,7 @@ def get_time(gid: int, year: int, month: int) -> list:
     name = dt[dt["gid"]==gid]["name"].iloc[0]
 
     command = f'SELECT time FROM battle_{gid}_1_{year}{month}'
-    data = pd.read_sql("SELECT time FROM battle_1056624010_1_202007",conn)
+    data = pd.read_sql(command,conn)
 
     def hour(ts: pd.Series):
         now = datetime.strptime(ts.iloc[0],"%Y-%m-%d %H:%M:%S.%f")
