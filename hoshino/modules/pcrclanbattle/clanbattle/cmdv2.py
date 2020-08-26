@@ -811,7 +811,7 @@ async def _do_show_remain(bot:NoneBot, ctx:Context_T, args:ParseResult, at_user:
     if at_user:
         _check_admin(ctx, '才能催刀。您可以用【!查刀】查询余刀')
 
-    today = args[''] or '今日'
+    today = args[''] if not at_user else '今日'
     if today not in ('昨日','今日'):
         await bot.send(ctx, f'无法识别参数“{today}”\n如果您要设置阈值，请使用“T<阈值>”',at_sender=True)
         return
