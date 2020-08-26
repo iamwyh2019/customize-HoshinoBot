@@ -823,7 +823,7 @@ async def _do_show_remain(bot:NoneBot, ctx:Context_T, args:ParseResult, at_user:
     people = 0
     rlist = bm.list_challenge_remain(1, datetime.now() if today=='今日' else datetime.now()-timedelta(days=1))
     rlist.sort(key=lambda x: x[3] + x[4], reverse=True)
-    msg = [  ('' if at_user else '\n') + f"{clan['name']}今日余刀：" ]
+    msg = [  ('' if at_user else '\n') + f"{clan['name']}{today}余刀：" ]
     for uid, _, name, r_n, r_e in rlist:
         if r_n + r_e >= threshold:
             msg.append(f"剩{r_n}刀 补时{r_e}刀 | {ms.at(uid) if at_user else name}")
