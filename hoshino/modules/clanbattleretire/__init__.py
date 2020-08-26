@@ -1,19 +1,23 @@
 from io import BytesIO
-import os
+from os import path
 import requests
-from PIL import Image
+from PIL import Image,ImageFont,ImageDraw
 from hoshino import Service
-from hoshino.util import FreqLimiter
+from hoshino.util import FreqLimiter,fig2b64
 import matplotlib.pyplot as plt
-from .data_source import add_text, get_data, get_person
+from .data_source import get_data, get_person, get_time
+from matplotlib import font_manager as fm
 import base64
 import pandas as pd
 import numpy as np
 import datetime
 import math
+from nonebot import MessageSegment as ms
 
 _time_limit = 2*60
 _lmt = FreqLimiter(_time_limit)
+
+font_path = path.join(path.dirname(__file__), 'msyh.ttf')
 
 b_constellations = ["摩羯","水瓶","双鱼","白羊","金牛","双子","巨蟹","狮子","处女","天秤","天蝎","射手"] #国服的（预测）
 
@@ -26,18 +30,23 @@ REPORT_UNDECLARED = -1
 
 sv_help = '''
 [离职报告/会战报告] 生成一张离职报告/会战报告
+[出刀时间统计] 生成一张出刀时间分布表
 '''.strip()
 
 sv = Service('clanbattle-retire', help_=sv_help, bundle='离职报告')
 
-@sv.on_fullmatch('离职报告')
+@sv.on_fullmatch(('离职报告','!离职报告','！离职报告'))
 async def send_resign_report(bot, event):
     await send_report(bot, event, type=REPORT_RESIGN)
 
-@sv.on_fullmatch('会战报告')
+@sv.on_fullmatch(('会战报告','!会战报告','！会战报告'))
 async def send_normal_report(bot, event):
     await send_report(bot, event, type=REPORT_NORMAL)
 
+#这个函数本来可以直接写的，但为了保证代码风格统一就再封装一层
+@sv.on_fullmatch(('出刀时间统计','!出刀时间统计','！出刀时间统计'))
+async def send_chal_stat(bot, event):
+    await send_time_dist(bot, event)
 
 async def send_report(bot, event, type=REPORT_UNDECLARED):
 
@@ -54,15 +63,7 @@ async def send_report(bot, event, type=REPORT_UNDECLARED):
         return
     _lmt.start_cd(uid)
 
-    now = datetime.datetime.now()
-    year = now.year
-    month = now.month
-    day = now.day
-    if day<20:
-        month -= 1
-    if month==0:
-        year -= 1
-        month = 12
+    year,month = get_ym()
     constellation = b_constellations[month-1]
 
     try:
@@ -172,8 +173,8 @@ async def send_report(bot, event, type=REPORT_UNDECLARED):
     bar_img2 = Image.open(buf)
 
     #将饼图和柱状图粘贴到模板图,mask参数控制alpha通道，括号的数值对是偏移的坐标
-    current_folder = os.path.dirname(__file__)
-    img = Image.open(os.path.join(current_folder,background1 if type==REPORT_RESIGN else background2))
+    current_folder = path.dirname(__file__)
+    img = Image.open(path.join(current_folder,background1 if type==REPORT_RESIGN else background2))
     img.paste(bar_img1, (580,950), mask=bar_img1.split()[3])
     img.paste(bar_img2, (130,950), mask=bar_img2.split()[3])
 
@@ -193,8 +194,8 @@ async def send_report(bot, event, type=REPORT_UNDECLARED):
     {avg_day_damage}
     '''
     
-    add_text(img, row1, position=(380,630), textsize=35, textfill='black')
-    add_text(img, row2, position=(833,630), textsize=35, textfill='black')
+    add_text(img, row1, position=(400,620), textsize=35, textfill='black')
+    add_text(img, row2, position=(850,620), textsize=35, textfill='black')
     add_text(img, year, position=(355,438), textsize=40, textfill='black')
     add_text(img, month, position=(565,438), textsize=40, textfill='black')
     add_text(img, constellation, position=(710,438), textsize=40, textfill='black')
@@ -209,3 +210,47 @@ async def send_report(bot, event, type=REPORT_UNDECLARED):
     base64_str = f'base64://{base64.b64encode(buf.getvalue()).decode()}'
     await bot.send(event, f'[CQ:image,file={base64_str}]')
     plt.close('all')
+
+async def send_time_dist(bot, event):
+    gid = event['group_id']
+    year,month = get_ym()
+
+    try:
+        name,times = get_time(gid,year,month)
+    except Exception as e:
+        await bot.send(event, f"出现错误: {str(e)}\n请联系开发组调教。")
+        return
+
+    plt.rcParams['axes.unicode_minus']=False
+    prop = fm.FontProperties(fname=font_path)
+    fig,ax = plt.subplots(figsize=(12,6),facecolor='white')
+    ax.set_xlabel('时间',fontsize=20,fontproperties=prop)
+    ax.set_ylabel('刀数',fontsize=20,fontproperties=prop)
+    ax.set_title(f'{name}{year}年{month}月会战出刀时间统计',fontsize=25,fontproperties=prop)
+    ax.set_xlim((0-0.5,24))
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    colors=(['#808080']*6)+(['#9bc5af']*6)+(['#c54731']*6)+(['#3a4a59']*6)
+    plt.bar(range(24),times,color=colors)
+
+    pic = fig2b64(plt)
+    plt.close()
+    await bot.send(event, ms.image(pic))
+
+def get_ym():
+    now = datetime.datetime.now()
+    year = now.year
+    month = now.month
+    day = now.day
+    if day < 20:
+        month -= 1
+    if month == 0:
+        year -= 1
+        month = 12
+    return year,month
+
+def add_text(img: Image,text:str,textsize:int,font=font_path,textfill='white',position:tuple=(0,0)):
+    img_font = ImageFont.truetype(font=font,size=textsize)
+    draw = ImageDraw.Draw(img)
+    draw.text(xy=position,text=text,font=img_font,fill=textfill)
+    return img
