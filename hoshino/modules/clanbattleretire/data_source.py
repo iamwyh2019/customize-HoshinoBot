@@ -52,7 +52,7 @@ def get_time(gid: int, year: int, month: int) -> list:
     hours = data.apply(hour,result_type='reduce',axis=1).tolist()
     y = [0]*24
     for hr in hours:
-        y[hr-1] += 1
+        y[hr] += 1
 
     conn.close()
     return name,y

@@ -231,6 +231,7 @@ async def send_time_dist(bot, event):
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     colors=(['#808080']*6)+(['#9bc5af']*6)+(['#c54731']*6)+(['#3a4a59']*6)
+    plt.xticks(range(24),fontproperties=prop)
     plt.bar(range(24),times,color=colors)
 
     pic = fig2b64(plt)
