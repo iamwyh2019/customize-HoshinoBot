@@ -223,10 +223,11 @@ async def send_time_dist(bot, event):
 
     plt.rcParams['axes.unicode_minus']=False
     prop = fm.FontProperties(fname=font_path)
+    prop.set_size('large')
     fig,ax = plt.subplots(figsize=(12,6),facecolor='white')
-    ax.set_xlabel('时间',fontsize=20,fontproperties=prop)
-    ax.set_ylabel('刀数',fontsize=20,fontproperties=prop)
-    ax.set_title(f'{name}{year}年{month}月会战出刀时间统计',fontsize=25,fontproperties=prop)
+    ax.set_xlabel('时间',fontproperties=prop)
+    ax.set_ylabel('刀数',fontproperties=prop)
+    ax.set_title(f'{name}{year}年{month}月会战出刀时间统计',fontproperties=prop)
     ax.set_xlim((0-0.5,24))
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)

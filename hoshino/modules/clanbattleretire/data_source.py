@@ -42,7 +42,7 @@ def get_time(gid: int, year: int, month: int) -> list:
     dt = pd.read_sql(command, conn)
     name = dt[dt["gid"]==gid]["name"].iloc[0]
 
-    command = f'SELECT time FROM battle_{gid}_1_{year}{month}'
+    command = f'SELECT time FROM battle_{gid}_1_{year}{month} WHERE flag!=2'
     data = pd.read_sql(command,conn)
 
     def hour(ts: pd.Series):
