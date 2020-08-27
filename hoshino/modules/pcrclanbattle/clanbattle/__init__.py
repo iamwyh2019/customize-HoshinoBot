@@ -9,7 +9,7 @@ from hoshino.typing import *
 from .argparse import ArgParser
 from .exception import *
 
-sv = Service('clanbattle')
+sv = Service('clanbattle', help_='请发送[!帮助]查看帮助', bundle='pcr会战')
 SORRY = '嘤嘤嘤(〒︿〒)'
 
 _registry:Dict[str, Tuple[Callable, ArgParser]] = {}
@@ -43,7 +43,7 @@ async def _clanbattle_bus(bot, ctx):
         except Exception as e:
             sv.logger.exception(e)
             sv.logger.error(f'{type(e)} occured when {func.__name__} handling message {ctx["message_id"]}.')
-            await bot.send(ctx, f'Error: 机器人出现未预料的错误\n{SORRY}\n※请及时联系维护组', at_sender=True)
+            await bot.send(ctx, f'Error: {str(e)}\n{SORRY}\n※请及时联系维护组', at_sender=True)
 
 
 def cb_cmd(name, parser:ArgParser) -> Callable:

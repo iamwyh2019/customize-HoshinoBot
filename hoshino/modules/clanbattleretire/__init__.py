@@ -33,7 +33,7 @@ sv_help = '''
 [出刀时间统计] 生成一张出刀时间分布表
 '''.strip()
 
-sv = Service('clanbattle-retire', help_=sv_help, bundle='离职报告')
+sv = Service('clanbattle-retire', help_=sv_help, bundle='pcr会战')
 
 @sv.on_fullmatch(('离职报告','!离职报告','！离职报告'))
 async def send_resign_report(bot, event):

@@ -25,7 +25,7 @@ sv_help = '''
 [生成表情 <名字> <文案>] 生成一张表情
 '''.strip()
 
-sv = Service('表情生成器', help_=sv_help, bundle='表情生成器')
+sv = Service('表情生成器', help_=sv_help, bundle='pcr娱乐')
 
 @sv.on_fullmatch(('表情列表','查看表情列表'))
 async def show_memes(bot,event):

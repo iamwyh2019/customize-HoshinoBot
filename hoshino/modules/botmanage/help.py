@@ -12,9 +12,8 @@ TOP_MANUAL = '''
 
 更多功能：
 [帮助pcr查询]
-[帮助空调]
-[帮助离职报告]
-[帮助表情生成器]
+[帮助pcr娱乐]
+[帮助pcr会战]
 '''.strip()
 
 def gen_bundle_manual(bundle_name, service_list, gid):

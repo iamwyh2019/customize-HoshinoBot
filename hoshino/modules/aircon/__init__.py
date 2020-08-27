@@ -16,7 +16,7 @@ sv_help = '''
 [升级空调/降级空调] 调整空调类型
 '''.strip()
 
-sv = Service('aircon', help_=sv_help, bundle='空调')
+sv = Service('aircon', help_=sv_help, bundle='pcr娱乐')
 
 ac_type_text = ["家用空调","中央空调"]
 AIRCON_HOME = 0
