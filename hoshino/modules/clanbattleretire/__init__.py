@@ -52,7 +52,8 @@ async def send_normal_report(bot, event):
     report = gen_report(gid, uid, nickname, type=REPORT_NORMAL)
     await bot.send(event, report)
 
-@sv.on_prefix(('看看报告','查看报告'))
+#罪恶的功能，不启用了
+#@sv.on_prefix(('看看报告','查看报告'))
 async def send_others_report(bot, event):
     if not priv.check_priv(event, priv.ADMIN):
         return
