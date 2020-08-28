@@ -2,7 +2,7 @@ from io import BytesIO
 from os import path
 import requests
 from PIL import Image,ImageFont,ImageDraw
-from hoshino import Service
+from hoshino import Service, priv
 from hoshino.util import FreqLimiter,fig2b64
 import matplotlib.pyplot as plt
 from .data_source import get_data, get_person, get_time
@@ -30,6 +30,7 @@ REPORT_UNDECLARED = -1
 
 sv_help = '''
 [离职报告/会战报告] 生成一张离职报告/会战报告
+[看看报告@qq] 看看群员的会战报告（限管理员）
 [出刀时间统计] 生成一张出刀时间分布表
 '''.strip()
 
@@ -37,31 +38,53 @@ sv = Service('clanbattle-retire', help_=sv_help, bundle='pcr会战')
 
 @sv.on_fullmatch(('离职报告','!离职报告','！离职报告'))
 async def send_resign_report(bot, event):
-    await send_report(bot, event, type=REPORT_RESIGN)
+    uid = event['user_id']
+    nickname = event['sender']['nickname']
+    gid = event['group_id']
+    report = gen_report(gid, uid, nickname, type=REPORT_RESIGN)
+    await bot.send(event, report)
 
 @sv.on_fullmatch(('会战报告','!会战报告','！会战报告'))
 async def send_normal_report(bot, event):
-    await send_report(bot, event, type=REPORT_NORMAL)
+    uid = event['user_id']
+    nickname = event['sender']['nickname']
+    gid = event['group_id']
+    report = gen_report(gid, uid, nickname, type=REPORT_NORMAL)
+    await bot.send(event, report)
+
+@sv.on_prefix(('看看报告','查看报告'))
+async def send_others_report(bot, event):
+    if not priv.check_priv(event, priv.ADMIN):
+        return
+
+    gid = event['group_id']
+    message = event['message']
+    nickname,uid = None,None
+    for msg in message:
+        if msg.type == 'at' and msg.data['qq'] != 'all':
+            uid = int(msg.data['qq'])
+            info = await bot.get_group_member_info(group_id=gid,user_id=uid)
+            nickname = info['card'] or info['nickname']
+
+    if nickname:
+        msg = gen_report(gid,uid,nickname,type=REPORT_NORMAL,kpi=True)
+    else:
+        msg = '参数错误！'
+    await bot.send(event, msg)
 
 #这个函数本来可以直接写的，但为了保证代码风格统一就再封装一层
 @sv.on_fullmatch(('出刀时间统计','!出刀时间统计','！出刀时间统计'))
 async def send_chal_stat(bot, event):
     await send_time_dist(bot, event)
 
-async def send_report(bot, event, type=REPORT_UNDECLARED):
+def gen_report(gid, uid, nickname, type=REPORT_UNDECLARED, kpi=False):
 
     if type not in (REPORT_RESIGN,REPORT_NORMAL):
-        await bot.send(event, "类型错误！", at_sender=True)
-        return
-
-    uid = event['user_id']
-    nickname = event['sender']['nickname']
-    gid = event['group_id']
-
-    if not _lmt.check(uid):
-        await bot.send(event, f'每{math.ceil(_time_limit/60)}分钟仅能生成一次报告', at_sender=True)
-        return
-    _lmt.start_cd(uid)
+        return "类型错误！"
+    if not kpi:
+        if not _lmt.check(uid):
+            return f'每{math.ceil(_time_limit/60)}分钟仅能生成一次报告'
+        _lmt.start_cd(uid)
 
     year,month = get_ym()
     constellation = b_constellations[month-1]
@@ -69,12 +92,9 @@ async def send_report(bot, event, type=REPORT_UNDECLARED):
     try:
         clanname, challenges = get_person(gid,uid,year,month)
     except Exception as e:
-        await bot.send(event, f"出现错误: {str(e)}\n请联系开发组调教。")
-        return
-
+        return f"出现错误: {str(e)}\n请联系开发组调教。"
     if challenges.shape[0] == 0:
-        await bot.send(event, "您没有参加本次公会战。请再接再厉！", at_sender=True)
-        return
+        return "您没有参加本次公会战。请再接再厉！"
 
     total_chl = 0
     miss_chl = 0
@@ -208,8 +228,9 @@ async def send_report(bot, event, type=REPORT_UNDECLARED):
     buf = BytesIO()
     img.save(buf,format='JPEG')
     base64_str = f'base64://{base64.b64encode(buf.getvalue()).decode()}'
-    await bot.send(event, f'[CQ:image,file={base64_str}]')
+    img = f'[CQ:image,file={base64_str}]'
     plt.close('all')
+    return img
 
 async def send_time_dist(bot, event):
     gid = event['group_id']
