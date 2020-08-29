@@ -51,7 +51,7 @@ class ArgParser:
             except Exception:
                 msg = f"请给出正确的{holder.tip or '参数'}"
                 if name:
-                    msg += f"以{name}开头"
+                    msg += f"，以{name}开头"
                 raise ParseError(msg, self.usage)
         
         # 检查所有参数是否以赋值
@@ -60,7 +60,7 @@ class ArgParser:
                 if holder.default is None:  # 缺失必要参数 抛异常
                     msg = f"请给出{holder.tip or '缺少的参数'}"
                     if name:
-                        msg += f"以{name}开头"
+                        msg += f"，以{name}开头"
                     raise ParseError(msg, self.usage)
                 else:
                     result[name] = holder.default
