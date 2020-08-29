@@ -14,7 +14,7 @@ import datetime
 import math
 from nonebot import MessageSegment as ms
 
-_time_limit = 2*60
+_time_limit = 1*60
 _lmt = FreqLimiter(_time_limit)
 
 font_path = path.join(path.dirname(__file__), 'msyh.ttf')
@@ -39,7 +39,7 @@ sv = Service('clanbattle-retire', help_=sv_help, bundle='pcr会战')
 @sv.on_fullmatch(('离职报告','!离职报告','！离职报告'))
 async def send_resign_report(bot, event):
     uid = event['user_id']
-    nickname = event['sender']['nickname']
+    nickname = event['sender']['card'] or event['sender']['card']
     gid = event['group_id']
     report = gen_report(gid, uid, nickname, type=REPORT_RESIGN)
     await bot.send(event, report)
@@ -47,7 +47,7 @@ async def send_resign_report(bot, event):
 @sv.on_fullmatch(('会战报告','!会战报告','！会战报告'))
 async def send_normal_report(bot, event):
     uid = event['user_id']
-    nickname = event['sender']['nickname']
+    nickname = event['sender']['card'] or event['sender']['card']
     gid = event['group_id']
     report = gen_report(gid, uid, nickname, type=REPORT_NORMAL)
     await bot.send(event, report)
