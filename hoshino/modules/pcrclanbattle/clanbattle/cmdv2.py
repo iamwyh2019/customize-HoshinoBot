@@ -47,6 +47,7 @@ ERROR_CLAN_NOTFOUND = f'公会未初始化：请*群管理*使用【{USAGE_ADD_C
 ERROR_ZERO_MEMBER = f'公会内无成员：使用【{USAGE_ADD_MEMBER}】以添加{USAGE_TIP}'
 ERROR_MEMBER_NOTFOUND = f'未找到成员：请使用【{USAGE_ADD_MEMBER}】加入公会{USAGE_TIP}'
 ERROR_PERMISSION_DENIED = '权限不足：需*群管理*以上权限'
+ERROR_NOT_SUPERUSER = '权限不足：需机器人管理员'
 
 
 def _check_clan(bm:BattleMaster):
@@ -64,6 +65,10 @@ def _check_member(bm:BattleMaster, uid:int, alt:int, tip=None):
 def _check_admin(ctx:Context_T, tip:str=''):
     if not priv.check_priv(ctx, priv.ADMIN):
         raise PermissionDeniedError(ERROR_PERMISSION_DENIED + tip)
+
+def _check_superuser(ctx:Context_T, tip:str=''):
+    if not priv.check_priv(ctx, priv.SUPERUSER):
+        raise PermissionDeniedError(ERROR_NOT_SUPERUSER + tip)
 
 
 @cb_cmd('建会', ArgParser(usage=USAGE_ADD_CLAN, arg_dict={
@@ -293,7 +298,7 @@ async def add_challenge_ext(bot:NoneBot, ctx:Context_T, args:ParseResult):
     await process_challenge(bot, ctx, challenge)
 
 
-@cb_cmd('掉刀', ArgParser(usage='!掉刀 (@qq)', arg_dict={
+@cb_cmd(('掉刀','滑刀'), ArgParser(usage='!掉刀 (@qq)', arg_dict={
     '@': ArgHolder(tip='qq号', type=int, default=0),
     'R': ArgHolder(tip='周目数', type=round_code, default=0),
     'B': ArgHolder(tip='Boss编号', type=boss_code, default=0)}))
@@ -321,8 +326,57 @@ async def del_challenge(bot:NoneBot, ctx:Context_T, args:ParseResult):
     if ch['uid'] != ctx['user_id']:
         _check_admin(ctx, '才能删除其他人的记录')
     bm.del_challenge(args.E, 1, now)
-    await bot.send(ctx, f"{clan['name']}已删除{ms.at(ch['uid'])}的出刀记录E{args.E}", at_sender=True)
+    await bot.send(ctx, f"{clan['name']}已删除出刀记录E{args.E}", at_sender=True)
 
+@cb_cmd(('改刀','修改出刀','更改出刀'), ArgParser(usage='''!改刀 E记录编号 (T时间) (D伤害) (B编号) (R周目数)
+!改刀 E1 T2020-7-1-12:00:00 B3 R4 D750000''', arg_dict={
+    'E': ArgHolder(tip='记录编号', type=int),
+    'T': ArgHolder(tip='时间', type=str, default=''),
+    'D': ArgHolder(tip='伤害', type=damage_int, default=-1),
+    'B': ArgHolder(tip='Boss编号', type=boss_code, default=0),
+    'R': ArgHolder(tip='周目数', type=round_code, default=0)
+    }))
+async def change_challenge(bot:NoneBot, ctx:Context_T, args:ParseResult):
+    bm = BattleMaster(ctx['group_id'])
+    now = datetime.now()
+    clan = _check_clan(bm)
+    ch = bm.get_challenge(args.E, 1, now)
+    if not ch:
+        raise NotFoundError(f'未找到出刀记录E{args.E}')
+    if ch['uid'] != ctx['user_id']:
+        _check_admin(ctx, '才能修改其他人的记录')
+
+    eid = ch['eid']
+    uid = ch['uid']
+    alt = ch['alt']
+    rnd = ch['round'] if args['R']==0 else args['R']
+    boss = ch['boss'] if args['B']==0 else args['B']
+    dmg = ch['dmg'] if args['D']==-1 else args['D']
+    flag = ch['flag']
+    time = ch['time']
+    if args['T']!='':
+        try:
+            time = datetime.strptime(args['T'],'%Y-%m-%d-%H:%M:%S')
+        except:
+            await bot.send(ctx, f'时间参数错误：应为"YYYY-MM-DD-hh:mm:ss"格式')
+            return
+
+    bm.mod_challenge(eid,uid,alt,rnd,boss,dmg,flag,time)
+    await bot.send(ctx, f"{clan['name']}已修改出刀记录E{args.E}", at_sender=True)
+
+@cb_cmd(('查看出刀',), ArgParser(usage='!查看出刀', arg_dict={
+    'E': ArgHolder(tip='记录编号', type=int)
+    }))
+async def print_challenge(bot:NoneBot, ctx:Context_T, args:ParseResult):
+    _check_superuser(ctx, '才能使用此测试功能')
+    bm = BattleMaster(ctx['group_id'])
+    now = datetime.now()
+    clan = _check_clan(bm)
+    ch = bm.get_challenge(args.E, 1, now)
+    if not ch:
+        raise NotFoundError(f'未找到出刀记录E{args.E}')
+
+    await bot.send(ctx, f'测试信息\n{ch}')
 
 # TODO 将预约信息转至数据库
 SUBSCRIBE_PATH = os.path.expanduser('~/.hoshino/clanbattle_sub/')
@@ -840,9 +894,15 @@ async def _do_show_remain(bot:NoneBot, ctx:Context_T, args:ParseResult, at_user:
 
 @cb_cmd('查刀', ArgParser(usage='!查刀 (T阈值) (昨日)', arg_dict={
     'T': ArgHolder(tip='阈值', type=int, default=1),
+    '@': ArgHolder(tip='qq号', type=int, default=0),
+    'B': ArgHolder(tip='Boss编号', type=boss_code, default=0),
+    'R': ArgHolder(tip='周目数', type=round_code, default=0),
     '' : ArgHolder(tip='昨日', type=str, default='今日')}))
 async def list_remain(bot:NoneBot, ctx:Context_T, args:ParseResult):
-    await _do_show_remain(bot, ctx, args, at_user=False)
+    if args['B']!=0:
+        await list_challenge(bot,ctx,args)
+    else:
+        await _do_show_remain(bot, ctx, args, at_user=False)
 
 @cb_cmd('催刀', ArgParser(usage='!催刀 (T阈值) (M留言)', arg_dict={
     'T': ArgHolder(tip='阈值', type=int, default=1),
