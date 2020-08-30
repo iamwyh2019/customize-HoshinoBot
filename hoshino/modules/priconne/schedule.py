@@ -83,12 +83,13 @@ def return_schedule(st=0,en=7): #今天开始,七天后结束
 
     for n_days in range(st,en):
         t = base + datetime.timedelta(days=n_days)
-        year, month, day = str(t).split("-")#分割年月日
+        year, month, day = map(str,(t.year,t.month,t.day))
+        pmonth = month if len(month)>1 else '0'+month
         activity_info_list = []
         info_list = []
 
         for i in data['schedule_data']:
-            if i['year'] == year and i['month'] == month:
+            if i['year'] == year and i['month'] == pmonth:
                 
                 for key in day_key:
                     if i['day'][day][key] != '':
@@ -97,7 +98,7 @@ def return_schedule(st=0,en=7): #今天开始,七天后结束
 
                 activity_info_list = [info[13:-6] for info in info_list]
 
-                infos += '=========' + str(t).replace("-","年",1).replace("-","月",1) + '日' + '=========\n'
+                infos += f'========={year}年{month}月{day}日=========\n'
                 for i in activity_info_list:
                     infos += '>>> ' + i + '\n'
 
