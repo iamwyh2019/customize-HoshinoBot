@@ -46,7 +46,10 @@ def get_time(gid: int, year: int, month: int) -> list:
     data = pd.read_sql(command,conn)
 
     def hour(ts: pd.Series):
-        now = datetime.strptime(ts.iloc[0],"%Y-%m-%d %H:%M:%S.%f")
+        try:
+            now = datetime.strptime(ts.iloc[0],"%Y-%m-%d %H:%M:%S.%f")
+        except:
+            now = datetime.strptime(ts.iloc[0],"%Y-%m-%d %H:%M:%S")
         return now.hour
 
     hours = data.apply(hour,result_type='reduce',axis=1).tolist()
