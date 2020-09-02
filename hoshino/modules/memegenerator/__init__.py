@@ -87,6 +87,8 @@ async def remove_meme(bot,event):
 	else:
 		await bot.send(event,f'表情文件"{meme_name}"不存在',at_sender=True)
 
+	del img[idx],img_name[idx]
+
 
 @sv.on_prefix(('生成表情',))
 async def generate_meme(bot,event):
