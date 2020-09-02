@@ -1,9 +1,9 @@
 from io import BytesIO
-from hoshino import Service
+from hoshino import Service, priv
 from nonebot import MessageSegment
 import os
 from os import path
-from .memeutil import draw_meme
+from .memeutil import draw_meme, download_meme
 from PIL import Image
 import base64
 
@@ -23,6 +23,8 @@ sv_help = '''
 [表情列表] 查看当前表情列表
 [查看表情 <名字>] 查看指定表情
 [生成表情 <名字> <文案>] 生成一张表情
+[上传表情 <名字> <图片>] 上传一张表情
+[删除表情 <名字>] 删除一张表情（仅限管理员）
 '''.strip()
 
 sv = Service('表情生成器', help_=sv_help, bundle='pcr娱乐')
@@ -50,6 +52,41 @@ async def show_meme(bot,event):
 	idx = img_name.index(sel)
 	await bot.send(event,
 		MessageSegment.image(f'file:///{os.path.join(img_dir,img[idx])}'))
+
+@sv.on_prefix(('上传表情'))
+async def upload_meme(bot,event):
+	# if not priv.check_priv(event,priv.ADMIN):
+	#     await bot.send(event, '该操作需要管理员权限', at_sender=True)
+	#     return
+	msg = event.message.extract_plain_text().split(" ")
+	meme_name = ''.join(e for e in msg[0] if e.isalnum())
+	for seg in event.message:
+		if (seg.type == 'image'):
+			meme_path = download_meme(seg.data['url'], meme_name)
+			if (meme_path == ""):
+				await bot.send(event,f'上传表情"{meme_name}"失败',at_sender=True)
+			load_images()
+			await bot.send(event,f'上传表情"{meme_name}"成功',at_sender=True)
+
+@sv.on_prefix(('删除表情'))
+async def remove_meme(bot,event):
+	if not priv.check_priv(event,priv.ADMIN):
+		await bot.send(event, '该操作需要管理员权限', at_sender=True)
+		return
+	msg = event.message.extract_plain_text().split(" ")
+	meme_name = msg[0]
+	if meme_name not in img_name:
+		await bot.send(event,f'没有找到表情"{meme_name}"',at_sender=True)
+		return
+
+	idx = img_name.index(meme_name)
+	file_path = os.path.join(img_dir,img[idx])
+	if os.path.exists(file_path):
+		os.remove(file_path)
+		await bot.send(event,f'删除表情"{meme_name}"成功',at_sender=True)
+	else:
+		await bot.send(event,f'表情文件"{meme_name}"不存在',at_sender=True)
+
 
 @sv.on_prefix(('生成表情',))
 async def generate_meme(bot,event):
