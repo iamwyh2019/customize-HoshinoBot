@@ -60,7 +60,7 @@ class ResRec(ResObj):
         elif hoshino.config.RES_PROTOCOL=='file':
             return MessageSegment.record(f'file://{os.path.abspath(self.path)}')
         else:
-            return MessageSegment.text('[不支持的方法]')
+            return MessageSegment.text('[不支持base64协议]')
     
 def get(path, *paths):
     return ResObj(os.path.join(path, *paths))
