@@ -13,9 +13,9 @@ sv = Service('voiceguess', bundle='pcr娱乐', help_='''
 cygames | 猜猜随机的"cygames"语音来自哪位角色
 '''.strip())
 
-DOWNLOAD_THRESHOLD = 69
+DOWNLOAD_THRESHOLD = 60
 MULTIPLE_VOICE_ESTERTION_ID_LIST = ['0044']
-ONE_TURN_TIME = 30
+ONE_TURN_TIME = 20
 
 class WinnerRecorder:    
     def __init__(self):
@@ -83,7 +83,7 @@ def get_estertion_id_list():
 def estertion_id2chara_id(estertion_id):
     return (estertion_id + 1000)
 
-@sv.on_prefix('cygames')
+@sv.on_fullmatch(('cygames','猜语音','Cygames'))
 async def cygames_voice_guess(bot, ev: CQEvent):
     try:
         if winner_recorder.get_on_off_status():
