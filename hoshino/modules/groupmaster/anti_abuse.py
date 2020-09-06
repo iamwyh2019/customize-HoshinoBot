@@ -12,13 +12,16 @@ import hoshino
 from hoshino.service import sucmd
 from hoshino.typing import CommandSession, CQHttpError
 from hoshino import R, Service, util, priv
+from hoshino.util import DailyNumberLimiter
 
 sv = Service('anti-abuse', visible=False, manage_priv=priv.SUPERUSER)
 
+crawl = DailyNumberLimiter(1)
+
 BANNED_WORD = (
 	'rbq', 'RBQ', '憨批', '废物', '死妈', '崽种', '傻逼', '傻逼玩意',
-	'没用东西', '傻B', '傻b', 'SB', 'sb', '煞笔', 'cnm', '爬', 'kkp',
-	'nmsl', 'D区', '口区', '我是你爹', 'nmbiss', '弱智', '给爷爬', '杂种爬','爪巴'
+	'没用东西', '傻B', '傻b', 'SB', 'sb', '煞笔', 'cnm', 'kkp',
+	'nmsl', 'D区', '口区', '我是你爹', 'nmbiss', '弱智', '给爷爬', '杂种爬'
 )
 
 def get_sec(tstr):
@@ -42,28 +45,39 @@ def get_sec(tstr):
 
 	return (hour,minute,second)
 
-@on_command('ban_word', aliases=BANNED_WORD, only_to_me=True)
-async def ban_word(session):
-	ctx = session.ctx
-	user_id = ctx['user_id']
+async def process(bot, event):
+	user_id = event['user_id']
 	msg_from = str(user_id)
-	if ctx['message_type'] == 'group':
-		msg_from += f'@[群:{ctx["group_id"]}]'
-		group_id=ctx["group_id"]
-	elif ctx['message_type'] == 'discuss':
-		msg_from += f'@[讨论组:{ctx["discuss_id"]}]'
-		group_id=ctx["discuss_id"]
+	if event['message_type'] == 'group':
+		group_id=event["group_id"]
+	elif event['message_type'] == 'discuss':
+		group_id=event["discuss_id"]
 	else:
 		group_id = None
 
 	if (group_id is not None and priv.check_block_group(group_id)) or priv.check_block_user(user_id):
 		return
 
-	hoshino.logger.critical(f'Self: {ctx["self_id"]}, Message {ctx["message_id"]} from {msg_from}: {ctx["message"]}')
-	hoshino.priv.set_block_user(user_id, timedelta(hours=8))
+	hoshino.priv.set_block_user(user_id, timedelta(hours=1))
 	pic = R.img(f"angry.jpg").cqcode
-	await session.send(f"不理你啦！バーカー\n{pic}", at_sender=True)
-	await util.silence(session.ctx, 8*60*60)
+	await bot.send(event,f"不理你啦！バーカー\n{pic}", at_sender=True)
+	await util.silence(event, 1*60*60)
+
+@on_command('ban_word', aliases=BANNED_WORD, only_to_me=True)
+async def ban_word(session):
+	event = session.event
+	bot = session.bot
+	await process(bot,event)
+
+@sv.on_fullmatch(('爬','爪巴'),only_to_me=True)
+async def tolerable_ban_word(bot,event):
+	uid = event['user_id']
+	if crawl.check(uid):
+		crawl.increase(uid)
+		await bot.send(event,'别骂了别骂了，我爬就是了……再骂就不理你了！',at_sender=True)
+	else:
+		crawl.reset(uid)
+		await process(bot,event)
 
 @sv.on_prefix(('拉黑用户','拉黑群员','拉黑群友'))
 async def block_user(bot,event):
@@ -151,12 +165,12 @@ async def unblock_user(bot,event):
 
 @on_command('取消拉黑本群',aliases=('解除拉黑本群','取消拉黑此群','解除拉黑此群'),only_to_me=False)
 async def unblock_group(session):
-	ctx = session.ctx
-	uid = ctx['user_id']
-	if ctx['message_type'] == 'group':
-		gid=ctx["group_id"]
-	elif ctx['message_type'] == 'discuss':
-		gid=ctx["discuss_id"]
+	event = session.event
+	uid = event['user_id']
+	if event['message_type'] == 'group':
+		gid=event["group_id"]
+	elif event['message_type'] == 'discuss':
+		gid=event["discuss_id"]
 	else:
 		return
 
