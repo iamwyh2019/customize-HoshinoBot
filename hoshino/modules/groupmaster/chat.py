@@ -96,9 +96,8 @@ async def goodmorning(bot, ev):
 async def selfintro(bot, ev):
     await bot.send(ev,'我是圣特蕾莎女子学院好朋友部的优妮～')
 
-'''
-hentai_audio=("你是变态可疑分子.mp3","我懂了，你是变态吧.m4a")
-roar_audio=("瓜啊.m4a","呜啊.m4a")
+hentai_audio=("你是变态可疑分子.silk","我懂了，你是变态吧.silk")
+roar_audio=("瓜啊.silk","呜啊.silk")
 
 @sv.on_fullmatch(('变态','我是变态','我是绅士','变态可疑分子','可疑分子'))
 async def chat_hentai(bot,ev):
@@ -112,8 +111,7 @@ async def chat_roar(bot,ev):
 
 @sv.on_fullmatch(('唱歌','唱首歌','来首歌','来唱首歌'), only_to_me=True)
 async def sing(bot,ev):
-    await bot.send(ev,R.rec('song.mp3').cqcode)
-'''
+    await bot.send(ev,R.rec('song.silk').cqcode)
 
 @sv.on_fullmatch(('再见','拜拜'),only_to_me=True)
 async def farewell(bot,ev):
@@ -126,35 +124,35 @@ async def eatme(bot, ev):
     await bot.send(ev, '这样不好，真的', at_sender=True)
 
 @sv.on_keyword(('涩图', 'setu', '色图', '黄图', 'h图'))
-async def chat_antisetu(bot, ctx):
+async def chat_antisetu(bot, ev):
     if random.random() < 0.15:
-        await bot.send(ctx, '不要ghs哦')
+        await bot.send(ev, '不要ghs哦')
 
 @sv.on_keyword(('大佬', 'dalao', '大神'))
-async def chat_dalao(bot, ctx):
+async def chat_dalao(bot, ev):
     if random.random() < 0.15:
-        await bot.send(ctx, R.img('dalao.jpg').cqcode)
+        await bot.send(ev, R.img('dalao.jpg').cqcode)
 
 @sv.on_keyword(('确实', '有一说一', 'u1s1', 'yysy'))
-async def chat_queshi(bot, ctx):
+async def chat_queshi(bot, ev):
     if random.random() < 0.15:
-        await bot.send(ctx, R.img('确实.jpg').cqcode)
+        await bot.send(ev, R.img('确实.jpg').cqcode)
 
 @sv.on_keyword(('会战'))
-async def chat_clanba(bot, ctx):
+async def chat_clanba(bot, ev):
     if random.random() < 0.10:
-        await bot.send(ctx, R.img('我的天啊你看看都几点了.jpg').cqcode)
+        await bot.send(ev, R.img('我的天啊你看看都几点了.jpg').cqcode)
 
 @sv.on_keyword(('内鬼'))
-async def chat_neigui(bot, ctx):
+async def chat_neigui(bot, ev):
     if random.random() < 0.15:
-        await bot.send(ctx, R.img('内鬼.png').cqcode)
+        await bot.send(ev, R.img('内鬼.png').cqcode)
 
 
 #@sv.on_keyword(('伊莉亚','伊利亚','伊莉雅','伊利雅','yly'))
-#async def chat_yly(bot, ctx):
+#async def chat_yly(bot, ev):
 #    if random.random() < 0.15:
-#        await bot.send(ctx, f'''伊莉亚，嘿嘿嘿\n{R.img('伊莉亚.gif').cqcode}''')
+#        await bot.send(ev, f'''伊莉亚，嘿嘿嘿\n{R.img('伊莉亚.gif').cqcode}''')
 
 #nyb_player = f'''{R.img('春黑.gif').cqcode}
 #正在播放：New Year Burst
