@@ -272,6 +272,8 @@ async def rank_query_by_name(bot, ev: CQEvent):
         await bot.send(ev, '您查询得太快了, 请稍等一会儿', at_sender=True)
         return
     clan_name = ev.message.extract_plain_text()
+    if clan_name.isdigit():
+        await bot.send(ev,'如果您想查询某一排名，请使用“查询排名”')
     info = get_rank(clan_name, "name")
     if type(info) == int:
         msg = f'查询出现错误{info}，请联系维护者'
@@ -292,6 +294,8 @@ async def rank_query_by_leader(bot, ev: CQEvent):
         await bot.send(ev, '您查询得太快了, 请稍等一会儿', at_sender=True)
         return
     leader_name = ev.message.extract_plain_text()
+    if leader_name.isdigit():
+        await bot.send(ev,'如果您想查询某一排名，请使用“查询排名”')
     info = get_rank(leader_name, "leader")
     if type(info) == int:
         msg = f'查询出现错误{info}，请联系维护者'
@@ -313,7 +317,8 @@ async def rank_query_by_rank(bot, ev: CQEvent):
         return
     rank = ev.message.extract_plain_text()
     if not rank.isdigit():
-        await bot.send(ev, '请正确输入数字', at_sender=True)
+        await bot.send(ev, '无法识别该排名，将以公会名查询\n若要以公会名或会长名查询，请使用“查询公会”或“查询会长”', at_sender=True)
+        await rank_query_by_name(bot,ev)
         return
     info = get_rank(rank, "rank")
     if type(info) == int:
