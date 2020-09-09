@@ -43,7 +43,11 @@ async def reload_memes(bot,event):
 
 @sv.on_prefix(('查看表情','看看表情'))
 async def show_meme(bot,event):
-	msg = event.message.extract_plain_text().split(" ")
+	msg = event.message.extract_plain_text()
+	if msg == "":
+		await show_memes(bot, event)
+		return
+	msg = msg.split(" ")
 	sel = msg[0]
 	if sel not in img_name:
 		await bot.send(event,f'没有找到表情"{sel}"',at_sender=True)
@@ -53,11 +57,11 @@ async def show_meme(bot,event):
 	await bot.send(event,
 		MessageSegment.image(f'file:///{os.path.join(img_dir,img[idx])}'))
 
-@sv.on_prefix(('上传表情'))
+@sv.on_prefix(('上传表情','添加表情'))
 async def upload_meme(bot,event):
-	# if not priv.check_priv(event,priv.ADMIN):
-	#     await bot.send(event, '该操作需要管理员权限', at_sender=True)
-	#     return
+	if not priv.check_priv(event,priv.SUPERUSER):
+		await bot.send(event, '该操作需要超级管理员权限', at_sender=True)
+		return
 	msg = event.message.extract_plain_text().split(" ")
 	meme_name = ''.join(e for e in msg[0] if e.isalnum())
 	for seg in event.message:
@@ -68,10 +72,10 @@ async def upload_meme(bot,event):
 			load_images()
 			await bot.send(event,f'上传表情"{meme_name}"成功',at_sender=True)
 
-@sv.on_prefix(('删除表情'))
+@sv.on_prefix(('删除表情',))
 async def remove_meme(bot,event):
-	if not priv.check_priv(event,priv.ADMIN):
-		await bot.send(event, '该操作需要管理员权限', at_sender=True)
+	if not priv.check_priv(event,priv.SUPERUSER):
+		await bot.send(event, '该操作需要超级管理员权限', at_sender=True)
 		return
 	msg = event.message.extract_plain_text().split(" ")
 	meme_name = msg[0]
