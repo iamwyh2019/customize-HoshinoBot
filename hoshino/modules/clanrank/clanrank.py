@@ -329,7 +329,7 @@ async def rank_query_by_rank(bot, ev: CQEvent):
         _lmt.start_cd(uid)
     await bot.send(ev, msg)
 
-@sv_query.on_fullmatch('分数线')
+@sv_query.on_fullmatch(('分数线','!分数线','！分数线'))
 async def damage_line(bot, ev: CQEvent):
     """
     通过line接口来查询分数线，共14条信息
