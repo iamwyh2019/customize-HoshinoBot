@@ -6,7 +6,7 @@ from os import path
 from nonebot import MessageSegment
 import random
 
-sv = Service('~好看的东西~', bundle='pcr娱乐', help_='''
+sv = Service('好看的东西', bundle='pcr娱乐', help_='''
 来点好看的   |  一些好~看~的~图~片
 '''.strip())
 
@@ -23,7 +23,7 @@ async def send_food_pic(bot,event):
 
 	now = datetime.now()
 	if END<=now.hour<START:
-		await bot.send(event,f'这个功能只在{START}点到{END}点开♥放♥哟♥', at_sender=True)
+		await bot.send(event,f'这个功能只在{START}点到{END}点开放哟', at_sender=True)
 		return
 
 	res_list = os.listdir(res_path)
