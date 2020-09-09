@@ -913,7 +913,7 @@ async def _do_show_remain(bot:NoneBot, event:Context_T, args:ParseResult, at_use
     'R': ArgHolder(tip='周目数', type=round_code, default=0),
     '' : ArgHolder(tip='昨日', type=str, default='今日')}))
 async def list_remain(bot:NoneBot, event:Context_T, args:ParseResult):
-    if args['B']!=0:
+    if args['B'] or args['R'] or args['@'] or args.at:
         await list_challenge(bot,event,args)
     else:
         await _do_show_remain(bot, event, args, at_user=False)
