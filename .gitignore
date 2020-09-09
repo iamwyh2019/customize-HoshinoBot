@@ -143,3 +143,6 @@ hoshino/modules/pcrclanbattle/clanbattle/config.json
 >>>>>>> parent of 4b38afd... Update .gitignore
 hoshino/modules/botmanage/web_service_manager/view.py
 hoshino/modules/aircon/aircon.json
+hoshino/modules/entertain/_chara_data_full.py
+hoshino/modules/entertain/cheat.py
+hoshino/modules/entertain/README.md
