@@ -32,6 +32,9 @@ def draw_meme(img: Image, text:str):
 	rows = len(text_l)
 	text_len = max([get_width(s) for s in text_l])
 
+	if text_len == 0:
+		return img
+
 	tsize = int(img.width / text_len)
 	tsize = min(tsize,img.height//6) #太大了
 	position = ((img.width - text_len*tsize)//2,img.height+offset)

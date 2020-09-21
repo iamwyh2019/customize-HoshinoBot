@@ -96,7 +96,7 @@ async def download_comic(id_):
         json.dump(index, f, ensure_ascii=False)
 
 
-@sv.scheduled_job('cron', minute='*/5', second='25')
+#@sv.scheduled_job('cron', minute='*/5', second='25')
 async def update_seeker():
     '''
     轮询官方四格漫画更新

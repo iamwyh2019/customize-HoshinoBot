@@ -54,15 +54,23 @@ async def to_apply_for_title(bot, ev):
         await bot.send(ev, '你想听什么呀?', at_sender=True)
     else:
         music_name = ''.join(music_name)
-        #song_list = search_netease_cloud_music(music_name)
-        song_list = searchqq(music_name)
+        song_list = search_netease_cloud_music(music_name)
         if song_list:
             sv.logger.info('成功获取到歌曲列表')
             key = f'{ev.group_id}-{ev.user_id}'
             temp[key] = {}
             # _music = MessageSegment.music(type_=_type, id_=_id)
             msg = ['我找到了这些~!']
+
+            flag = True
+            if song_list[0]['type'] == '163':
+                msg.append('=== 网易云音乐 ===')
+
             for idx, song in enumerate(song_list):
+                if song['type'] == 'qq' and flag:
+                    msg.append('=== QQ音乐 ===')
+                    flag = False
+
                 msg.append(
                     f'{idx}. {song["name"]} - {song["artists"]}'
                 )
