@@ -23,7 +23,7 @@ sv_push = Service("clanrank-push",enable_on_default=True,visible=True,help_='''
 url_first = "https://service-kjcbcnmw-1254119946.gz.apigw.tencentcs.com/"
 headers = {"Custom-Source":"GitHub@var-mixer","Content-Type": "application/json","Referer": "https://kengxxiao.github.io/Kyouka/"}
 
-_time_limit = 20
+_time_limit = 15
 _lmt = FreqLimiter(_time_limit)
 
 def loadConfig():
@@ -48,34 +48,35 @@ def saveConfig(config):
     with open("./hoshino/modules/clanrank/clanrank.json","w",encoding='utf-8') as dump_f:
         json.dump(config,dump_f,indent=4,ensure_ascii=False)
  
-def get_rank(info,info_type):
+def get_rank(info, info_type, time=0):
     """
     母函数, 网络查询, 返回原始json信息
     可以查询的信息包括会长名字、公会名、名次、分数、榜单前十、会长ID
-    仅限前2W名和分数线公会\n
+    仅限前25000名和分数线公会\n
+    time请保证为时间戳形式
     """
     url = url_first + info_type
     url += '/'
     
     if info_type == "name":
         url += '-1'
-        content = json.dumps({"history":"0","clanName": info})
+        content = json.dumps({"history":int(time),"clanName": info})
     elif info_type == "leader":
         url += '-1'
-        content = json.dumps({"history":"0","leaderName": info})
+        content = json.dumps({"history":int(time),"leaderName": info})
     elif info_type == "score":
         # 无需额外请求头
         url += info
-        content = json.dumps({"history":"0"})
+        content = json.dumps({"history":int(time)})
     elif info_type == "rank":
         url += info
-        content = json.dumps({"history":"0"})
+        content = json.dumps({"history":int(time)})
     elif info_type == "fav":
         info = [info] # 转化为表
-        content = json.dumps({"ids": info, "history": "0"})
+        content = json.dumps({"ids": info, "history": int(time)})
     elif info_type == "line":
         # info内容此时无效
-        content = json.dumps({"ids": info, "history": "0"})
+        content = json.dumps({"ids": info, "history": int(time)})
     else:
         # 这都能填错?爪巴!
         return -1
@@ -85,6 +86,7 @@ def get_rank(info,info_type):
         # timeout
         return 408
     r_dec = json.loads(r.text)
+    hoshino.logger.info(f'接受到查询结果{r.text}')
     return r_dec
 
 def process(dec, infoList:list):
@@ -102,6 +104,7 @@ def process(dec, infoList:list):
     'leader_viewer_id':会长数字ID \n
     'full'：所有匹配到的查询结果
     """
+    infoList = infoList.copy() # 避免影响后续查询, 感谢sjj118, 参见#4
     # 异常处理
     if dec['code'] != 0:
         # Bad request
@@ -109,7 +112,7 @@ def process(dec, infoList:list):
         return msg
     result = len(dec['data'])
     if result == 0:
-        msg = "没有查询结果,仅能查询前20000名公会,排名信息30分钟更新一次,相比于游戏内更新有10分钟左右延迟\n"
+        msg = "没有查询结果,仅能查询前20000名公会,排名信息30分钟更新一次,相比于游戏内更新有12分钟左右延迟\n"
         return msg
 
     # 预处理列表信息中的部分
@@ -142,13 +145,13 @@ def process(dec, infoList:list):
             else:
                 msg += f"{msg_dic[key]}："
                 msg += f"{dec['data'][i][key]}\n"
-        if i<result-1:
+        if i < result-1:
             msg += '\n'
     return msg
 
 def set_clanname(group_id,leader_id):
     """
-    为一个群绑定公会信息, 由于公会是以会长ID为唯一标志的, 因此传入参数只有群号, 会长ID, 请确保公会是前2W名
+    为一个群绑定公会信息, 由于公会是以会长ID为唯一标志的, 因此传入参数只有群号, 会长ID, 请确保公会是前25000名
     """
     origin_info = get_rank(leader_id,"fav")
     if type(origin_info) == int:
@@ -171,7 +174,7 @@ def set_clanname(group_id,leader_id):
     saveConfig(clanrank_config)
     return 0
 
-@sv_push.on_fullmatch(('公会排名','工会排名','!公会排名','！公会排名','!工会排名','！工会排名'))
+@sv_push.on_fullmatch(('公会排名','工会排名','!公会排名','!工会排名','！公会排名','！工会排名','!排名','！排名'))
 async def clanrankQuery(bot, ev:CQEvent):
     """
     查询本公会排名, 需要预先绑定公会。
@@ -187,12 +190,12 @@ async def clanrankQuery(bot, ev:CQEvent):
     # 获取上次更新时间,假定网站更新比游戏内延迟12分钟
     lastQuertTime = config[str(group_id)]["lastQuery"]["ts"]
     if time.time() - lastQuertTime >= 42*60:
-        # 上次查询时间戳有效时间42分钟,超时会触发联网查询 (v0.1.5：ts始终返回0，因此不作缓存)
-        #msg = '缓存数据已超时, 正在在线查询......'
-        #await bot.send(ev, msg)
+        # 上次查询时间戳有效时间42分钟,超时会触发联网查询
+        msg = '缓存数据已超时, 正在在线查询\n'
+        await bot.send(ev, msg)
         code = set_clanname(int(group_id),config[str(group_id)]["leaderId"])
         if code != 0:
-            msg = f'发生错误{code}, 可能的原因：公会更换了会长/工会排名不在前2W名。\n如果非上述原因, 请联系维护并提供此信息。\n'
+            msg = f'发生错误{code}, 可能的原因：公会更换了会长/工会排名不在前25000名/传入的时间戳不正确。\n如果非上述原因, 请联系维护并提供此信息。\n'
             await bot.send(ev, msg)
             return
         else:
@@ -209,7 +212,7 @@ async def set_clan(bot,ev:CQEvent):
     """
     uid = ev.user_id
     if not _lmt.check(uid):
-        await bot.send(ev, '您操作得太快了, 请稍等一会儿', at_sender=True)
+        await bot.send(ev, f'您操作得太快了, 请稍等一会儿(冷却时间剩余{int(_lmt.left_time(uid)) + 1}秒)', at_sender=True)
         return
     _lmt.start_cd(uid)
     group_id = ev.group_id
@@ -219,7 +222,7 @@ async def set_clan(bot,ev:CQEvent):
         return
     code = set_clanname(int(group_id),int(leader_id))
     if code != 0:
-        msg = f'发生错误{code}, 可能的原因：网络错误/ID输入错误/工会排名不在前2W名。\n如果非上述原因, 请联系维护并提供此信息。'
+        msg = f'发生错误{code}, 可能的原因：网络错误/ID输入错误/工会排名不在前25000名。\n如果非上述原因, 请联系维护并提供此信息。'
         await bot.send(ev, msg, at_sender=True)
         return
     msg = f"绑定成功\n"
@@ -243,11 +246,11 @@ async def clanrank_push_cn():
         if origin_info['code'] != 0:
             # Bad request
             msg += f"查询本日5时公会战信息时发生错误{origin_info['code']}"
-        elif result == 0:
-            msg += "没有查询到本日5时的公会战排名信息, 可能已掉出前2W名"
         elif time.time() - origin_info['ts'] >= 45*60:
             # 获得的数据是超过45分钟以前的, 说明网站不再更新, 公会战结束
             return
+        elif result == 0:
+            msg += "没有查询到本日5时的公会战排名信息, 可能已掉出前25000名"
         else:
             clanname = origin_info['data'][0]['clan_name']
             rank = origin_info['data'][0]['rank']
@@ -269,17 +272,17 @@ async def rank_query_by_name(bot, ev: CQEvent):
     """
     uid = ev.user_id
     if not _lmt.check(uid):
-        await bot.send(ev, '您查询得太快了, 请稍等一会儿', at_sender=True)
+        await bot.send(ev, f'您查询得太快了, 请稍等一会儿(冷却时间剩余{int(_lmt.left_time(uid)) + 1}秒)', at_sender=True)
         return
     clan_name = ev.message.extract_plain_text()
     if clan_name.isdigit():
-        await bot.send(ev,'如果您想查询某一排名，请使用“查询排名”')
+        await bot.send(ev,'如果您想查询某一排名，请使用“查询排名+[排名]”')
     info = get_rank(clan_name, "name")
     if type(info) == int:
         msg = f'查询出现错误{info}，请联系维护者'
     else:
         msg = process(info,leader_id_query_list)
-        msg += f"查询有{_time_limit}秒冷却"
+        msg += f"\n查询有{_time_limit}秒冷却"
         _lmt.start_cd(uid)
     await bot.send(ev, msg)
 
@@ -291,7 +294,7 @@ async def rank_query_by_leader(bot, ev: CQEvent):
     """
     uid = ev.user_id
     if not _lmt.check(uid):
-        await bot.send(ev, '您查询得太快了, 请稍等一会儿', at_sender=True)
+        await bot.send(ev, f'您查询得太快了, 请稍等一会儿(冷却时间剩余{int(_lmt.left_time(uid)) + 1}秒)', at_sender=True)
         return
     leader_name = ev.message.extract_plain_text()
     if leader_name.isdigit():
@@ -301,7 +304,7 @@ async def rank_query_by_leader(bot, ev: CQEvent):
         msg = f'查询出现错误{info}，请联系维护者'
     else:
         msg = process(info,leader_id_query_list)
-        msg += f"查询有{_time_limit}秒冷却"
+        msg += f"\n查询有{_time_limit}秒冷却"
         _lmt.start_cd(uid)
     await bot.send(ev, msg)
 
@@ -313,7 +316,7 @@ async def rank_query_by_rank(bot, ev: CQEvent):
     """
     uid = ev.user_id
     if not _lmt.check(uid):
-        await bot.send(ev, '您查询得太快了, 请稍等一会儿', at_sender=True)
+        await bot.send(ev, f'您查询得太快了, 请稍等一会儿(冷却时间剩余{int(_lmt.left_time(uid)) + 1}秒)', at_sender=True)
         return
     rank = ev.message.extract_plain_text()
     if not rank.isdigit():
@@ -325,7 +328,7 @@ async def rank_query_by_rank(bot, ev: CQEvent):
         msg = f'查询出现错误{info}，请联系维护者'
     else:
         msg = process(info,leader_id_query_list)
-        msg += f"查询有{_time_limit}秒冷却"
+        msg += f"\n查询有{_time_limit}秒冷却"
         _lmt.start_cd(uid)
     await bot.send(ev, msg)
 
@@ -336,7 +339,7 @@ async def damage_line(bot, ev: CQEvent):
     """
     uid = ev.user_id
     if not _lmt.check(uid):
-        await bot.send(ev, '您查询得太快了, 请稍等一会儿', at_sender=True)
+        await bot.send(ev, f'您查询得太快了, 请稍等一会儿(冷却时间剩余{int(_lmt.left_time(uid)) + 1}秒)', at_sender=True)
         return
     info = get_rank("nothing", "line")
     if type(info) == int:
