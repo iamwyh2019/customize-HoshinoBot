@@ -312,7 +312,7 @@ async def add_challenge_ext(bot:NoneBot, event:Context_T, args:ParseResult):
     await process_challenge(bot, event, challenge)
 
 
-@cb_cmd(('掉刀','滑刀'), ArgParser(usage='!掉刀 (@qq)', arg_dict={
+@cb_cmd(('掉刀','滑刀','吞刀'), ArgParser(usage='!掉刀 (@qq)', arg_dict={
     '@': ArgHolder(tip='qq号', type=int, default=0),
     'R': ArgHolder(tip='周目数', type=round_code, default=0),
     'B': ArgHolder(tip='Boss编号', type=boss_code, default=0)}))
@@ -342,13 +342,15 @@ async def del_challenge(bot:NoneBot, event:Context_T, args:ParseResult):
     bm.del_challenge(args.E, 1, now)
     await bot.send(event, f"{clan['name']}已删除出刀记录E{args.E}", at_sender=True)
 
-@cb_cmd(('改刀','修改出刀','更改出刀'), ArgParser(usage='''!改刀 E记录编号 (T时间) (D伤害) (B编号) (R周目数)
+@cb_cmd(('改刀','修改出刀','更改出刀'), ArgParser(usage='''!改刀 E记录编号 (T时间) (D伤害) (B编号) (R周目数) (@qq) (F类型)
 !改刀 E1 T2020-7-1-12:00:00 B3 R4 D750000''', arg_dict={
     'E': ArgHolder(tip='记录编号', type=int),
     'T': ArgHolder(tip='时间', type=str, default=''),
     'D': ArgHolder(tip='伤害', type=damage_int, default=-1),
     'B': ArgHolder(tip='Boss编号', type=boss_code, default=0),
-    'R': ArgHolder(tip='周目数', type=round_code, default=0)
+    'R': ArgHolder(tip='周目数', type=round_code, default=0),
+    'F': ArgHolder(tip='类型', type=str, default='不变'),
+    '@': ArgHolder(tip='QQ号', type=int, default=0)
     }))
 async def change_challenge(bot:NoneBot, event:Context_T, args:ParseResult):
     bm = BattleMaster(event['group_id'])
@@ -361,12 +363,26 @@ async def change_challenge(bot:NoneBot, event:Context_T, args:ParseResult):
         _check_admin(event, '才能修改其他人的记录')
 
     eid = ch['eid']
-    uid = ch['uid']
+    uid = args.at or args['@'] or ch['uid']
     alt = ch['alt']
     rnd = ch['round'] if args['R']==0 else args['R']
     boss = ch['boss'] if args['B']==0 else args['B']
     dmg = ch['dmg'] if args['D']==-1 else args['D']
+
     flag = ch['flag']
+    flg = args['F']
+    if flg!='不变':
+        if flg in ('通常','普通','通常刀','普通刀'):
+            flag = BattleMaster.NORM
+        elif flg in ('尾刀','收尾','收尾刀'):
+            flag = BattleMaster.LAST
+        elif flg in ('补时','补时刀','补刀'):
+            flag = BattleMaster.EXT
+        elif flg in ('掉刀','滑刀','吞刀'):
+            flag = BattleMaster.TIMEOUT
+        else:
+            raise NotFoundError(f'未知的参数"{flg}"')
+
     time = ch['time']
     if args['T']!='':
         try:
