@@ -191,7 +191,7 @@ async def clanrankQuery(bot, ev:CQEvent):
     lastQuertTime = config[str(group_id)]["lastQuery"]["ts"]
     if time.time() - lastQuertTime >= 42*60:
         # 上次查询时间戳有效时间42分钟,超时会触发联网查询
-        msg = '缓存数据已超时, 正在在线查询\n'
+        msg = '缓存数据已超时, 正在在线查询……'
         await bot.send(ev, msg)
         code = set_clanname(int(group_id),config[str(group_id)]["leaderId"])
         if code != 0:
