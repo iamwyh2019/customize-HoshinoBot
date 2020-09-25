@@ -301,6 +301,19 @@ async def add_challenge_last(bot:NoneBot, event:Context_T, args:ParseResult):
     'R': ArgHolder(tip='周目数', type=round_code, default=0),
     'B': ArgHolder(tip='Boss编号', type=boss_code, default=0)}))
 async def add_challenge_ext(bot:NoneBot, event:Context_T, args:ParseResult):
+    bm = BattleMaster(event['group_id'])
+    clan = _check_clan(bm)
+    zone = bm.get_timezone_num(clan['server'])
+    now = datetime.now()
+
+    uid = args['@'] or args.at or event['user_id']
+    alt = event['group_id']
+    challen = bm.list_challenge_of_user_of_day(uid, alt, now, zone)
+
+    if len(challen)==0 or not (challen[-1]['flag'] & BattleMaster.LAST):
+        await bot.send(event, '⚠️您的上一刀不是尾刀！', at_sender=True)
+        return
+
     challenge = ParseResult({
         'round': args.R,
         'boss': args.B,
