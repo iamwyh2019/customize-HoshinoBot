@@ -83,6 +83,13 @@ class BattleMaster(object):
         score_rate = config[ config["SCORE_RATE"][server] ][ stage-1 ][ boss-1 ]
         return boss_hp, score_rate
 
+    def get_phase2_threshold(self,round_,server):
+        boss = 5
+        stage = BattleMaster.get_stage(round_, server)
+        config = self.config
+        boss_hp = config[ config["BOSS_HP"][server] ][ stage-1 ][ boss-1 ]
+        return boss_hp // 2
+
 
     def get_boss_hp(self, round_, boss, server):
         stage = BattleMaster.get_stage(round_, server)
@@ -98,9 +105,11 @@ class BattleMaster(object):
 
     @staticmethod
     def int2kanji(x):
-        if 0 <= x <= 50:
+        if 0 <= x <= 5:
             return '零一二三四五六七八九十⑪⑫⑬⑭⑮⑯⑰⑱⑲廿㉑㉒㉓㉔㉕㉖㉗㉘㉙卅㉛㉜㉝㉞㉟㊱㊲㊳㊴㊵㊶㊷㊸㊹㊺㊻㊼㊽㊾㊿'[x]
-        raise ValueError("'x' should in range [0, 50]")
+        elif x==6:
+            return '狂暴五'
+        raise ValueError("'x' should in range [0, 6]")
 
     @staticmethod
     def get_server_code(server_name):

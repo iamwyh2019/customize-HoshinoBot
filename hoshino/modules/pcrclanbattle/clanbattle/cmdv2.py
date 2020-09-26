@@ -242,8 +242,15 @@ async def process_challenge(bot:NoneBot, event:Context_T, ch:ParseResult):
     # 判断是否更换boss，呼叫预约
     if aft_round != cur_round or aft_boss != cur_boss:
         await call_subscribe(bot, event, aft_round, aft_boss)
+    elif aft_boss == 5:
+        threshold = bm.get_phase2_threshold(aft_round,clan['server'])
+        if cur_hp > threshold and aft_hp < threshold:
+            aft_boss = 6
+            await call_subscribe(bot, event, aft_round, aft_boss)
+        elif cur_hp < threshold:
+            boss = 6
 
-    await auto_unlock_boss(bot, event, bm)
+    #await auto_unlock_boss(bot, event, bm)
     await auto_unsubscribe(bot, event, bm.group, mem['uid'], boss)
 
 
@@ -429,7 +436,7 @@ os.makedirs(SUBSCRIBE_PATH, exist_ok=True)
 class SubscribeData:
 
     def __init__(self, data:dict):
-        for i in '12345':
+        for i in '123456':
             data.setdefault(i, [])
             data.setdefault('m' + i, [])
             l = len(data[i])
@@ -437,17 +444,17 @@ class SubscribeData:
                 data['m' + i] = [None] * l
         data.setdefault('tree', [])
         data.setdefault('lock', [])
-        if 'max' not in data or len(data['max']) != 6:
-            data['max'] = [99, 6, 6, 6, 6, 6]
+        if 'max' not in data or len(data['max']) != 7:
+            data['max'] = [99, 10, 10, 10, 10, 10, 10]
         self._data = data
         
     @staticmethod
     def default():
         return SubscribeData({
-            '1':[], '2':[], '3':[], '4':[], '5':[],
-            'm1':[], 'm2':[], 'm3':[], 'm4':[], 'm5':[],
+            '1':[], '2':[], '3':[], '4':[], '5':[], '6':[],
+            'm1':[], 'm2':[], 'm3':[], 'm4':[], 'm5':[], 'm6':[],
             'tree':[], 'lock':[],
-            'max': [99, 6, 6, 6, 6, 6]
+            'max': [99, 10, 10, 10, 10, 10, 10]
         })
     
     def get_sub_list(self, boss:int):
@@ -532,9 +539,10 @@ def _gen_namelist_text(bm:BattleMaster, uidlist:List[int], memolist:List[str]=No
 
 SUBSCRIBE_TIP = ''
 
-@cb_cmd('预约', ArgParser(usage='!预约 <Boss号> M留言', arg_dict={
+@cb_cmd('预约', ArgParser(usage='!预约 <Boss号> [M留言] [狂暴]', arg_dict={
     '': ArgHolder(tip='Boss编号', type=boss_code),
-    'M': ArgHolder(tip='留言', default='')}))
+    'M': ArgHolder(tip='留言', default=''),
+    '狂' : ArgHolder(tip='状态', type=str, default='')}))
 async def subscribe(bot:NoneBot, event:Context_T, args:ParseResult):
     bm = BattleMaster(event['group_id'])
     uid = event['user_id']
@@ -542,6 +550,16 @@ async def subscribe(bot:NoneBot, event:Context_T, args:ParseResult):
     _check_member(bm, uid, bm.group)
     sub = _load_sub(bm.group)
     boss = args['']
+
+    if args['狂'] not in ('','暴'):
+        await bot.send(event, 'Boss状态错误！', at_sender=True)
+        return
+    elif args['狂']=='暴':
+        if boss!=5:
+            await bot.send(event, '只有五王存在狂暴状态！', at_sender=True)
+            return
+        boss=6
+
     memo = args.M
     boss_name = bm.int2kanji(boss)
     slist = sub.get_sub_list(boss)
@@ -562,8 +580,9 @@ async def subscribe(bot:NoneBot, event:Context_T, args:ParseResult):
     await bot.send(event, '\n'.join(msg), at_sender=True)
 
 
-@cb_cmd(('取消预约', '预约取消'), ArgParser(usage='!取消预约 <Boss号>', arg_dict={
-    '': ArgHolder(tip='Boss编号', type=boss_code)}))
+@cb_cmd(('取消预约', '预约取消'), ArgParser(usage='!取消预约 <Boss号> [狂暴]', arg_dict={
+    '': ArgHolder(tip='Boss编号', type=boss_code),
+    '狂': ArgHolder(tip='状态', type=str, default='')}))
 async def unsubscribe(bot:NoneBot, event:Context_T, args:ParseResult):
     bm = BattleMaster(event['group_id'])
     uid = event['user_id']
@@ -571,6 +590,16 @@ async def unsubscribe(bot:NoneBot, event:Context_T, args:ParseResult):
     _check_member(bm, uid, bm.group)
     sub = _load_sub(bm.group)
     boss = args['']
+
+    if args['狂'] not in ('','暴'):
+        await bot.send(event, 'Boss状态错误！', at_sender=True)
+        return
+    elif args['狂']=='暴':
+        if boss!=5:
+            await bot.send(event, '只有五王存在狂暴状态！', at_sender=True)
+            return
+        boss=6
+
     boss_name = bm.int2kanji(boss)    
     slist = sub.get_sub_list(boss)
     mlist = sub.get_memo_list(boss)
@@ -605,9 +634,9 @@ async def call_subscribe(bot:NoneBot, event:Context_T, round_:int, boss:int):
     if slist:
         msg.append(f"您预约的{BattleMaster.int2kanji(boss)}王出现啦！")
         msg.extend(_gen_namelist_text(bm, slist, mlist, do_at=True))
-    if slist and tlist:
+    if slist and tlist and boss!=6:
         msg.append("==========")
-    if tlist:
+    if tlist and boss!=6:
         msg.append(f"以下成员可以下树了")
         msg.extend(map(lambda x: str(ms.at(x)), tlist))
         sub.clear_tree()
@@ -622,7 +651,7 @@ async def list_subscribe(bot:NoneBot, event:Context_T, args:ParseResult):
     clan = _check_clan(bm)
     msg = [ f"\n{clan['name']}当前预约情况：" ]
     sub = _load_sub(bm.group)
-    for boss in range(1, 6):
+    for boss in range(1, 7):
         slist = sub.get_sub_list(boss)
         mlist = sub.get_memo_list(boss)
         limit = sub.get_sub_limit(boss)
@@ -631,14 +660,25 @@ async def list_subscribe(bot:NoneBot, event:Context_T, args:ParseResult):
     await bot.send(event, '\n'.join(msg), at_sender=True)
 
 
-@cb_cmd(('清空预约', '预约清空', '清理预约', '预约清理'), ArgParser('!清空预约', arg_dict={
-    '': ArgHolder(tip='Boss编号', type=boss_code)}))
+@cb_cmd(('清空预约', '预约清空', '清理预约', '预约清理'), ArgParser('!清空预约 <Boss编号> [狂暴]', arg_dict={
+    '': ArgHolder(tip='Boss编号', type=boss_code),
+    '狂': ArgHolder(tip='状态', type=str, default='')}))
 async def clear_subscribe(bot:NoneBot, event:Context_T, args:ParseResult):
     bm = BattleMaster(event['group_id'])
     clan = _check_clan(bm)
     _check_admin(event, '才能清理预约队列')
     sub = _load_sub(bm.group)
     boss = args['']
+
+    if args['狂'] not in ('','暴'):
+        await bot.send(event, 'Boss状态错误！', at_sender=True)
+        return
+    elif args['狂']=='暴':
+        if boss!=5:
+            await bot.send(event, '只有五王存在狂暴状态！', at_sender=True)
+            return
+        boss=6
+    
     slist = sub.get_sub_list(boss)
     mlist = sub.get_memo_list(boss)
     if slist:
@@ -713,7 +753,7 @@ async def list_sos(bot:NoneBot, event:Context_T, args:ParseResult):
     msg.extend(_gen_namelist_text(bm, tree))
     await bot.send(event, '\n'.join(msg), at_sender=True)
 
-
+'''
 @cb_cmd(('锁定', '申请出刀'), ArgParser('!锁定'))
 async def lock_boss(bot:NoneBot, event:Context_T, args:ParseResult):
     bm = BattleMaster(event['group_id'])
@@ -778,6 +818,7 @@ async def auto_unlock_boss(bot:NoneBot, event:Context_T, bm:BattleMaster):
             _save_sub(sub, bm.group)
             msg = f"\nBoss已自动解锁"
             await bot.send(event, msg, at_sender=True)
+'''
 
 
 @cb_cmd(('进度', '进度查询', '查询进度', '进度查看', '查看进度', '状态'), ArgParser(usage='!进度'))
