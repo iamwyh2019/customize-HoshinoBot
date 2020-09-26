@@ -84,14 +84,19 @@ QUICK_START = f'''
 【查询余刀&催刀】
 !查刀
 !催刀
+【预约Boss】
+!预约 四王
+!预约 五王 狂暴
 
-※前往 t.cn/A6wBzowv 查看完整命令一览表
+※前往 topurl.cn/3yp 查看完整命令一览表
 '''.rstrip()
 
 @on_command('!帮助', aliases=('！帮助', '!幫助', '！幫助', '!help', '！help'), only_to_me=False)
 async def cb_help(session:CommandSession):
     await session.send(QUICK_START, at_sender=True)
-    msg = MessageSegment.share(url='https://github.com/Ice-Cirno/HoshinoBot/blob/master/hoshino/modules/pcrclanbattle/clanbattle/README.md',
-                               title='Hoshino会战管理v2',
+    '''
+    msg = MessageSegment.share(url='https://github.com/iamwyh2019/customize-HoshinoBot/blob/master/hoshino/modules/pcrclanbattle/clanbattle/README.md',
+                               title='优妮会战管理',
                                content='命令一览表')
     await session.send(msg)
+    '''
