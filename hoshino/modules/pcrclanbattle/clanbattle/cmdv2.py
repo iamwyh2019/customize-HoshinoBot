@@ -241,10 +241,12 @@ async def process_challenge(bot:NoneBot, event:Context_T, ch:ParseResult):
 
     # 判断是否更换boss，呼叫预约
     if aft_round != cur_round or aft_boss != cur_boss:
+        if boss==5:
+            boss = 6
         await call_subscribe(bot, event, aft_round, aft_boss)
     elif aft_boss == 5:
         threshold = bm.get_phase2_threshold(aft_round,clan['server'])
-        if cur_hp > threshold and aft_hp < threshold:
+        if cur_hp >= threshold and aft_hp < threshold:
             aft_boss = 6
             await call_subscribe(bot, event, aft_round, aft_boss)
         elif cur_hp < threshold:
