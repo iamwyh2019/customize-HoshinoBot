@@ -4,7 +4,7 @@ HoshinoBot的个人修改版。安装和部署指南请看[部署](#deploy)。
 
 本项目不提供资源文件。
 
-<font color=red>由于开发组退坑PCR，此项目更新速度将大幅放慢。</font>
+**由于开发组退坑PCR，此项目更新速度将大幅放慢。**
 
 ## 简介
 
@@ -53,4 +53,4 @@ HoshinoBot的个人修改版。安装和部署指南请看[部署](#deploy)。
 
 随后，在go-cqhttp的[项目地址](https://github.com/Mrs4s/go-cqhttp/releases)下载符合您系统的程序，并参考[配置教程](https://github.com/Mrs4s/go-cqhttp/blob/master/docs/config.md)配置`config.ini`。在配置中，请关闭`http_config`与`ws_config`，启用`ws_reverse_servers`，其中`reverse_url`的格式为`ws://[您的IP]:[您的监听端口]/ws/`，其中监听端口与HoshinoBot中的监听端口保持一致。
 
-配置完后，依次启动HoshinoBot与miraiOK，向机器人发送“在吗”测试，若有回复则部署成功。
+配置完后，依次启动HoshinoBot与go-cqhttp，向机器人发送“在吗”测试，若有回复则部署成功。
