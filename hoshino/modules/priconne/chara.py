@@ -113,7 +113,7 @@ def download_chara_icon(id_, star):
     save_path = R.img(f'priconne/unit/icon_unit_{id_}{star}1.png').path
     logger.info(f'Downloading chara icon from {url}')
     try:
-        rsp = requests.get(url, stream=True, timeout=5)
+        rsp = requests.get(url, stream=True, timeout=10)
     except Exception as e:
         logger.error(f'Failed to download {url}. {type(e)}')
         #logger.exception(e)
@@ -199,7 +199,7 @@ class Chara:
 
 
 
-@sucmd('reload-pcr-chara', force_private=False, aliases=('重载角色花名册', ))
+@sucmd('reload-pcr-chara', force_private=False, aliases=('重载角色花名册','重置角色花名册','更新角色花名册','刷新角色花名册'))
 async def reload_pcr_chara(session: CommandSession):
     try:
         roster.update()
@@ -215,11 +215,13 @@ async def reload_chara_icon(session: CommandSession):
     if idx==UNKNOWN:
         await session.send(f'未找到角色“{name}”')
         return
+    c = fromid(idx)
+    await session.send(f'正在下载{c.name}的头像，请稍等')
     six = download_chara_icon(idx, 6)
     three = download_chara_icon(idx, 3)
     one = download_chara_icon(idx, 1)
     if any((one,three,six)):
-        msg = f'已更新{name}的'
+        msg = f'已更新{c.name}的'
         if one:
             msg += '一星'
         if three:
