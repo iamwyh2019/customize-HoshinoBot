@@ -116,13 +116,16 @@ def download_chara_icon(id_, star):
         rsp = requests.get(url, stream=True, timeout=5)
     except Exception as e:
         logger.error(f'Failed to download {url}. {type(e)}')
-        logger.exception(e)
+        #logger.exception(e)
+        return False
     if 200 == rsp.status_code:
         img = Image.open(BytesIO(rsp.content))
         img.save(save_path)
         logger.info(f'Saved to {save_path}')
+        return True
     else:
         logger.error(f'Failed to download {url}. HTTP {rsp.status_code}')
+        return False
 
 
 class Chara:
@@ -204,3 +207,29 @@ async def reload_pcr_chara(session: CommandSession):
     except Exception as e:
         logger.exception(e)
         await session.send(f'Error: {type(e)}')
+
+@sucmd('reload-chara-icon', force_private=False, aliases=('下载头像','更新头像'))
+async def reload_chara_icon(session: CommandSession):
+    name = session.current_arg
+    idx = name2id(name)
+    if idx==UNKNOWN:
+        await session.send(f'未找到角色“{name}”')
+        return
+    six = download_chara_icon(idx, 6)
+    three = download_chara_icon(idx, 3)
+    one = download_chara_icon(idx, 1)
+    if any((one,three,six)):
+        msg = f'已更新{name}的'
+        if one:
+            msg += '一星'
+        if three:
+            if one:
+                msg += '、'
+            msg += '三星'
+        if six:
+            if three or (one and not three):
+                msg += '、'
+            msg += '六星'
+        await session.send(msg + '头像')
+    else:
+        await session.send('更新失败，可能是该角色未实装')
