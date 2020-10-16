@@ -10,7 +10,7 @@ qksimg = R.img('anti.jpg').cqcode
 async def qks_keyword(bot, ev):
     msg = f'骑空士爪巴\n{qksimg}'
     await bot.send(ev, msg, at_sender=True)
-    await util.silence(ev, 60)
+    #await util.silence(ev, 60)
 
 # 有潜在的安全问题
 # @sv.on_rex(r'[a-zA-Z0-9\.]{4,12}\/[a-zA-Z0-9]+')
@@ -30,4 +30,4 @@ async def qks_rex(bot, ev):
     if s == 301 or s == 302:
         if 'granbluefantasy.jp' in h['Location']:
             await bot.send(ev, msg, at_sender=True)
-            await util.silence(ev, 60)
+            #await util.silence(ev, 60)

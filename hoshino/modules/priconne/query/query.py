@@ -112,7 +112,7 @@ YUKARI_SHEET = f'''
 @sv.on_fullmatch(YUKARI_SHEET_ALIAS)
 async def yukari_sheet(bot, ev):
     await bot.send(ev, YUKARI_SHEET, at_sender=True)
-    await util.silence(ev, 60)
+    #await util.silence(ev, 60)
 
 @sv.on_fullmatch(('角色位置','角色站位','站位'))
 async def stand_position(bot,ev):

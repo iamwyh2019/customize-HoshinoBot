@@ -121,7 +121,7 @@ async def gacha_1(bot, ev: CQEvent):
     if sv.bot.config.USE_CQPRO:
         res = f'{chara.icon.cqcode} {res}'
 
-    await silence(ev, silence_time)
+    #await silence(ev, silence_time)
     await bot.send(ev, f'优秀的伙伴增加了！\n{res}', at_sender=True)
 
 
@@ -159,7 +159,7 @@ async def gacha_10(bot, ev: CQEvent):
     elif hiishi<=SUPER_BAD_LUCK:
         await bot.send(ev, '世 界 名 画')
     await bot.send(ev, f'优秀的伙伴增加了！\n{res}\n', at_sender=True)
-    await silence(ev, silence_time)
+    #await silence(ev, silence_time)
 
 
 @sv.on_prefix(gacha_300_aliases, only_to_me=True)
@@ -223,7 +223,7 @@ async def gacha_300(bot, ev: CQEvent):
 
     await bot.send(ev, '\n'.join(msg), at_sender=True)
     silence_time = 1200
-    await silence(ev, silence_time)
+    #await silence(ev, silence_time)
 
 
 @sv.on_prefix('氪金', only_to_me=True)

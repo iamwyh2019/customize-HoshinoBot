@@ -61,7 +61,7 @@ async def process(bot, event):
 	hoshino.priv.set_block_user(user_id, timedelta(hours=1))
 	pic = R.img(f"angry.jpg").cqcode
 	await bot.send(event,f"不理你啦！バーカー\n{pic}", at_sender=True)
-	await util.silence(event, 1*60*60)
+	#await util.silence(event, 1*60*60)
 
 @on_command('ban_word', aliases=BANNED_WORD, only_to_me=True)
 async def ban_word(session):

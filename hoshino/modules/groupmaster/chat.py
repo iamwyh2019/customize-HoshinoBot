@@ -52,7 +52,7 @@ async def chat_sympathy(bot, ev):
 async def nihaole(bot, ev):
     if random.random() <= 0.50:
         await bot.send(ev, '不许好，憋回去！')
-        await util.silence(ev, 30)
+        #await util.silence(ev, 30)
 
 @sv.on_fullmatch(('晚安','晚安哦', '晚安啦', 'good night'), only_to_me=True)
 async def goodnight(bot, ev):
