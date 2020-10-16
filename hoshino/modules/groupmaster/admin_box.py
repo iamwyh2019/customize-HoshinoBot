@@ -55,3 +55,16 @@ async def send_gift(bot, event):
 		await bot.send(event, '你想送给谁？', at_sender=True)
 	else:
 		await bot.send(event, f'[CQ:gift,qq={uid},id={random.randint(0,8)}]')
+
+'''
+@sv.on_notice('group_recall')
+async def show_recall(session):
+	bot,event=session.bot,session.event
+	if event.user_id != event.operator_id:
+		return
+	mid = event.message_id
+	uid = event.user_id
+	msg = await bot.get_group_msg(message_id=mid)
+	msg = msg['content']
+	await bot.send(event, f'[CQ:at,qq={uid}]撤回的消息是：\n{msg}')
+'''
