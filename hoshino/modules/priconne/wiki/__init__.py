@@ -24,7 +24,7 @@ def get_chara(name, types):
     elif is_npc:
         msg = f'没有查询到{name}的wiki数据'
     else:
-        msg = f'{c.icon.cqcode}'
+        msg = f'{c.name}\n{c.icon.cqcode}'
         try:
             if types == 'introduce':
                 msg += get_info(id_)
