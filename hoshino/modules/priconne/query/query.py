@@ -35,11 +35,11 @@ async def rank_sheet(bot, ev):
         if not pos or '后' in pos:
             msg.append(str(p6))
         await bot.send(ev, '\n'.join(msg), at_sender=True)
-        await util.silence(ev, 60)
+        # await util.silence(ev, 60)
     elif is_tw:
         msg.append(f'※不定期搬运自漪夢奈特\n※油管有介绍视频及原文档\nR16-4 rank表：\n{p1}{p2}')
         await bot.send(ev, '\n'.join(msg), at_sender=True)
-        await util.silence(ev, 60)
+        # await util.silence(ev, 60)
     elif is_cn:
         await bot.send(ev, '\n※B服当前仅开放至金装，r10前无需考虑卡rank\n※暂未发现公开的靠谱rank推荐表\n※装备强化消耗较多mana，如非前排建议不强化', at_sender=True)
         # await bot.send(ev, str(p7))
@@ -52,7 +52,7 @@ async def say_arina_database(bot, ev):
 '''
 
 
-OTHER_KEYWORDS = '【日rank】【台rank】【b服rank】【jjc作业网】【黄骑充电表】【一个顶俩】'
+OTHER_KEYWORDS = '【日rank】【台rank】【b服rank】【jjc作业网】【黄骑充电表】'
 PCR_SITES = f'''
 【繁中wiki/兰德索尔图书馆】pcredivewiki.tw
 【日文wiki/GameWith】gamewith.jp/pricone-re
@@ -85,18 +85,14 @@ BCR_SITES = f'''
 {OTHER_KEYWORDS}
 ※日台服速查请输入【pcr速查】'''
 
-'''
-
 @sv.on_fullmatch(('pcr速查', 'pcr图书馆', 'pcr圖書館', '图书馆', '圖書館'))
 async def pcr_sites(bot, ev: CQEvent):
     await bot.send(ev, PCR_SITES, at_sender=True)
-    await util.silence(ev, 60)
+    # await util.silence(ev, 60)
 @sv.on_fullmatch(('bcr速查', 'bcr攻略'))
 async def bcr_sites(bot, ev: CQEvent):
     await bot.send(ev, BCR_SITES, at_sender=True)
-    await util.silence(ev, 60)
-
-'''
+    # await util.silence(ev, 60)
 
 
 
