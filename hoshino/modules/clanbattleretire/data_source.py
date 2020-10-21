@@ -56,6 +56,7 @@ def get_time(gid: int, year: int, month: int) -> list:
     y = [0]*24
     for hr in hours:
         y[hr] += 1
+    y = y[5:] + y[:5]
 
     conn.close()
     return name,y
