@@ -301,12 +301,17 @@ class BattleMaster(object):
             last = 0
             ext = 0
             timeout = 0
-            for ch in challens:
+            l = len(challens)
+            for i in range(l):
+                ch = challens[i]
                 f = ch['flag']
                 if f & BattleMaster.EXT:
                     ext = ext + 1
                 elif f & BattleMaster.LAST:
                     last = last + 1
+                    if i>0 and (challens[i-1]['flag'] & BattleMaster.LAST):
+                        last = last - 1
+                        ext = ext + 1
                 elif f & BattleMaster.TIMEOUT:
                     timeout = timeout + 1
                 else:

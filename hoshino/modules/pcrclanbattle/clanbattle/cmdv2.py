@@ -420,7 +420,7 @@ async def change_challenge(bot:NoneBot, event:Context_T, args:ParseResult):
     'E': ArgHolder(tip='记录编号', type=int)
     }))
 async def print_challenge(bot:NoneBot, event:Context_T, args:ParseResult):
-    _check_superuser(event, '才能使用此测试功能')
+    _check_admin(event, '才能使用此测试功能')
     bm = BattleMaster(event['group_id'])
     now = datetime.now()
     clan = _check_clan(bm)
