@@ -69,35 +69,31 @@ class Gacha(object):
 
 
     def gacha_tenjou(self):
-        result = {'up': [], 's3': [], 's2':[], 's1':[]}
+        result = {'up': [], 's3': [], 's2':[], 's1':[], 'res':[]}
         first_up_pos = 999999
         up = self.up_prob
         s3 = self.s3_prob
         s2 = self.s2_prob
         s1 = 1000 - s3 - s2
-        for i in range(9 * 30):
-            c, y = self.gacha_one(up, s3, s2, s1)
+        for i in range(1, 10*30+1):
+            if i%10 != 0:
+                c, y = self.gacha_one(up, s3, s2, s1)
+            else:
+                c, y = self.gacha_one(up, s3, s2 + s1, 0)
+
             if 100 == y:
                 result['up'].append(c)
-                first_up_pos = min(first_up_pos, 10 * ((i+1) // 9) + ((i+1) % 9))
+                result['res'].append(c)
+                first_up_pos = min(first_up_pos, i)
             elif 50 == y:
                 result['s3'].append(c)
+                result['res'].append(c)
             elif 10 == y:
                 result['s2'].append(c)
             elif 1 == y:
                 result['s1'].append(c)
             else:
                 pass    # should never reach here
-        for i in range(30):
-            c, y = self.gacha_one(up, s3, s2 + s1, 0)
-            if 100 == y:
-                result['up'].append(c)
-                first_up_pos = min(first_up_pos, 10 * (i+1))
-            elif 50 == y:
-                result['s3'].append(c)
-            elif 10 == y:
-                result['s2'].append(c)
-            else:
-                pass    # should never reach here
+                
         result['first_up_pos'] = first_up_pos
         return result
