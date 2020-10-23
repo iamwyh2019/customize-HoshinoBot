@@ -647,13 +647,30 @@ async def call_subscribe(bot:NoneBot, event:Context_T, round_:int, boss:int):
         await bot.send(event, '\n'.join(msg), at_sender=False)    # do not at the sender
 
 
-@cb_cmd(('查询预约', '预约查询', '查看预约', '预约查看'), ArgParser('!查询预约'))
+@cb_cmd(('查询预约', '预约查询', '查看预约', '预约查看'), ArgParser('!查询预约 (Boss编号) (狂暴)', arg_dict={
+    '':  ArgHolder(tip='Boss编号', type=boss_code, default=0),
+    'B': ArgHolder(tip='Boss编号', type=boss_code, default=0),
+    '狂': ArgHolder(tip='状态', type=str, default='')
+    }))
 async def list_subscribe(bot:NoneBot, event:Context_T, args:ParseResult):
     bm = BattleMaster(event['group_id'])
     clan = _check_clan(bm)
+    boss = args[''] or args.B
+
+    if args['狂'] not in ('','暴'):
+        await bot.send(event, 'Boss状态错误！', at_sender=True)
+        return
+    elif args['狂']=='暴':
+        if boss!=5:
+            await bot.send(event, '只有五王存在狂暴状态！', at_sender=True)
+            return
+        boss=6
+
+    scope = (boss,) if boss else list(range(1,7))
+
     msg = [ f"\n{clan['name']}当前预约情况：" ]
     sub = _load_sub(bm.group)
-    for boss in range(1, 7):
+    for boss in scope:
         slist = sub.get_sub_list(boss)
         mlist = sub.get_memo_list(boss)
         limit = sub.get_sub_limit(boss)
