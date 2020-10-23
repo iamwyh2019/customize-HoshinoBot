@@ -174,13 +174,19 @@ def set_clanname(group_id,leader_id):
     saveConfig(clanrank_config)
     return 0
 
-@sv_push.on_fullmatch(('公会排名','工会排名','!公会排名','!工会排名','！公会排名','！工会排名','!排名','！排名'))
+@sv_push.on_prefix(('公会排名','工会排名','!公会排名','!工会排名','！公会排名','！工会排名','!排名','！排名'))
 async def clanrankQuery(bot, ev:CQEvent):
     """
     查询本公会排名, 需要预先绑定公会。
     只能查询已经绑定的公会信息！
     """
     # 检测有无绑定信息
+    msg = ev.message.extract_plain_text()
+    raw = ev.raw_message
+    if len(msg)>0:
+        if not (raw.startswith('公会排名') or raw.startswith('工会排名')):
+            await rank_query_by_name(bot,ev)
+        return
     group_id = ev.group_id
     config = loadConfig()
     if str(group_id) not in config:
