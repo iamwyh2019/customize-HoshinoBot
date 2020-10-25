@@ -82,7 +82,11 @@ async def _arena_query(bot, ev: CQEvent, region: int):
 
     # 处理查询结果
     if isinstance(res,int):
-        await bot.finish(ev, f'查询出错，错误代码{res}\n请先移步pcrdfans.com进行查询', at_sender=True)
+        lmt.reset(uid)
+        if res==110:
+            await bot.finish(ev, f'查询出错，错误代码{res}\n此错误是因为作业网处理环奈时存在bug，请多试几次', at_sender=True)
+        else:
+            await bot.finish(ev, f'查询出错，错误代码{res}\n请先移步pcrdfans.com进行查询', at_sender=True)
     if not len(res):
         await bot.finish(ev, '没有查询到解法\n※没有作业说明随便拆 发挥你的想象力～★\n作业上传请前往pcrdfans.com', at_sender=True)
     res = res[:min(max_disp, len(res))]    # 限制显示数量，截断结果

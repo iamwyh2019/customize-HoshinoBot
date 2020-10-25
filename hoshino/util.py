@@ -136,6 +136,9 @@ class FreqLimiter:
     def left_time(self, key) -> float:
         return self.next_time[key] - time.time()
 
+    def reset(self, key):
+        self.next_time[key] = time.time()
+
 
 class DailyNumberLimiter:
     tz = pytz.timezone('Asia/Shanghai')
