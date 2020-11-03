@@ -69,7 +69,7 @@ async def show_recall(session):
 	await bot.send(event, f'[CQ:at,qq={uid}]撤回的消息是：\n{msg}')
 '''
 anti_anony = ('你是谁？','为什么要匿名？')
-@sv.on_message('group')
+#@sv.on_message('group')
 async def anti_anonymous(bot, event):
 	if not event.anonymous:
 		return

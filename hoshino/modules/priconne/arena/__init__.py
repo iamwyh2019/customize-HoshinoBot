@@ -82,11 +82,23 @@ async def _arena_query(bot, ev: CQEvent, region: int):
 
     # 处理查询结果
     if isinstance(res,int):
-        lmt.reset(uid)
+        
         if res==110:
-            await bot.finish(ev, f'查询出错，错误代码{res}\n此错误是因为作业网处理环奈时存在bug，请多试几次', at_sender=True)
+            cnt = 0
+            while isinstance(res,int) and res==110:
+                if cnt>5:
+                    await bot.finish(ev, f'查询出错，错误代码{res}\n该错误是由于作业网处理环奈存在bug，请重试几次或前往pcrdfans.com查询',
+                        at_sender=True)
+                sv.logger.info('Triggered Kanna bug. Retrying.')
+                res = await arena.do_query(defen, uid, region)
+                cnt += 1
+            if isinstance(res,int) and res!=110:
+                lmt.reset(uid)
+                await bot.finish(ev, f'查询出错，错误代码{res}\n请先移步pcrdfans.com进行查询', at_sender=True)
         else:
+            lmt.reset(uid)
             await bot.finish(ev, f'查询出错，错误代码{res}\n请先移步pcrdfans.com进行查询', at_sender=True)
+
     if not len(res):
         await bot.finish(ev, '没有查询到解法\n※没有作业说明随便拆 发挥你的想象力～★\n作业上传请前往pcrdfans.com', at_sender=True)
     res = res[:min(max_disp, len(res))]    # 限制显示数量，截断结果
