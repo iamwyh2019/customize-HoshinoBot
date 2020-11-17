@@ -180,10 +180,10 @@ class Resource_map(object):
 
         self.crop()
 
-        self.adjust()
+        #self.adjust()
 
         bio = BytesIO()
-        self.map_image.save(bio, format='PNG')
+        self.map_image.save(bio, format='JPEG')
         base64_str = 'base64://' + base64.b64encode(bio.getvalue()).decode()
 
         return f"[CQ:image,file={base64_str}]"
