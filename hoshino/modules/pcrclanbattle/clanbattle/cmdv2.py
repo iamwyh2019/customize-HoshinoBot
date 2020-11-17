@@ -216,7 +216,7 @@ async def process_challenge(bot:NoneBot, event:Context_T, ch:ParseResult):
         msg.append('⚠️上报与当前进度不一致')
     else:   # 伤害校对
         eps = 30000
-        if damage > cur_hp + eps:
+        if damage >= cur_hp:
             damage = cur_hp
             msg.append(f'⚠️过度虐杀 伤害数值已自动修正为{damage}')
             if flag == BattleMaster.NORM:
