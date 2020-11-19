@@ -188,6 +188,13 @@ async def batch_add_member(bot:NoneBot, event:Context_T, args:ParseResult):
     await bot.send(event, msg, at_sender=True)
 
 
+def _gen_type_text(tp):
+    return "普通刀" if tp == BattleMaster.NORM else\
+           "尾刀" if tp == BattleMaster.LAST else\
+           "补时刀" if tp == BattleMaster.EXT else\
+           "掉刀" if tp == BattleMaster.TIMEOUT else\
+           "未知类型"
+
 def _gen_progress_text(clan_name, round_, boss, hp, max_hp, score_rate):
     return f"{clan_name} 当前进度：\n{round_}周目 {BattleMaster.int2kanji(boss)}王    SCORE x{score_rate:.1f}\nHP={hp:,d}/{max_hp:,d}"
 
@@ -217,8 +224,9 @@ async def process_challenge(bot:NoneBot, event:Context_T, ch:ParseResult):
     else:   # 伤害校对
         eps = 30000
         if damage >= cur_hp:
+            if damage > cur_hp:
+                msg.append(f'⚠️过度虐杀 伤害数值已自动修正为{cur_hp}')
             damage = cur_hp
-            msg.append(f'⚠️过度虐杀 伤害数值已自动修正为{damage}')
             if flag == BattleMaster.NORM:
                 flag = BattleMaster.LAST
                 msg.append('⚠️已自动标记为尾刀')
@@ -235,7 +243,8 @@ async def process_challenge(bot:NoneBot, event:Context_T, ch:ParseResult):
     eid = bm.add_challenge(mem['uid'], mem['alt'], round_, boss, damage, flag, now)
     aft_round, aft_boss, aft_hp = bm.get_challenge_progress(1, now)
     max_hp, score_rate = bm.get_boss_info(aft_round, aft_boss, clan['server'])
-    msg.append(f"记录编号E{eid}：\n{mem['name']}给予{round_}周目{bm.int2kanji(boss)}王{damage:,d}点伤害\n")
+    msg.append(f"记录编号E{eid}：")
+    msg.append(f"{mem['name']}给予{round_}周目{bm.int2kanji(boss)}王{damage:,d}点伤害，类型为{_gen_type_text(flag)}\n")
     msg.append(_gen_progress_text(clan['name'], aft_round, aft_boss, aft_hp, max_hp, score_rate))
     await bot.send(event, '\n'.join(msg), at_sender=True)
 
