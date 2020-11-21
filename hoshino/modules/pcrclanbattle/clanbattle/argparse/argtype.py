@@ -16,7 +16,7 @@ def damage_int(x:str) -> int:
         x = int(m.group(1)) * _unit_rate[m.group(2).lower()]
         if x < 100000000:
             return x
-    raise ParseError('伤害值不合法 伤害值应为小于一亿的非负整数')
+    raise ParseError('伤害值不合法，应为小于一亿的非负整数')
 
 
 def boss_code(x:str) -> int:
@@ -25,7 +25,7 @@ def boss_code(x:str) -> int:
         return int(m.group(1))
     elif m := _rex2_bcode.match(x):
         return '零一二三四五'.find(m.group(1))
-    raise ParseError('Boss编号不合法 应为1-5的整数')
+    raise ParseError('Boss编号不合法，应为1-5的整数\n狂暴五王请用"5 狂暴"表示')
 
 
 def round_code(x:str) -> int:

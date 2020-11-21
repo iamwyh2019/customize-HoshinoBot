@@ -205,9 +205,13 @@ async def process_challenge(bot:NoneBot, event:Context_T, ch:ParseResult):
     """
 
     bm = BattleMaster(event['group_id'])
+    clan = _check_clan(bm)
+    zone = bm.get_timezone_num(clan['server'])
     now = datetime.now()
     clan = _check_clan(bm)
     mem = _check_member(bm, ch.uid, ch.alt)
+    uid = mem['uid']
+    alt = mem['alt']
 
     cur_round, cur_boss, cur_hp = bm.get_challenge_progress(1, now)
     round_ = ch.round or cur_round
@@ -215,10 +219,17 @@ async def process_challenge(bot:NoneBot, event:Context_T, ch:ParseResult):
     damage = ch.damage if ch.flag != BattleMaster.LAST else (ch.damage or cur_hp)
     flag = ch.flag
 
-    if (ch.flag == BattleMaster.LAST) and (ch.round or ch.boss) and (not damage):
+    msg = ['']
+
+    if flag == BattleMaster.NORM:
+        challen = bm.list_challenge_of_user_of_day(uid, alt, now, zone)
+        if len(challen)>0 and (challen[-1]['flag'] & BattleMaster.LAST):
+            msg.append('⚠️已自动识别为补时刀')
+            flag = BattleMaster.EXT
+
+    if (flag == BattleMaster.LAST) and (ch.round or ch.boss) and (not damage):
         raise NotFoundError('补报尾刀请给出伤害值')     # 补报尾刀必须给出伤害值
 
-    msg = ['']
     if round_ != cur_round or boss != cur_boss:
         msg.append('⚠️上报与当前进度不一致')
     else:   # 伤害校对
@@ -240,7 +251,7 @@ async def process_challenge(bot:NoneBot, event:Context_T, ch:ParseResult):
                 else:
                     msg.append('⚠️Boss仍有少量残留血量')
 
-    eid = bm.add_challenge(mem['uid'], mem['alt'], round_, boss, damage, flag, now)
+    eid = bm.add_challenge(uid, alt, round_, boss, damage, flag, now)
     aft_round, aft_boss, aft_hp = bm.get_challenge_progress(1, now)
     max_hp, score_rate = bm.get_boss_info(aft_round, aft_boss, clan['server'])
     msg.append(f"记录编号E{eid}：")
@@ -272,18 +283,9 @@ async def process_challenge(bot:NoneBot, event:Context_T, ch:ParseResult):
     'B': ArgHolder(tip='Boss编号', type=boss_code, default=0)}))
 async def add_challenge(bot:NoneBot, event:Context_T, args:ParseResult):
     bm = BattleMaster(event['group_id'])
-    clan = _check_clan(bm)
-    zone = bm.get_timezone_num(clan['server'])
-    now = datetime.now()
 
     uid = args['@'] or args.at or event['user_id']
     alt = event['group_id']
-    challen = bm.list_challenge_of_user_of_day(uid, alt, now, zone)
-
-    flg = BattleMaster.NORM
-    if len(challen)>0 and (challen[-1]['flag'] & BattleMaster.LAST):
-        await bot.send(event, '已自动识别为补时刀', at_sender=True)
-        flg = BattleMaster.EXT
 
     challenge = ParseResult({
         'round': args.R,
@@ -291,7 +293,7 @@ async def add_challenge(bot:NoneBot, event:Context_T, args:ParseResult):
         'damage': args.get(''),
         'uid': uid,
         'alt': alt,
-        'flag': flg
+        'flag': BattleMaster.NORM
     })
     await process_challenge(bot, event, challenge)
 
