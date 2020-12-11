@@ -7,8 +7,6 @@ local_coolq_config/
 db.json
 database.json
 *.sqlite
-res/
-img/
 imgs/
 image/
 images/
