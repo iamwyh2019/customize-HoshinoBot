@@ -49,7 +49,7 @@ class BattleMaster(object):
         yyyy = time.year
         mm = time.month
         dd = time.day
-        if dd < 15:
+        if dd < 10:
             mm = mm - 1
         if mm < 1:
             mm = 12
@@ -66,11 +66,7 @@ class BattleMaster(object):
     def get_stage(round_, server):
         if server == BattleMaster.SERVER_CN:
             y, m, _ = BattleMaster.get_yyyymmdd(datetime.now(), 8)
-            if y == 2020:
-                if m < 9:
-                    return 5 if round_ == 1 else 6
-                elif m < 12:
-                    return 7 if round_ == 1 else 8
+            return 1 if round_ == 1 else 2 if round_ <= 5 else 3
         # All other situation
         return 4 if round_ >= 35 else 3 if round_ >= 11 else 2 if round_ >= 4 else 1
 

@@ -22,7 +22,7 @@ async def _clanbattle_bus(bot, ctx):
         if m.type == 'text':
             start = m.data.get('text', '').lstrip()
             break
-    if not start or start[0] not in '!！':
+    if not start or start[0] not in '!！#':
         return
 
     # find cmd
