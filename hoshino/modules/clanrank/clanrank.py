@@ -197,8 +197,8 @@ async def clanrankQuery(bot, ev:CQEvent):
     lastQuertTime = config[str(group_id)]["lastQuery"]["ts"]
     if time.time() - lastQuertTime >= 42*60:
         # 上次查询时间戳有效时间42分钟,超时会触发联网查询
-        msg = '缓存数据已超时, 正在在线查询……'
-        await bot.send(ev, msg)
+        #msg = '缓存数据已超时, 正在在线查询……'
+        #await bot.send(ev, msg)
         code = set_clanname(int(group_id),config[str(group_id)]["leaderId"])
         if code != 0:
             msg = f'发生错误{code}, 可能的原因：公会更换了会长/工会排名不在前25000名/传入的时间戳不正确。\n如果非上述原因, 请联系维护并提供此信息。\n'
