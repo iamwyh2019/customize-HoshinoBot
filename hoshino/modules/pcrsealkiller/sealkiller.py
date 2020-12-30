@@ -196,7 +196,7 @@ async def on_input_image(bot, ev: CQEvent):
                     await bot.send(ev, '检测到海豹行为(╯‵□′)╯︵┻━┻')
                     #    await bot.delete_msg(self_id=ev.self_id, message_id=ev.message_id)
                     #    await util.silence(ev, 10*60, skip_su=False)
-                    await bot.send(ev, '优妮提醒您:' + str(MessageSegment.image(f'file:///{os.path.abspath(PIC_PATH)}')) + '拒绝海豹，从我做起')
+                    await bot.send(ev, '优妮提醒您:\n' + str(MessageSegment.image(f'file:///{os.path.abspath(PIC_PATH)}')) + '\n拒绝海豹，从我做起')
                     #else:
                     #    await bot.delete_msg(self_id=ev.self_id, message_id=ev.message_id)
                     #    await bot.send(ev, '虽然没看出你有没有在晒卡，总之消息先撤回了~')
