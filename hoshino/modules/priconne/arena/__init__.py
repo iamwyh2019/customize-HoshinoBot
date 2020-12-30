@@ -81,23 +81,16 @@ async def _arena_query(bot, ev: CQEvent, region: int):
     sv.logger.info('Got response!')
 
     # 处理查询结果
-    if isinstance(res,int):
-        
-        if res==110:
-            cnt = 0
-            while isinstance(res,int) and res==110:
-                if cnt>5:
-                    await bot.finish(ev, f'查询出错，错误代码{res}\n该错误是由于作业网处理环奈存在bug，请重试几次或前往pcrdfans.com查询',
-                        at_sender=True)
-                sv.logger.info('Triggered Kanna bug. Retrying.')
-                res = await arena.do_query(defen, uid, region)
-                cnt += 1
-            if isinstance(res,int) and res!=110:
-                lmt.reset(uid)
-                await bot.finish(ev, f'查询出错，错误代码{res}\n请先移步pcrdfans.com进行查询', at_sender=True)
-        else:
-            lmt.reset(uid)
+    if isinstance(res,int) or res is None:
+        cnt = 0
+        while (isinstance(res, int) or res is None) and cnt < 5:
+            res = await arena.do_query(defen, uid, region)
+            cnt += 1
+        if isinstance(res, int):
             await bot.finish(ev, f'查询出错，错误代码{res}\n请先移步pcrdfans.com进行查询', at_sender=True)
+        elif res is None:
+            await bot.finish(ev, f'查询出错，返回结果为空\n请先移步pcrdfans.com进行查询', at_sender=True)
+        sv.logger.info(f'Results acquired after retrying {cnt} times')
 
     if not len(res):
         await bot.finish(ev, '没有查询到解法\n※没有作业说明随便拆 发挥你的想象力～★\n作业上传请前往pcrdfans.com', at_sender=True)

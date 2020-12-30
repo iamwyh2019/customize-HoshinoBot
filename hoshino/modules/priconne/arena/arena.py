@@ -125,6 +125,9 @@ async def do_query(id_list, user_id, region=1):
         logger.exception(e)
         return None
 
+    if res['data']['result'] is None:
+        return None
+
     if res['code']:
         logger.error(f"Arena query failed.\nResponse={res}\nPayload={payload}")
         return res['code']
