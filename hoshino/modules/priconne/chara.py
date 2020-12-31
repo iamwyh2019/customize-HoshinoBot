@@ -221,6 +221,7 @@ async def reload_chara_icon(session: CommandSession):
     three = download_chara_icon(idx, 3)
     one = download_chara_icon(idx, 1)
     if any((one,three,six)):
+        person = Chara(idx, star=6 if six else 3)
         msg = f'已更新{c.name}的'
         if one:
             msg += '一星'
@@ -232,6 +233,7 @@ async def reload_chara_icon(session: CommandSession):
             if three or (one and not three):
                 msg += '、'
             msg += '六星'
-        await session.send(msg + '头像')
+        msg += '头像'
+        await session.send(f'{msg}\n{person.icon.cqcode}')
     else:
         await session.send('更新失败，可能是该角色未实装')
