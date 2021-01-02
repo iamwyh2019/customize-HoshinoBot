@@ -21,7 +21,8 @@ crawl = DailyNumberLimiter(1)
 BANNED_WORD = (
 	'rbq', 'RBQ', '憨批', '废物', '死妈', '崽种', '傻逼', '傻逼玩意',
 	'没用东西', '傻B', '傻b', 'SB', 'sb', '煞笔', 'cnm', 'kkp',
-	'nmsl', 'D区', '口区', '我是你爹', 'nmbiss', '弱智', '给爷爬', '杂种爬'
+	'nmsl', 'D区', '口区', '我是你爹', 'nmbiss', '弱智', '给爷爬', '杂种爬', '滚',
+	'给爷滚', '给老子滚', '给老子爬'
 )
 
 def get_sec(tstr):

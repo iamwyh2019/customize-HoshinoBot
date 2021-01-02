@@ -1,6 +1,6 @@
 from PIL import Image
 from io import BytesIO
-from nonebot import MessageSegment
+
 
 import os
 import json
@@ -10,8 +10,6 @@ import base64
 
 FILE_PATH = os.path.dirname(__file__)
 ICON_PATH = os.path.join(FILE_PATH,'icon')
-
-INSTRUCTION = "* 发送“原神卡池切换”可切换卡池\n*发送“相遇之缘”抽10连，“纠缠之缘”抽90连，“原之井”抽180连"
 
 
 
@@ -41,8 +39,8 @@ ROLE_ARMS_LIST = {
     "5星常驻角色": [],
     "4星常驻角色": [],
     "4星白给角色": [],
-    "5星非up武器": [],
-    "4星非up武器": [],
+    "5星常驻武器": [],
+    "4星常驻武器": [],
     "3星武器": [],
 
     "空":[], #这个列表是留空占位的，不会有任何数据
@@ -62,22 +60,22 @@ ROLE_ARMS_LIST = {
 
 CORRESPONDENCE = {
     # 这里记录的是ROLE_ARMS_LIST最后7个列表与其他列表的包含关系
-    '5星全角色武器':["5星常驻角色","5星up角色","5星非up武器","5星up武器"],
+    '5星全角色武器':["5星常驻角色","5星up角色","5星常驻武器","5星up武器"],
 
-    '5星常驻池':["5星常驻角色","5星非up武器","5星up武器"],
-    '4星常驻池':["4星常驻角色","4星白给角色","4星up角色","4星up武器","4星非up武器"],
+    '5星常驻池':["5星常驻角色","5星常驻武器","5星up武器"],
+    '4星常驻池':["4星常驻角色","4星白给角色","4星up角色","4星up武器","4星常驻武器"],
 
     '5星角色up池全角色':["5星up角色","5星常驻角色"],
-    '4星角色up池全物品':["4星up角色","4星常驻角色","4星非up武器","4星up武器"],
+    '4星角色up池全物品':["4星up角色","4星常驻角色","4星常驻武器","4星up武器"],
 
-    '5星武器up池全武器':["5星up武器","5星非up武器"],
-    '4星武器up池全物品':["4星up武器","4星非up武器","4星常驻角色","4星up角色"]
+    '5星武器up池全武器':["5星up武器","5星常驻武器"],
+    '4星武器up池全物品':["4星up武器","4星常驻武器","4星常驻角色","4星up角色"]
 }
 
 
 POOL = {
     # 这个字典记录的是3个不同的卡池，每个卡池的抽取列表的value是ROLE_ARMS_LIST的哪个列表的key
-    # 比如角色UP池的5星UP列表，是保存在ROLE_ARMS_LIST["5星up角色"]这个列表里的
+    # 比如角色UP池的5星UP列表value是"5星up角色"，就表示角色UP池的5星UP列表是保存在ROLE_ARMS_LIST["5星up角色"]这个列表里的
     '角色up池':{
         '5星up':"5星up角色",
         '随机全5星':'5星角色up池全角色',
@@ -93,14 +91,21 @@ POOL = {
     },
 
     '常驻池':{
+        '5星up': '空',
         '5星物品':'5星常驻池',
-        '4星物品':'4星常驻池',
-        '5星up':'空',
-        '4星up':'空'
+        '4星up': '空',
+        '4星物品':'4星常驻池'
     }
 }
 
+DISTANCE_FREQUENCY = {
+    # 3个池子的5星是多少发才保底
+    '角色up池':90,
+    '武器up池':80,
+    '常驻池':90
+}
 
+HELP = "发送“相遇之缘”抽10连，“纠缠之缘”抽90连，“原之井”抽180连"
 
 
 
@@ -210,16 +215,20 @@ class Gacha(object):
     def pic2b64(im):
         # im是Image对象，把Image图片转成base64
         bio = BytesIO()
-        im.save(bio, format='PNG')
+        im.save(bio, format='JPEG')
         base64_str = base64.b64encode(bio.getvalue()).decode()
         return 'base64://' + base64_str
+
+    @staticmethod
+    def ba64_to_cq(base64_str):
+        return f"[CQ:image,file={base64_str}]"
 
     def concat_pic(self, border=5):
         # self.gacha_list是一个列表，这个函数找到列表中名字对应的图片，然后拼接成一张大图返回
         num = len(self.gacha_list)
         # w, h = pics[0].size
         w, h = [125, 130]
-        des = Image.new('RGBA', (w * min(num, border), h * math.ceil(num / border)), (255, 255, 255, 0))
+        des = Image.new('RGB', (w * min(num, border), h * math.ceil(num / border)), (255, 255, 255))
 
         for i in range(num):
             im = Image.open(self.get_png_path(self.gacha_list[i]))
@@ -348,7 +357,7 @@ class Gacha(object):
         r = random.random()
 
         # 先检查是不是保底5星
-        if self.distance_5_star % 90 == 0:
+        if self.distance_5_star % DISTANCE_FREQUENCY[self.pool] == 0:
             self.gacha_rarity_statistics["5星"] += 1
             self.distance_5_star = 0 # 重置保底计数
             self.last_time_5 = self.get_5_star() # 抽一次卡，把结果赋值留给下一次抽卡判断
@@ -405,7 +414,7 @@ class Gacha(object):
         mes = '本次祈愿得到以下角色装备：\n'
         res = self.concat_pic()
         res = self.pic2b64(res)
-        mes += str(MessageSegment.image(res))
+        mes += self.ba64_to_cq(res)
         mes += '\n'
         mes += gacha_txt
 
@@ -418,7 +427,8 @@ class Gacha(object):
         if self.last_5_up:
             mes += f'第 {self.last_5_up} 抽首次出现5★UP!\n'
 
-        mes += f"\n* 本次抽取卡池为{self.pool}\n"+INSTRUCTION
+        mes += f"\n* 本次抽取卡池为 {self.pool} \n* 发送 原神卡池切换 可切换卡池"
+        mes += "\n* " + HELP
 
         return mes
 
@@ -442,7 +452,7 @@ class Gacha(object):
         mes = '本次祈愿得到以下角色装备：\n'
         res = self.concat_pic()
         res = self.pic2b64(res)
-        mes += str(MessageSegment.image(res))
+        mes += self.ba64_to_cq(res)
         mes += '\n'
         mes += gacha_txt
 
@@ -462,7 +472,8 @@ class Gacha(object):
         if self.is_guaranteed(frequency):
             mes += "居然全是保底，你脸也太黑了\n"
 
-        mes += f"\n* 本次抽取卡池为{self.pool}\n"+INSTRUCTION
+        mes += f"\n* 本次抽取卡池为 {self.pool} \n* 发送 原神卡池切换 可切换卡池"
+        mes += "\n* " + HELP
         return mes
 
 
@@ -479,14 +490,14 @@ def gacha_info(pool = DEFAULT_POOL):
     for _5_star in ROLE_ARMS_LIST[_5_star_up_info]:
         im = Image.open(Gacha.get_png_path(_5_star))
         im = Gacha.pic2b64(im)
-        up_info += str(MessageSegment.image(im))
+        up_info += Gacha.ba64_to_cq(im)
         up_info += "\n"
         up_info += f"{_5_star} ★★★★★"
 
     for _4_star in ROLE_ARMS_LIST[_4_star_up_info]:
         im = Image.open(Gacha.get_png_path(_4_star))
         im = Gacha.pic2b64(im)
-        up_info += str(MessageSegment.image(im))
+        up_info += Gacha.ba64_to_cq(im)
         up_info += "\n"
         up_info += f"{_4_star} ★★★★"
 
