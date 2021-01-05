@@ -17,7 +17,7 @@ from hoshino import Service
 from hoshino.typing import CQEvent
 
 sv = Service('pcr-cherugo', bundle='pcr娱乐', help_='''
-[切噜一下] 转换为切噜语
+[切噜一下+文字] 转换为切噜语
 [切噜～♪切啰巴切拉切蹦切蹦] 切噜语翻译
 '''.strip())
 

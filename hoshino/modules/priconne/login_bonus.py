@@ -1,11 +1,13 @@
 import random,os
 import hoshino
-from hoshino import Service, R
+from hoshino import Service, R, config
 from hoshino.typing import CQEvent
 from hoshino.util import DailyNumberLimiter
 
-sv_help = '''
-[优妮签到] 给主人盖章章
+botname = config.BOTNAME
+
+sv_help = f'''
+[{botname}签到] 给主人盖章章
 '''.strip()
 
 sv = Service('登录签到', bundle='pcr娱乐', help_=sv_help)

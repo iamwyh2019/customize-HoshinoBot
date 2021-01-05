@@ -2,7 +2,7 @@ import os
 import random
 from collections import defaultdict
 
-from hoshino import Service, priv, util
+from hoshino import Service, priv, util, config
 from hoshino.typing import *
 from hoshino.util import DailyNumberLimiter, concat_pic, pic2b64, silence
 
@@ -14,11 +14,13 @@ try:
 except:
     import json
 
+botname = config.BOTNAME
 
-sv_help = '''
-[优妮来发十连] 转蛋模拟
-[优妮来发单抽] 转蛋模拟
-[优妮来一井] 4w5钻！
+
+sv_help = f'''
+[{botname}来发十连] 转蛋模拟
+[{botname}来发单抽] 转蛋模拟
+[{botname}来一井] 4w5钻！
 [查看卡池] 模拟卡池&出率
 [切换卡池] 更换模拟卡池
 '''.strip()

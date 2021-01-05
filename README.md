@@ -6,6 +6,8 @@ HoshinoBot的个人修改版。安装和部署指南请看[部署](#deploy)。
 
 **由于开发组退坑PCR，此项目更新速度将大幅放慢。**
 
+**2021年1月5日的更新修改了机器人配置文件结构，请参见下文[20210105更新](#20210105update)对您的机器人配置文件进行相应修改，以避免不必要的错误。**
+
 ## 简介
 
 本项目对原版机器人进行了少许修改，这些修改可能导致与原版机器人部分功能不兼容。修改包括：
@@ -24,7 +26,7 @@ HoshinoBot的个人修改版。安装和部署指南请看[部署](#deploy)。
 - 查询公会战排名：[项目地址](https://github.com/pcrbot/clanrank)
 - 查询简介、技能、专武信息：[项目地址](https://github.com/pcrbot/pcr-wiki)
 - 查看日程表：[项目地址](https://github.com/pcrbot/schedule)
-- 网页管理服务；这个插件的`view.py`由于含有密码而没有上传；
+- 网页管理服务；这个插件的`view.py`由于含有密码而没有上传，请参考`/hoshino/modules/botmanage/web_service_manager`的README进行配置；
 - 群空调；
 - 表情生成器；
 - 公会战离职报告；
@@ -54,3 +56,28 @@ HoshinoBot的个人修改版。安装和部署指南请看[部署](#deploy)。
 随后，在go-cqhttp的[项目地址](https://github.com/Mrs4s/go-cqhttp/releases)下载符合您系统的程序，并参考[配置教程](https://github.com/Mrs4s/go-cqhttp/blob/master/docs/config.md)配置`config.ini`。在配置中，请关闭`http_config`与`ws_config`，启用`ws_reverse_servers`，其中`reverse_url`的格式为`ws://[您的IP]:[您的监听端口]/ws/`，其中监听端口与HoshinoBot中的监听端口保持一致。
 
 配置完后，依次启动HoshinoBot与go-cqhttp，向机器人发送“在吗”测试，若有回复则部署成功。
+
+<h2 id="20210105update"> 20210105更新 </h2>
+
+我们在`/hoshino/config/__bot__.py`中加入了表示机器人名字的变量：
+
+```python
+BOTNAME = '优妮'
+```
+
+**请在您的机器人的`__bot__.py`内任意位置加入这一行代码，并将名字改为您机器人的名字。**
+
+这一改动旨在方便在迁移和大规模部署机器人时快速更改内部文案。例如，名为“优妮”的机器人可能有多句形如“优妮提醒您”或“使用方法：优妮来发十连”的应答。在新建一个名为“镜华”的机器人时，只需要修改配置文件中这一行即可完成所有文案修改。
+
+在您编写自己的插件时，请在头部加入这一行代码：
+
+```python
+from hoshino.config import BOTNAME as botname  # 或将botname换成您喜欢的变量名
+```
+
+并在随后需要提及机器人名字的地方都用该变量表示。例如：
+
+```python
+return f'{botname}检测到海豹行为！'
+```
+

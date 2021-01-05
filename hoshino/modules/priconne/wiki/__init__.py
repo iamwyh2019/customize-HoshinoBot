@@ -4,11 +4,13 @@ from .. import chara
 from .data import *
 # from .run import update
 
-sv = Service('wiki', help_='''
-[@bot简介ue] 角色简介
-[@bot技能ue] 角色技能
-[@bot专武ue] 角色专武
-[@bot羁绊ue] 角色羁绊
+botname = config.BOTNAME
+
+sv = Service('wiki', help_=f'''
+[{botname}简介熊锤] 角色简介
+[{botname}技能熊锤] 角色技能
+[{botname}专武熊锤] 角色专武
+[{botname}羁绊熊锤] 角色羁绊
 '''.strip(), bundle='pcr查询')
 
 def get_chara(name, types):

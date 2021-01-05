@@ -4,15 +4,17 @@ import os
 import re
 
 import aiohttp
+import hoshino
 
 from hoshino import Service, util, priv
 from . import Config
 from hoshino.typing import CQEvent, MessageSegment
 
+botname = hoshino.config.BOTNAME
+
 sv = Service('pcr-seal-killer', bundle='pcr娱乐', help_='''
-自动击杀晒卡海豹，请给机器人管理员或者群主，配置指令如下：
-启用海豹杀手 [海豹判定阈值]：如果不输入参数，默认阈值是100
-禁用海豹杀手：关闭海豹杀手服务，减轻机器人运行开销
+启用海豹杀手 [海豹判定阈值]：如果不输入参数则默认为100
+禁用海豹杀手：关闭海豹杀手服务
 '''.strip())
 
 GACHA_KEYWORDS = ['所持角色交换Pt', '持有的角色交換Pt', '所持キャラ交換Pt', '持有的角色交换Pt', '所持キャラ交换Pt', '所持CSPキャラ交換Pt']
@@ -196,7 +198,7 @@ async def on_input_image(bot, ev: CQEvent):
                     await bot.send(ev, '检测到海豹行为(╯‵□′)╯︵┻━┻')
                     #    await bot.delete_msg(self_id=ev.self_id, message_id=ev.message_id)
                     #    await util.silence(ev, 10*60, skip_su=False)
-                    await bot.send(ev, '优妮提醒您:\n' + str(MessageSegment.image(f'file:///{os.path.abspath(PIC_PATH)}')) + '\n拒绝海豹，从我做起')
+                    await bot.send(ev, botname + '提醒您:\n' + str(MessageSegment.image(f'file:///{os.path.abspath(PIC_PATH)}')) + '\n拒绝海豹，从我做起')
                     #else:
                     #    await bot.delete_msg(self_id=ev.self_id, message_id=ev.message_id)
                     #    await bot.send(ev, '虽然没看出你有没有在晒卡，总之消息先撤回了~')
