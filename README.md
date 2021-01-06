@@ -2,11 +2,9 @@
 
 HoshinoBot的个人修改版。安装和部署指南请看[部署](#deploy)。
 
-本项目不提供资源文件。
+本项目不提供原项目的资源文件，请前往HoshinoBot原[项目地址](https://github.com/Ice-Cirno/HoshinoBot)下载资源文件。额外的资源文件在res文件夹中，可能不完整，您可以提出issue索取未上传的资源；
 
-**由于开发组退坑PCR，此项目更新速度将大幅放慢。**
-
-**2021年1月5日的更新修改了机器人配置文件结构，请参见下文[20210105更新](#20210105update)对您的机器人配置文件进行相应修改，以避免不必要的错误。**
+**2021年1月5日的更新修改了机器人配置文件结构，并上传了相应的示例配置文件。如您此前使用过本项目的代码，请参见下文[20210105更新](#20210105update)对您的机器人配置文件进行相应修改，以避免不必要的错误。如您在这之后才开始部署，则只需要下载项目中的示例配置文件即可，不需要修改。**
 
 ## 简介
 
@@ -14,11 +12,11 @@ HoshinoBot的个人修改版。安装和部署指南请看[部署](#deploy)。
 
 - 在[语料库](https://github.com/iamwyh2019/custom-HoshinoBot/blob/master/hoshino/modules/groupmaster/chat.py)中加入更多应答；
 - 在[资源库接口](https://github.com/iamwyh2019/custom-HoshinoBot/blob/master/hoshino/R.py)中添加`ResRec`类以处理语音；
-- 在[广播](https://github.com/iamwyh2019/custom-HoshinoBot/blob/master/hoshino/modules/botmanage/broadcast.py)中添加“单个群发消息”功能；
+- 在[广播](https://github.com/iamwyh2019/custom-HoshinoBot/blob/master/hoshino/modules/botmanage/broadcast.py)中添加“单个群发消息”功能；用法：私发机器人`gbc [群号] [内容]`；
 - **不兼容**：修改[每日签到](https://github.com/iamwyh2019/custom-HoshinoBot/blob/master/hoshino/modules/priconne/login_bonus.py)访问印章图片的位置，支持印章图片集的热更新；加入重置签到情况的功能。不兼容的原因是修改了印章路径；
 - 在[反滥用](https://github.com/iamwyh2019/custom-HoshinoBot/blob/master/hoshino/modules/groupmaster/anti_abuse.py)中加入主动拉黑某个人或某个群（及解除拉黑）的功能；
-- 增加[角色数据库](https://github.com/iamwyh2019/custom-HoshinoBot/blob/master/hoshino/modules/priconne/_pcr_data.py)中内容；**注意**：额外的资源文件并未上传；
-- **不兼容**：公会战期间[hourcall](https://github.com/iamwyh2019/customize-HoshinoBot/blob/master/hoshino/modules/hourcall/hourcall.py)将使用一套专门针对公会战的文案。同时，添加了手动触发报时功能，方便调试。不兼容的原因是在文案文件中加入当期公会战的日期，在读入原版文案时会因为不存在这个信息而报错；正在思考更好的判断现在是否是公会战的方式；
+- 增加[角色数据库](https://github.com/iamwyh2019/custom-HoshinoBot/blob/master/hoshino/modules/priconne/_pcr_data.py)中内容；
+- **不兼容**：公会战期间[hourcall](https://github.com/iamwyh2019/customize-HoshinoBot/blob/master/hoshino/modules/hourcall/hourcall.py)将使用一套专门针对公会战的文案。同时，添加了手动触发报时功能，方便调试。不兼容的原因是在文案文件中加入当期公会战的日期，在读入原版文案时会因为不存在这个信息而报错；
 - 修改[公会战管理系统](https://github.com/iamwyh2019/customize-HoshinoBot/blob/master/hoshino/modules/pcrclanbattle/clanbattle/cmdv2.py)，增加下树功能，取消锁定功能，支持预约狂暴五王，并使出刀、查刀、改刀功能更加精细易用；
 
 同时，编写或安装了若干插件，包括：
@@ -47,15 +45,29 @@ HoshinoBot的个人修改版。安装和部署指南请看[部署](#deploy)。
 
 <h2 id="deploy"> 部署 </h2>
 
-**注意**：本项目代码与使用中的机器人代码实时同步更新，但出于隐私原因，所有配置文件都不会公开。这可能导致部署困难。因此，我们建议您不直接使用本项目代码。
+我们提供了一份示例配置文件，位于`hoshino/config_example`文件夹中。请下载本项目代码，**将这个文件夹名字改为`config`**，填写`__bot__.py`的这些字段：
 
-由于酷Q框架停止服务，本项目已迁移至go-cqhttp框架上。
+```python
+PORT = 8080   # hoshino监听的端口与ip
+#HOST = '127.0.0.1'      # Windows部署使用此条配置
+HOST = '0.0.0.0'   # linux + docker使用此条配置
 
-首先，参考HoshinoBot的[项目地址](https://github.com/Ice-Cirno/HoshinoBot)中“部署指南”一章，下载机器人代码并填写配置信息。
+SUPERUSERS = []    # 填写超级用户（机器人管理员）的QQ号，可填多个用半角逗号","隔开
+NICKNAME = ()           # 机器人的昵称。呼叫昵称等同于@bot，可用元组配置多个昵称
+BOTNAME = ''  # 机器人的名字
 
-随后，在go-cqhttp的[项目地址](https://github.com/Mrs4s/go-cqhttp/releases)下载符合您系统的程序，并参考[配置教程](https://github.com/Mrs4s/go-cqhttp/blob/master/docs/config.md)配置`config.ini`。在配置中，请关闭`http_config`与`ws_config`，启用`ws_reverse_servers`，其中`reverse_url`的格式为`ws://[您的IP]:[您的监听端口]/ws/`，其中监听端口与HoshinoBot中的监听端口保持一致。
+RES_PROTOCOL = 'file'
+RES_DIR = r'/res'  # 资源库文件夹，需可读可写，windows下注意反斜杠转义
+RES_URL = 'http://172.17.0.1:8080/res/'   # 使用http协议时需填写，原则上该url应指向RES_DIR目录
+```
 
-配置完后，依次启动HoshinoBot与go-cqhttp，向机器人发送“在吗”测试，若有回复则部署成功。
+请按您的服务器和机器人实际情况进行修改，具体可见文件内代码注释。
+
+**可选**：在`hoshino/config/priconne.py`里填入竞技场查询key。竞技场查询功能的数据来自 [公主连结Re: Dive Fan Club - 硬核的竞技场数据分析站](https://pcrdfans.com/) ，查询需要授权key。您可以向pcrdfans的作者索要。（注：由于最近机器人搭建者较多，作者常被打扰，我们**不建议**您联系他，推荐您前往网站进行查询）
+
+随后，在go-cqhttp的[项目地址](https://github.com/Mrs4s/go-cqhttp/releases)下载符合您系统的程序，并参考[配置教程](https://github.com/Mrs4s/go-cqhttp/blob/master/docs/config.md)配置`config.ini`。在配置中，请关闭`http_config`与`ws_config`，启用`ws_reverse_servers`，其中`reverse_url`的格式为`ws://[您的IP]:[您的监听端口]/ws/`，监听端口与HoshinoBot的监听端口保持一致。
+
+配置完后，依次启动HoshinoBot与go-cqhttp，向机器人发送“bot管理”，若有回复则部署成功。
 
 <h2 id="20210105update"> 20210105更新 </h2>
 
