@@ -856,9 +856,9 @@ async def auto_unlock_boss(bot:NoneBot, event:Context_T, bm:BattleMaster):
 async def show_progress(bot:NoneBot, event:Context_T, args:ParseResult):
     bm = BattleMaster(event['group_id'])
     clan = _check_clan(bm)
-    r, b, hp = bm.get_challenge_progress(1, datetime.now())
+    r, b, hp, stage = bm.get_challenge_progress(1, datetime.now())
     max_hp, score_rate = bm.get_boss_info(r, b, clan['server'])
-    msg = _gen_progress_text(clan['name'], r, b, hp, max_hp, score_rate)
+    msg = _gen_progress_text(clan['name'], r, b, hp, max_hp, stage, score_rate)
     await bot.send(event, '\n' + msg, at_sender=True)
 
 
