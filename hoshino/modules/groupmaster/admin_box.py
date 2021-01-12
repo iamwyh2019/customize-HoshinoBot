@@ -30,10 +30,8 @@ async def show_group_role(bot, event):
 	role = info['role']
 	await bot.send(event, f'{name}在此群的地位是{role}')
 
-@sv.on_prefix(('戳一戳',),only_to_me=True)
+@sv.on_prefix(('戳一戳',), only_to_me=True)
 async def poke(bot, event):
-	if not priv.check_priv(event, priv.SUPERUSER):
-		return
 	uid = 0
 	for msg in event.message:
 		if msg.type == 'at' and msg.data['qq'] != 'all':
@@ -44,7 +42,7 @@ async def poke(bot, event):
 	else:
 		await bot.send(event, f'[CQ:poke,qq={uid}]')
 
-@sv.on_prefix(('送礼物',),only_to_me=True)
+@sv.on_prefix(('送礼物',), only_to_me=True)
 async def send_gift(bot, event):
 	uid = 0
 	for msg in event.message:
@@ -54,7 +52,7 @@ async def send_gift(bot, event):
 	if uid == 0:
 		await bot.send(event, '你想送给谁？', at_sender=True)
 	else:
-		await bot.send(event, f'[CQ:gift,qq={uid},id={random.randint(0,8)}]')
+		await bot.send(event, f'[CQ:gift,qq={uid},id={random.randint(0,13)}]')
 
 '''
 @sv.on_notice('group_recall')
