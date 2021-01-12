@@ -349,4 +349,5 @@ class BattleMaster(object):
         if remain_hp <= 0:
             round_, boss = self.next_boss(round_, boss)
             remain_hp = self.get_boss_hp(round_, boss, server)
-        return (round_, boss, remain_hp)
+        stage = self.get_stage(round_, server)
+        return (round_, boss, remain_hp, stage)

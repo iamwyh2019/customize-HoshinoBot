@@ -195,8 +195,9 @@ def _gen_type_text(tp):
            "掉刀" if tp == BattleMaster.TIMEOUT else\
            "未知类型"
 
-def _gen_progress_text(clan_name, round_, boss, hp, max_hp, score_rate):
-    return f"{clan_name} 当前进度：\n{round_}周目 {BattleMaster.int2kanji(boss)}王    SCORE x{score_rate:.1f}\nHP={hp:,d}/{max_hp:,d}"
+def _gen_progress_text(clan_name, round_, boss, hp, max_hp, stage, score_rate):
+    stg_text = chr(ord('A') + stage - 1)
+    return f"{clan_name} 当前进度：\n{round_}周目 {BattleMaster.int2kanji(boss)}王 {stg_text}面  SCORE x{score_rate:.1f}\nHP={hp:,d}/{max_hp:,d}"
 
 
 async def process_challenge(bot:NoneBot, event:Context_T, ch:ParseResult):
@@ -213,7 +214,7 @@ async def process_challenge(bot:NoneBot, event:Context_T, ch:ParseResult):
     uid = mem['uid']
     alt = mem['alt']
 
-    cur_round, cur_boss, cur_hp = bm.get_challenge_progress(1, now)
+    cur_round, cur_boss, cur_hp, cur_stage = bm.get_challenge_progress(1, now)
     round_ = ch.round or cur_round
     boss = ch.boss or cur_boss
     damage = ch.damage if ch.flag != BattleMaster.LAST else (ch.damage or cur_hp)
@@ -252,11 +253,11 @@ async def process_challenge(bot:NoneBot, event:Context_T, ch:ParseResult):
                     msg.append('⚠️Boss仍有少量残留血量')
 
     eid = bm.add_challenge(uid, alt, round_, boss, damage, flag, now)
-    aft_round, aft_boss, aft_hp = bm.get_challenge_progress(1, now)
+    aft_round, aft_boss, aft_hp, aft_stage = bm.get_challenge_progress(1, now)
     max_hp, score_rate = bm.get_boss_info(aft_round, aft_boss, clan['server'])
     msg.append(f"记录编号E{eid}：")
     msg.append(f"{mem['name']}给予{round_}周目{bm.int2kanji(boss)}王{damage:,d}点伤害，类型为{_gen_type_text(flag)}\n")
-    msg.append(_gen_progress_text(clan['name'], aft_round, aft_boss, aft_hp, max_hp, score_rate))
+    msg.append(_gen_progress_text(clan['name'], aft_round, aft_boss, aft_hp, max_hp, aft_stage, score_rate))
     await bot.send(event, '\n'.join(msg), at_sender=True)
 
     # 判断是否更换boss，呼叫预约
