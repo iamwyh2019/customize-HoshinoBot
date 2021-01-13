@@ -553,13 +553,14 @@ def _gen_namelist_text(bm:BattleMaster, uidlist:List[int], memolist:List[str]=No
 
 SUBSCRIBE_TIP = ''
 
-@cb_cmd('预约', ArgParser(usage='!预约 <Boss号> [M留言] [狂暴]', arg_dict={
+@cb_cmd('预约', ArgParser(usage='!预约 <Boss号> [M留言] [狂暴] [@qq]', arg_dict={
     '': ArgHolder(tip='Boss编号', type=boss_code),
     'M': ArgHolder(tip='留言', default=''),
-    '狂' : ArgHolder(tip='状态', type=str, default='')}))
+    '狂': ArgHolder(tip='状态', type=str, default=''),
+    '@': ArgHolder(tip='QQ号', type=int, default=0)}))
 async def subscribe(bot:NoneBot, event:Context_T, args:ParseResult):
     bm = BattleMaster(event['group_id'])
-    uid = event['user_id']
+    uid = args['@'] or args.at or event['user_id']
     _check_clan(bm)
     _check_member(bm, uid, bm.group)
     sub = _load_sub(bm.group)
@@ -594,14 +595,15 @@ async def subscribe(bot:NoneBot, event:Context_T, args:ParseResult):
     await bot.send(event, '\n'.join(msg), at_sender=True)
 
 
-@cb_cmd(('取消预约', '预约取消'), ArgParser(usage='!取消预约 <Boss号> [狂暴]', arg_dict={
+@cb_cmd(('取消预约', '预约取消'), ArgParser(usage='!取消预约 <Boss号> [狂暴] [@qq]', arg_dict={
     '': ArgHolder(tip='Boss编号', type=boss_code),
-    '狂': ArgHolder(tip='状态', type=str, default='')}))
+    '狂': ArgHolder(tip='状态', type=str, default=''),
+    '@': ArgHolder(tip='QQ号', type=int, default=0)}))
 async def unsubscribe(bot:NoneBot, event:Context_T, args:ParseResult):
     bm = BattleMaster(event['group_id'])
-    uid = event['user_id']
-    _check_clan(bm)
-    _check_member(bm, uid, bm.group)
+    uid = args['@'] or args.at or event['user_id']
+    #_check_clan(bm)
+    #_check_member(bm, uid, bm.group)
     sub = _load_sub(bm.group)
     boss = args['']
 
