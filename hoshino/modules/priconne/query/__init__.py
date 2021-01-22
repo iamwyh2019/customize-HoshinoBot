@@ -11,3 +11,4 @@ sv = Service('pcr-query', help_=sv_help, bundle='pcr查询')
 from .query import *
 from .whois import *
 from .miner import *
+from .rank import *
