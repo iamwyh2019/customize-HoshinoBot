@@ -335,42 +335,51 @@ def normalize_digit_format(n):
     return f'0{n}' if n < 10 else f'{n}'
 
 
-@sv.on_notice('notify.poke')
-async def poke_back(session: NoticeSession):
-    uid = session.ctx['user_id']
-    at_user = MessageSegment.at(session.ctx['user_id'])
-    guid = session.ctx['group_id'], session.ctx['user_id']
+async def poke_back(bot, event, mode = 'poke'):
+    uid = event['user_id']
+    gid = event['group_id']
+    me_id = await bot.get_login_info()
+    me_id = me_id['user_id']
+    at_user = MessageSegment.at(uid)
+    guid = gid, uid
     if not cooling_time_limiter.check(uid):
         return
     cooling_time_limiter.start_cd(uid)
-    if session.ctx['target_id'] != session.event.self_id:
+    if mode == 'poke' and event['target_id'] != me_id:
         return
     if not daily_limiter.check(guid) and not daily_tip_limiter.check(guid):
         poke_tip_cd_limiter.start_cd(guid)
     if not daily_limiter.check(guid) and poke_tip_cd_limiter.check(guid):
         daily_tip_limiter.increase(guid)
-        await session.send(f'{at_user}你今天戳得已经够多的啦，再戳也不会有奇怪的东西掉下来的~')
+        await bot.send(event, f'{at_user}你今天戳得已经够多的啦，再戳也不会有奇怪的东西掉下来的~')
         return
     daily_tip_limiter.reset(guid)
     if not daily_limiter.check(guid) or random.random() > POKE_GET_CARDS:
         poke = MessageSegment(type_='poke',
                               data={
-                                  'qq': str(session.ctx['user_id']),
+                                  'qq': str(uid),
                               })
-        await session.send(poke)
+        await bot.send(event, poke)
     else:
         amount = roll_cards_amount()
         col_num = math.ceil(amount / 2)
         row_num = 2 if amount != 1 else 1
-        card_counter, card_descs, card = get_random_cards(db.get_cards_num(session.ctx['group_id'], session.ctx['user_id']), row_num, col_num,
+        card_counter, card_descs, card = get_random_cards(db.get_cards_num(gid, uid), row_num, col_num,
                                                           amount, True, get_random_cards_list, SUPER_RARE_PROBABILITY, RARE_PROBABILITY)
         dash = '----------------------------------------'
         msg_part = '\n'.join(card_descs)
-        await session.send(f'别戳了别戳了o(╥﹏╥)o\n{card}\n{at_user}这些卡送给你了, 让我安静会...\n{dash}\n获得了:\n{msg_part}')
+        await bot.send(event, f'别戳了别戳了o(╥﹏╥)o\n{card}\n{at_user}这些卡送给你了, 让我安静会...\n{dash}\n获得了:\n{msg_part}')
         for card_id in card_counter.keys():
-            db.add_card_num(
-                session.ctx['group_id'], session.ctx['user_id'], card_id, card_counter[card_id])
+            db.add_card_num( gid, uid, card_id, card_counter[card_id])
         daily_limiter.increase(guid)
+
+@sv.on_notice('notify.poke')
+async def poked(session: NoticeSession):
+    await poke_back(session.bot, session.event)
+
+@sv.on_fullmatch(('集卡',), only_to_me = True)
+async def somehow_poked(bot, event):
+    await poke_back(bot, event, mode = 'at')
 
 
 @sv.on_prefix(('献祭', '合成', '融合'))
