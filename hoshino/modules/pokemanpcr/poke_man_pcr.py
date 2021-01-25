@@ -30,7 +30,7 @@ RESET_HOUR = 0                  # 每日戳一戳、赠送等指令使用次数�
 COL_NUM = 17                    # 查看仓库时每行显示的卡片个数
 OMIT_THRESHOLD = 20             # 当获得卡片数超过这个阈值时，不再显示获得卡片的具体名称，只显示获得的各个稀有度的卡片数目
 # 填写不希望被加载的卡片文件名，以逗号分隔。如['icon_unit_100161.png'], 表示不加载六星猫拳的头像
-BLACKLIST_CARD = ['icon_unit_100031.png']
+BLACKLIST_CARD = ['icon_unit_100031.png', 'icon_unit_300161.png', 'icon_unit_300261.png', 'icon_unit_300361.png', 'icon_unit_300131.png', 'icon_unit_300231.png', 'icon_unit_300331.png', 'icon_unit_300431.png', 'icon_unit_300631.png', 'icon_unit_300731.png', 'icon_unit_300831.png', 'icon_unit_301131.png', 'icon_unit_302031.png', 'icon_unit_302131.png', 'icon_unit_302431.png', 'icon_unit_302631.png', 'icon_unit_303931.png', 'icon_unit_201811.png', 'icon_unit_202011.png', 'icon_unit_202111.png', 'icon_unit_202911.png', 'icon_unit_203011.png', 'icon_unit_203311.png', 'icon_unit_203411.png', 'icon_unit_203911.png', 'icon_unit_204511.png', 'icon_unit_200111.png', 'icon_unit_200211.png', 'icon_unit_200311.png', 'icon_unit_200911.png', 'icon_unit_201111.png', 'icon_unit_201211.png', 'icon_unit_201411.png', 'icon_unit_201711.png', 'icon_unit_403111.png', 'icon_unit_1000011.png', 'icon_unit_1000111.png', 'icon_unit_1000211.png', 'icon_unit_1000311.png', 'icon_unit_1000411.png', 'icon_unit_1000511.png', 'icon_unit_1000611.png', 'icon_unit_1000711.png', 'icon_unit_1000811.png', 'icon_unit_1000911.png', 'icon_unit_1001011.png', 'icon_unit_1001111.png', 'icon_unit_1001211.png', 'icon_unit_1001311.png', 'icon_unit_1001411.png', 'icon_unit_1001511.png', 'icon_unit_1001611.png', 'icon_unit_1001711.png', 'icon_unit_1001811.png', 'icon_unit_1001911.png']
 # 献祭卡片时的获得不同稀有度卡片的概率，-1,0,1表示被献祭卡片的三种稀有度，后面长度为3的列表表示献祭获得卡片三种不同稀有度的概率，要求加和为1
 MIX_PROBABILITY = {str(list((-1, -1))): [0.8, 0.194, 0.006], str(list((-1, 0))): [0.44, 0.5, 0.06], str(list((-1, 1))): [0.55, 0.3, 0.1],
                    str(list((0, 0))): [0.1, 0.8, 0.1],       str(list((0, 1))): [0.3, 0.5, 0.2],      str(list((1, 1))): [0.15, 0.25, 0.6]}
@@ -366,7 +366,7 @@ async def poke_back(session: NoticeSession):
                                                           amount, True, get_random_cards_list, SUPER_RARE_PROBABILITY, RARE_PROBABILITY)
         dash = '----------------------------------------'
         msg_part = '\n'.join(card_descs)
-        await session.send(f'别戳了别戳了o(╥﹏╥)o{card}{at_user}这些卡送给你了, 让我安静会...\n{dash}\n获得了:\n{msg_part}')
+        await session.send(f'别戳了别戳了o(╥﹏╥)o\n{card}\n{at_user}这些卡送给你了, 让我安静会...\n{dash}\n获得了:\n{msg_part}')
         for card_id in card_counter.keys():
             db.add_card_num(
                 session.ctx['group_id'], session.ctx['user_id'], card_id, card_counter[card_id])
