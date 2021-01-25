@@ -8,7 +8,6 @@ db.json
 database.json
 *.sqlite
 imgs/
-image/
 images/
 
 # 非公开的组件
