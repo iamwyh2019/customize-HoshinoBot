@@ -49,7 +49,7 @@ class BattleMaster(object):
         yyyy = time.year
         mm = time.month
         dd = time.day
-        if dd < 10:
+        if dd < 4:
             mm = mm - 1
         if mm < 1:
             mm = 12
@@ -337,7 +337,7 @@ class BattleMaster(object):
         dao = self.get_battledao(cid, time)
         challens = dao.find_all()
         if not len(challens):
-            return ( 1, 1, self.get_boss_hp(1, 1, server) )
+            return ( 1, 1, self.get_boss_hp(1, 1, server), 1)
         round_ = challens[-1]['round']
         boss = challens[-1]['boss']
         remain_hp = self.get_boss_hp(round_, boss, server)
