@@ -17,7 +17,7 @@ FRAME_DIR_PATH = os.path.join(__BASE[0], 'image')
 DIR_PATH = os.path.join(os.path.expanduser(
     hoshino.config.RES_DIR), 'img', 'priconne', 'unit')
 DB_PATH = os.path.expanduser("~/.hoshino/poke_man_pcr.db")
-POKE_GET_CARDS = 0.75           # 每一戳的卡片掉落几率
+POKE_GET_CARDS = 0.85           # 每一戳的卡片掉落几率
 POKE_DAILY_LIMIT = 3            # 机器人每天掉落卡片的次数
 RARE_PROBABILITY = 0.17         # 戳一戳获得稀有卡片的概率
 SUPER_RARE_PROBABILITY = 0.03   # 戳一戳获得超稀有卡片的概率
