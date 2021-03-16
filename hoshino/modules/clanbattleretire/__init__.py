@@ -269,7 +269,7 @@ def get_ym():
     year = now.year
     month = now.month
     day = now.day
-    if day < 10:
+    if day < 4:
         month -= 1
     if month == 0:
         year -= 1
