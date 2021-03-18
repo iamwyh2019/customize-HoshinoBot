@@ -62,14 +62,14 @@ CORRESPONDENCE = {
     # 这里记录的是ROLE_ARMS_LIST最后7个列表与其他列表的包含关系
     '5星全角色武器':["5星常驻角色","5星up角色","5星常驻武器","5星up武器"],
 
-    '5星常驻池':["5星常驻角色","5星常驻武器","5星up武器"],
-    '4星常驻池':["4星常驻角色","4星白给角色","4星up角色","4星up武器","4星常驻武器"],
+    '5星常驻池':["5星常驻角色","5星常驻武器"],
+    '4星常驻池':["4星常驻角色","4星白给角色","4星常驻武器"],
 
     '5星角色up池全角色':["5星up角色","5星常驻角色"],
-    '4星角色up池全物品':["4星up角色","4星常驻角色","4星常驻武器","4星up武器"],
+    '4星角色up池全物品':["4星常驻角色","4星常驻武器"],
 
     '5星武器up池全武器':["5星up武器","5星常驻武器"],
-    '4星武器up池全物品':["4星up武器","4星常驻武器","4星常驻角色","4星up角色"]
+    '4星武器up池全物品':["4星常驻武器","4星常驻角色"]
 }
 
 
@@ -105,9 +105,7 @@ DISTANCE_FREQUENCY = {
     '常驻池':90
 }
 
-HELP = "发送“相遇之缘”抽10连，“纠缠之缘”抽90连，“原之井”抽180连"
-
-
+HELP_TEXT = "\n发送\"相遇之缘\"抽10连, \"纠缠之缘\"抽90连, \"原之井\"抽180连\n* 发送\"原神卡池\"查看卡池, \"原神卡池切换\"切换卡池"
 
 
 
@@ -231,7 +229,7 @@ class Gacha(object):
         des = Image.new('RGB', (w * min(num, border), h * math.ceil(num / border)), (255, 255, 255))
 
         for i in range(num):
-            im = Image.open(self.get_png_path(self.gacha_list[i]))
+            im = Image.open(self.get_png_path(self.gacha_list[i])).convert('RGB')
 
             pixel_w_offset = (125 - im.size[0]) / 2
             pixel_h_offset = (130 - im.size[1]) / 2  # 因为角色和武器大小不一样，小的图像设置居中显示
@@ -344,6 +342,23 @@ class Gacha(object):
         else:
             return random.choice(ROLE_ARMS_LIST[up_4_star])
 
+    def get_5_star_probability(self):
+        # 获取本次抽5星的概率是多少
+        basic_probability = POOL_PROBABILITY[self.pool]["5"]
+
+        if self.pool == '武器up池':
+            # 这是武器up池5星概率
+            if self.distance_5_star <= 62:
+                return basic_probability
+            else:
+                return basic_probability + 0.056 * (self.distance_5_star - 62)
+        else:
+            # 下边是常驻池和角色UP池
+            # 这两个保底和概率是相同的所以放在一起
+            if self.distance_5_star <= 73:
+                return basic_probability
+            else:
+                return basic_probability + 0.06 * (self.distance_5_star - 73)
 
 
     def gacha_one(self):
@@ -353,6 +368,8 @@ class Gacha(object):
         # self.distance_5_star是5星保底计数
         self.distance_4_star += 1
         self.distance_5_star += 1
+
+        _5_star_probability = self.get_5_star_probability()
 
         r = random.random()
 
@@ -364,7 +381,7 @@ class Gacha(object):
             return self.last_time_5 # 返回刚抽出的卡
 
         # 检查是不是概率5星
-        if r < POOL_PROBABILITY[self.pool]["5"]:
+        if r < _5_star_probability:
             self.gacha_rarity_statistics["5星"] += 1
             self.distance_5_star = 0
             self.last_time_5 = self.get_5_star()  # 抽一次卡，把结果赋值留给下一次抽卡判断
@@ -379,7 +396,7 @@ class Gacha(object):
 
         # 检查是不是概率4星
         # 由于是先判断5星的概率出货，所以4星的实际概率是4星原概率加上5星的概率
-        if r < (POOL_PROBABILITY[self.pool]["5"] + POOL_PROBABILITY[self.pool]["4"]):
+        if r < (_5_star_probability + POOL_PROBABILITY[self.pool]["4"]):
             self.gacha_rarity_statistics["4星"] += 1
             self.distance_4_star = 0
             self.last_time_4 = self.get_4_star()
@@ -427,8 +444,7 @@ class Gacha(object):
         if self.last_5_up:
             mes += f'第 {self.last_5_up} 抽首次出现5★UP!\n'
 
-        mes += f"\n* 本次抽取卡池为 {self.pool} \n* 发送 原神卡池切换 可切换卡池"
-        mes += "\n* " + HELP
+        mes += f"\n* 本次抽取卡池为 {self.pool}" + HELP_TEXT
 
         return mes
 
@@ -472,8 +488,7 @@ class Gacha(object):
         if self.is_guaranteed(frequency):
             mes += "居然全是保底，你脸也太黑了\n"
 
-        mes += f"\n* 本次抽取卡池为 {self.pool} \n* 发送 原神卡池切换 可切换卡池"
-        mes += "\n* " + HELP
+        mes += f"\n* 本次抽取卡池为 {self.pool}" + HELP_TEXT
         return mes
 
 
@@ -488,14 +503,14 @@ def gacha_info(pool = DEFAULT_POOL):
     up_info = ""
 
     for _5_star in ROLE_ARMS_LIST[_5_star_up_info]:
-        im = Image.open(Gacha.get_png_path(_5_star))
+        im = Image.open(Gacha.get_png_path(_5_star)).convert('RGB')
         im = Gacha.pic2b64(im)
         up_info += Gacha.ba64_to_cq(im)
         up_info += "\n"
         up_info += f"{_5_star} ★★★★★"
 
     for _4_star in ROLE_ARMS_LIST[_4_star_up_info]:
-        im = Image.open(Gacha.get_png_path(_4_star))
+        im = Image.open(Gacha.get_png_path(_4_star)).convert('RGB')
         im = Gacha.pic2b64(im)
         up_info += Gacha.ba64_to_cq(im)
         up_info += "\n"
