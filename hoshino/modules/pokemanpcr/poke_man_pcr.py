@@ -281,8 +281,7 @@ def get_card_id_by_card_name(card_name):
     else:
         rarity = -1
         star = '1'
-        chara_name_no_prefix = card_name[2:] if card_name.startswith(
-            '普通') else card_name
+        chara_name_no_prefix = card_name[2:] if card_name.startswith('普通') else card_name
     chara_id = chara.name2id(chara_name_no_prefix)
     return (30000 + rarity * 1000 + chara_id) if chara_id != chara.UNKNOWN and chara_id in chara_ids[star] else 0
 
@@ -506,18 +505,20 @@ async def auto_mix_card(bot, ev: CQEvent):
 async def exchange_cards(bot, ev: CQEvent):
     # 参数识别
     if len(ev.message) != 3:
-        await bot.finish(ev, '参数格式错误, 请重试')
+        await bot.finish(ev, '参数个数错误, 请重试')
     if ev.message[0].type != 'text' or ev.message[1].type != 'at' or ev.message[2].type != 'text':
         await bot.finish(ev, '参数格式错误, 请重试')
     target_uid = int(ev.message[1].data['qq'])
     card1_name = ev.message[0].data['text'].strip()
     card2_name = ev.message[2].data['text'].strip()
+    if card1_name.startswith("卡片"):
+        card1_name = card1_name[2:].strip()
     card1_id = get_card_id_by_card_name(card1_name)
     card2_id = get_card_id_by_card_name(card2_name)
     if not card1_id:
-        await bot.finish(ev, f'错误: 无法识别{get_card_name_with_rarity(card1_name)}, 若为稀有或超稀有卡请在名称前加上"稀有"或"超稀有"')
+        await bot.finish(ev, f'卡一错误: 无法识别{card1_name}, 若为稀有或超稀有卡请在名称前加上"稀有"或"超稀有"')
     if not card2_id:
-        await bot.finish(ev, f'错误: 无法识别{get_card_name_with_rarity(card2_name)}, 若为稀有或超稀有卡请在名称前加上"稀有"或"超稀有"')
+        await bot.finish(ev, f'卡二错误: 无法识别{card2_name}, 若为稀有或超稀有卡请在名称前加上"稀有"或"超稀有"')
     card1_num = db.get_card_num(ev.group_id, ev.user_id, card1_id)
     card2_num = db.get_card_num(ev.group_id, target_uid, card2_id)
     if card1_num == 0:
