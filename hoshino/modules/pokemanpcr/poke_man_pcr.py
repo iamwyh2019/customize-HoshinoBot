@@ -17,7 +17,7 @@ FRAME_DIR_PATH = os.path.join(__BASE[0], 'image')
 DIR_PATH = os.path.join(os.path.expanduser(
     hoshino.config.RES_DIR), 'img', 'priconne', 'unit')
 DB_PATH = os.path.expanduser("~/.hoshino/poke_man_pcr.db")
-POKE_GET_CARDS = 0.85           # 每一戳的卡片掉落几率
+POKE_GET_CARDS = 0.9           # 每一戳的卡片掉落几率
 POKE_DAILY_LIMIT = 3            # 机器人每天掉落卡片的次数
 RARE_PROBABILITY = 0.17         # 戳一戳获得稀有卡片的概率
 SUPER_RARE_PROBABILITY = 0.03   # 戳一戳获得超稀有卡片的概率
@@ -240,16 +240,28 @@ def get_random_cards(origin_cards, row_num, col_num, amount, bonus, get_random_c
 
 # 输入'[稀有度前缀][角色昵称]'格式的卡片名, 例如'黑猫','稀有黑猫','超稀有黑猫', 输出角色昵称标准化后的结果如'「凯露」','稀有「凯露」','超稀有「凯露」'
 def get_card_name_with_rarity(card_name):
+    if card_name.startswith('卡片'):
+        card_name = card_name[2:]
+    card_name = card_name.replace(" ", "")
+
     if card_name.startswith('超稀有'):
         chara_suffix = card_name[0:3]
         chara_nickname = card_name[3:]
+    elif card_name.startswith('六星'):
+        chara_suffix = '超稀有'
+        chara_nickname = card_name[2:]
+
     elif card_name.startswith('稀有'):
         chara_suffix = card_name[0:2]
         chara_nickname = card_name[2:]
+    elif card_name.startswith('三星'):
+        chara_suffix = '稀有'
+        chara_nickname = card_name[2:]
+
     else:
         chara_suffix = '普通'
         chara_nickname = card_name[2:] if card_name.startswith(
-            '普通') else card_name
+            '普通') or card_name.startswith('一星') else card_name
     chara_name = chara.fromname(chara_nickname).name
     return f'{chara_suffix}「{chara_name}」'
 
@@ -270,18 +282,26 @@ def get_chara_name(card_id):
 
 # 由'[稀有度前缀][角色昵称]'格式的卡片名, 返回卡片id(形如3xxxx)，如果卡片不存在则返回0
 def get_card_id_by_card_name(card_name):
+    if card_name.startswith('卡片'):
+        card_name = card_name[2:]
+    card_name = card_name.replace(" ", "")
     if card_name.startswith('超稀有'):
         rarity = 1
         star = '6'
         chara_name_no_prefix = card_name[3:]
-    elif card_name.startswith('稀有'):
+    elif card_name.startswith('六星'):
+        rarity = 1
+        star = '6'
+        chara_name_no_prefix = card_name[2:]
+    elif card_name.startswith('稀有') or card_name.startswith('三星'):
         rarity = 0
         star = '3'
         chara_name_no_prefix = card_name[2:]
     else:
         rarity = -1
         star = '1'
-        chara_name_no_prefix = card_name[2:] if card_name.startswith('普通') else card_name
+        chara_name_no_prefix = card_name[2:] if card_name.startswith('普通')\
+             or card_name.startswith('一星') else card_name
     chara_id = chara.name2id(chara_name_no_prefix)
     return (30000 + rarity * 1000 + chara_id) if chara_id != chara.UNKNOWN and chara_id in chara_ids[star] else 0
 
@@ -505,14 +525,12 @@ async def auto_mix_card(bot, ev: CQEvent):
 async def exchange_cards(bot, ev: CQEvent):
     # 参数识别
     if len(ev.message) != 3:
-        await bot.finish(ev, '参数个数错误, 请重试')
+        await bot.finish(ev, '参数个数错误。正确格式：交换 自己的卡片名字 @对象 对方的卡片名字')
     if ev.message[0].type != 'text' or ev.message[1].type != 'at' or ev.message[2].type != 'text':
-        await bot.finish(ev, '参数格式错误, 请重试')
+        await bot.finish(ev, '参数格式错误。正确格式：交换 自己的卡片名字 @对象 对方的卡片名字')
     target_uid = int(ev.message[1].data['qq'])
     card1_name = ev.message[0].data['text'].strip()
     card2_name = ev.message[2].data['text'].strip()
-    if card1_name.startswith("卡片"):
-        card1_name = card1_name[2:].strip()
     card1_id = get_card_id_by_card_name(card1_name)
     card2_id = get_card_id_by_card_name(card2_name)
     if not card1_id:
@@ -562,7 +580,7 @@ async def confirm_exchange(bot, ev: CQEvent):
 @sv.on_prefix(('赠送', '白给', '白送'))
 async def give(bot, ev: CQEvent):
     if len(ev.message) != 2 or ev.message[0].type != 'at' or ev.message[1].type != 'text':
-        await bot.finish(ev, '参数格式错误, 请重试')
+        await bot.finish(ev, '参数格式错误。正确格式：赠送 @对象 卡片名')
     target_uid = int(ev.message[0].data['qq'])
     if not daily_give_limiter.check((ev.group_id, target_uid)):
         await bot.finish(ev, f'{MessageSegment.at(target_uid)}的今日接受赠送次数已达上限，明天再送给TA吧~')
