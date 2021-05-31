@@ -40,6 +40,7 @@ def get_foods():
 async def net_ease_cloud_word(bot,ev:CQEvent):
     uid = ev.user_id
     if not _lmt.check(uid):
+        await bot.send(ev, "今天问了太多遍了！", at_sender = True)
         return
     match = ev.match
     time = match.group(1).strip()
