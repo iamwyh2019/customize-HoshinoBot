@@ -36,7 +36,7 @@ def get_foods():
     key = random.choice(keys)
     return words[key]
 
-@sv.on_rex(r'^(今天|[早中午晚][上饭餐午]|夜宵)吃(什么|啥|点啥)')
+@sv.on_rex(r'^(今天|早上|早餐|早饭|中午|中餐|中饭|下午|下午茶|晚上|晚饭|晚餐|夜宵|宵夜)吃(什么|啥|点啥)')
 async def net_ease_cloud_word(bot,ev:CQEvent):
     uid = ev.user_id
     if not _lmt.check(uid):
