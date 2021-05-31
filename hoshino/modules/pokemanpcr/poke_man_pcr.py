@@ -240,7 +240,7 @@ def get_random_cards(origin_cards, row_num, col_num, amount, bonus, get_random_c
 
 # 输入'[稀有度前缀][角色昵称]'格式的卡片名, 例如'黑猫','稀有黑猫','超稀有黑猫', 输出角色昵称标准化后的结果如'「凯露」','稀有「凯露」','超稀有「凯露」'
 def get_card_name_with_rarity(card_name):
-    if card_name.startswith('卡片'):
+    if card_name.startswith('卡片') or card_name.startswith('卡牌'):
         card_name = card_name[2:]
     card_name = card_name.replace(" ", "")
 
@@ -282,7 +282,7 @@ def get_chara_name(card_id):
 
 # 由'[稀有度前缀][角色昵称]'格式的卡片名, 返回卡片id(形如3xxxx)，如果卡片不存在则返回0
 def get_card_id_by_card_name(card_name):
-    if card_name.startswith('卡片'):
+    if card_name.startswith('卡片') or card_name.startswith('卡牌'):
         card_name = card_name[2:]
     card_name = card_name.replace(" ", "")
     if card_name.startswith('超稀有'):
