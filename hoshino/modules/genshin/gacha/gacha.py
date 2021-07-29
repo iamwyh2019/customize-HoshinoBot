@@ -225,20 +225,20 @@ class Gacha(object):
         # self.gacha_list是一个列表，这个函数找到列表中名字对应的图片，然后拼接成一张大图返回
         num = len(self.gacha_list)
         # w, h = pics[0].size
-        w, h = [125, 130]
+        w, h = 130, 160
         des = Image.new('RGB', (w * min(num, border), h * math.ceil(num / border)), (255, 255, 255))
 
         for i in range(num):
-            im = Image.open(self.get_png_path(self.gacha_list[i])).convert('RGB')
+            im = Image.open(self.get_png_path(self.gacha_list[i])).resize((w,h)).convert('RGB')
 
-            pixel_w_offset = (125 - im.size[0]) / 2
-            pixel_h_offset = (130 - im.size[1]) / 2  # 因为角色和武器大小不一样，小的图像设置居中显示
+            #pixel_w_offset = (125 - im.size[0]) / 2
+            #pixel_h_offset = (130 - im.size[1]) / 2  # 因为角色和武器大小不一样，小的图像设置居中显示
 
             w_row = (i % border) + 1
             h_row = math.ceil((i + 1) / border)
 
-            pixel_w = (w_row - 1) * w + pixel_w_offset
-            pixel_h = (h_row - 1) * h + pixel_h_offset
+            pixel_w = (w_row - 1) * w #+ pixel_w_offset
+            pixel_h = (h_row - 1) * h #+ pixel_h_offset
 
             des.paste(im, (int(pixel_w), int(pixel_h)))
 
