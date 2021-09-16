@@ -53,7 +53,7 @@ class BattleMaster(object):
         if dd < 4:
             mm = mm - 1
         '''
-        if dd >= 30:
+        if dd >= 20:
             mm = mm + 1
         if mm < 1:
             mm = 12
